@@ -95,7 +95,7 @@ const useAddProfMutation = () => {
             onSuccess: (data) => {
                 if (data.success) {
                     const { newProf } = data;
-                    console.log("Professor added successfully", newProf);
+                    alert("Professor added successfully", newProf);
                 } else {
                     alert(data.error || 'Unknown error');
                 }
