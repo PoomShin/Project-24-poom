@@ -49,13 +49,14 @@ app.post('/admin/login', async (req, res) => {
         const result = await pool.query('SELECT * FROM admin WHERE username = $1 AND password = $2', [username, password]);
         const user = result.rows[0];
 
-        const response = user ?
-            { success: true, message: 'Login successful', name: user.name, role: user.role }
-            : { success: false, message: 'User not found' };
-
-        res.json(response);
+        if (user) {
+            const { name, role } = user;
+            return res.json({ success: true, message: 'Login successful', name, role });
+        } else {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 });
 app.post('/admin/addBranch', async (req, res) => {
@@ -64,7 +65,7 @@ app.post('/admin/addBranch', async (req, res) => {
     try {
         const result = await pool.query(
             'INSERT INTO branches (branchname, branchtag, coursetag) VALUES ($1, $2, $3) RETURNING *',
-            [branchname, "T"+branchtag, coursetag]
+            [branchname, "T" + branchtag, coursetag]
         );
 
         const { rows: [newBranch] } = result;

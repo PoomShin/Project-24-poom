@@ -1,33 +1,11 @@
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate();
+    const loginMutation = useLoginMutation();
 
-    {/* เรียกใช้เมื่อ submit form ใน <Admin Form/> */ }
-    const { mutate: loginMutation } = useMutation({
-        mutationFn: async ({ username, password }) => {
-            try {
-                const response = await axios.post('http://localhost:5000/admin/login', { username, password });
-                return response.data;
-            } catch (error) {
-                throw new Error(error.response.data.message);
-            }
-        },
-        onSuccess: ({ success, message, name, role }) => {
-            if (success) {
-                alert(`${message} Your name is ${name} and role is ${role}`);
-                localStorage.setItem('userData', JSON.stringify({ name, role }));
-                navigate('/admin');
-            } else
-                alert(message);
-        },
-        onError: ({ message }) => {
-            alert(message);
-        },
-    });
     const handleLogin = (e) => {
         e.preventDefault();
-        loginMutation({ username, password });
+        loginMutation.mutate({ username, password });
     };
 
     return (
@@ -58,3 +36,29 @@ import axios from 'axios';
 import LoginHeader from './components/LoginHeader';
 import GoogleButton from './components/GoogleButton';
 import AdminForm from './components/AdminForm';
+
+const useLoginMutation = () => {
+    const navigate = useNavigate();
+
+    return useMutation(
+        async ({ username, password }) => {
+            const response = await axios.post('/admin/login', { username, password });
+            return response.data;
+        },
+        {
+            onSuccess: ({ success, message, name, role }) => {
+                if (success) {
+                    alert(`${message} Your name is ${name} and role is ${role}`);
+                    localStorage.setItem('userData', JSON.stringify({ name, role }));
+                    navigate('/admin');
+                } else {
+                    alert(message);
+                }
+            },
+            onError: (error) => {
+                console.log(error.message);
+                alert('incorrect username or password!')
+            },
+        }
+    );
+};
