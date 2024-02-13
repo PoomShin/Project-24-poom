@@ -39,6 +39,7 @@ export default function Content({ currentPage, setCurrentPage }) {
                     <img src={icon} className="inline h-12" />
                     <p className="inline text-3xl font-semibold ml-2">{currentPage}</p>
                 </div>
+                
 
                 {/* Add Button */}
                 <form className="col-start-7">
@@ -54,7 +55,9 @@ export default function Content({ currentPage, setCurrentPage }) {
             {currentPage === 'Branch' && branches && (
                 <>
                     <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />
+                    {/* ปุ่ม add brach */}
                     <AddBranchModal isVisible={isModalOpen} onClose={toggleModal} />
+                    
                 </>
             )}
             {currentPage === 'Course' && branches && (

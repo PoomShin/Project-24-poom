@@ -14,4 +14,3 @@ export default function Navbar({ name }) {
 import ku_logo from '../assets/ku_logo.png';
 import notification from '../assets/notification.png';
 import userProfile from '../assets/user.png';
-

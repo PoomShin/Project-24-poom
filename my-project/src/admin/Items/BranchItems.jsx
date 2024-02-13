@@ -1,9 +1,107 @@
 export default function BranchItems({ branches, onSelectBranch }) {
     return (
-        <div className="grid grid-cols-7 auto-rows-auto gap-y-16 mr-4">
+        <div className="grid lg:grid-cols-7 sm:grid-cols-2 gap-y-16 mr-4 pb-6">
             {branches.map((branch) => (
                 <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
-            ))}
+            ))} 
+             {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))}  {branches.map((branch) => (
+                <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
+            ))} 
+            
         </div>
     );
 }

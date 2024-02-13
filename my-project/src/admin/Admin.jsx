@@ -8,7 +8,7 @@ export default function Admin() {
   return (
     <div className="grid grid-cols-12 w-full h-full ">
       {memoizedNavbar}
-      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />      
       <Content currentPage={currentPage} setCurrentPage={setCurrentPage} />
     </div>
   );
