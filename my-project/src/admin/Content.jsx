@@ -38,6 +38,7 @@ export default function Content({ currentPage, setCurrentPage }) {
                     <img src={icon} className="inline h-12" />
                     <p className="inline text-3xl font-semibold ml-2">{currentPage}</p>
                 </div>
+                
 
                 {/* Add Button */}
                 <form className="col-start-7">
@@ -53,7 +54,9 @@ export default function Content({ currentPage, setCurrentPage }) {
             {currentPage === 'Branch' && branches && (
                 <>
                     <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />
+                    {/* ปุ่ม add brach */}
                     <AddBranchModal isVisible={isModalOpen} onClose={toggleModal} />
+                    
                 </>
             )}
             {currentPage === 'Course' && branches && (
@@ -74,23 +77,6 @@ export default function Content({ currentPage, setCurrentPage }) {
         </div >
     );
 }
-
-import { useState, useCallback } from 'react';
-import { useQuery } from 'react-query';
-import axios from 'axios';
-
-// Import components
-import BranchItems from './Items/BranchItems';
-import ProfItems from './Items/ProfItems';
-import CourseItems from './Items/CourseItems';
-import AddBranchModal from './Modals/AddBranchModal';
-import AddProfModal from './Modals/AddProfModal';
-import AddCourseModal from './Modals/AddCourseModal';
-
-// Import assets
-import branchIcon from '../assets/branch.png';
-import curriculumIcon from '../assets/course.png';
-import profIcon from '../assets/user.png';
 
 //Custom hook for fetching branches
 const useFetchBranches = () => {
@@ -122,3 +108,20 @@ const useFetchCourses = (selectedBranchTag) => {
         return response.data;
     });
 };
+
+import { useState, useCallback } from 'react';
+import { useQuery } from 'react-query';
+import axios from 'axios';
+
+// Import components
+import BranchItems from './Items/BranchItems';
+import ProfItems from './Items/ProfItems';
+import CourseItems from './Items/CourseItems';
+import AddBranchModal from './Modals/AddBranchModal';
+import AddProfModal from './Modals/AddProfModal';
+import AddCourseModal from './Modals/AddCourseModal';
+
+// Import assets
+import branchIcon from '../assets/branch.png';
+import curriculumIcon from '../assets/course.png';
+import profIcon from '../assets/user.png';

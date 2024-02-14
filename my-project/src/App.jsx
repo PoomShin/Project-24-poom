@@ -31,4 +31,3 @@ import Admin from './admin/Admin';
 import Login from './login/Login';
 import Prof from "./prof/Prof";
 import Prof_Layout from "./Poom/Prof_Layout";
-export const API_URL = 'http://localhost:5000';
