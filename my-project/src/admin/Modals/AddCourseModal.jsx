@@ -1,55 +1,48 @@
-export default function AddCourseModal({ courseTag, branchTag, isVisible, onClose, }) {
+export default function AddCourseModal({ courseTag, branchTag, isVisible, onClose }) {
     const [selectedCurriculum, setSelectedCurriculum] = useState('65');
     const [importedData, setImportedData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const options = generateOptions();
+    const mutation = useImportCoursesMutation();
+
+    const handleCurriculumChange = (e) => setSelectedCurriculum(e.target.value);
 
     const handleImport = (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
 
-        reader.onload = function (e) {
-            const text = e.target.result;
-            const result = Papa.parse(text, { header: true }); // Parsing CSV data with headers
-
-            const dataWithTags = result.data.map(item => ({
-                ...item,
-                branchtag: branchTag,
-                coursetag: courseTag
-            }));
-
-            setImportedData(dataWithTags);
-        };
-
+        reader.onload = handleFileLoad;
         reader.readAsText(file);
     };
 
-    const filterDataByCourseTag = () => {
-        if (importedData) {
-            const dataWithDefaultCurriculum = importedData.map(item => ({
-                ...item,
-                curriculum: selectedCurriculum
-            }));
+    const handleFileLoad = (e) => {
+        const text = e.target.result;
+        const result = Papa.parse(text, { header: true }); // Parsing CSV data with headers
 
-            const filtered = dataWithDefaultCurriculum.filter(row => row.coursecode.startsWith(courseTag));
-            setFilteredData(filtered);
+        const dataWithTags = result.data.map(item => ({
+            ...item,
+            branchtag: branchTag,
+            coursetag: courseTag,
+            curriculum: selectedCurriculum
+        }));
 
-            const remainingData = dataWithDefaultCurriculum.filter(row => !row.coursecode.startsWith(courseTag));
-            setImportedData(remainingData);
-        }
+        setImportedData(dataWithTags);
     };
 
-    const handleCurriculumChange = (e) => setSelectedCurriculum(e.target.value);
+    const filterDataByCourseTag = () => {
+        const filtered = importedData.filter(row => row.coursecode.startsWith(courseTag));
+        setFilteredData(filtered);
+
+        const remainingData = importedData.filter(row => !row.coursecode.startsWith(courseTag));
+        setImportedData(remainingData);
+    };
 
     const handleTransfer = (rowData) => {
-        const updatedImportedData = importedData.filter(item => item === rowData);
-        setImportedData(updatedImportedData);
-        setFilteredData([...filteredData, rowData]);
+        setFilteredData(prevFilteredData => [...prevFilteredData, rowData]);
+        setImportedData(prevImportedData => prevImportedData.filter(item => item === rowData));
     };
 
     const handleImportDatabase = () => mutation.mutate(filteredData);
-
-    const options = generateOptions();
-    const mutation = useImportCoursesMutation();
 
     return isVisible && createPortal(
         <div className="w-screen h-screen fixed flex bg-gray-800 bg-opacity-50">
@@ -65,7 +58,8 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                 <Table bg={'bg-orange-200'} text='Validation table'>
                     <tbody className="divide-y bg-white divide-gray-200">
                         {importedData.map((rowData, index) => (
-                            <TableRow key={index}
+                            <TableRow
+                                key={index}
                                 courseCode={rowData.coursecode}
                                 defaultCurriculum={selectedCurriculum}
                                 thName={rowData.thname}
@@ -85,9 +79,10 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                 <Table bg='bg-emerald-200' text='Import table'>
                     <tbody className="divide-y bg-white divide-gray-200">
                         {filteredData.map((rowData, index) => (
-                            <TableRow key={index}
+                            <TableRow
+                                key={index}
                                 courseCode={rowData.coursecode}
-                                defaultCurriculum={selectedCurriculum}
+                                defaultCurriculum={rowData.curriculum}
                                 thName={rowData.thname}
                                 engName={rowData.engname}
                                 credits={rowData.credit}
@@ -99,6 +94,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                         ))}
                     </tbody>
                 </Table>
+
                 <TableImportButton handleImportDatabase={handleImportDatabase} />
             </div>
         </div>,
@@ -113,7 +109,7 @@ import axios from 'axios';
 import Papa from 'papaparse'; // Library for parsing CSV files
 
 import Table from '../components/Table';
-import TableRow from '../components/TableRows';
+import TableRow from '../components/TableRow';
 import TableValidation from '../components/TableValidation';
 import TableImportButton from '../components/TableImportButton';
 import AddCourseSideBar from '../components/AddCourseSideBar';
