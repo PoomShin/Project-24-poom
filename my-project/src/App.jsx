@@ -3,6 +3,7 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
   { path: '/', element: <Login /> },
   { path: '/admin', element: <Admin /> },
+  { path: '/prof', element: <Prof /> }
 ]);
 
 export default function App() {
@@ -27,4 +28,4 @@ import { UserContext } from "../public/context/user-context";
 
 import Admin from './admin/Admin';
 import Login from './login/Login';
-export const API_URL = 'http://localhost:5000';
+import Prof from "./prof/Prof";

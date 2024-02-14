@@ -3,13 +3,10 @@ export default function BranchItems({ branches, onSelectBranch }) {
         <div className="grid lg:grid-cols-7 sm:grid-cols-2 gap-y-16 mr-4 pb-6">
             {branches.map((branch) => (
                 <BranchItem key={branch.id} branch={branch} onSelectBranch={onSelectBranch} />
-            ))} 
+            ))}
         </div>
     );
 }
-
-import moreIcon from '../../assets/more.png';
-import removeIcon from '../../assets/remove.png';
 
 const BranchItem = ({ branch, onSelectBranch }) => (
     <div
@@ -26,3 +23,6 @@ const BranchItem = ({ branch, onSelectBranch }) => (
         </div>
     </div>
 );
+
+import moreIcon from '../../assets/more.png';
+import removeIcon from '../../assets/remove.png';

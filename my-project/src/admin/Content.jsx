@@ -10,6 +10,7 @@ export default function Content({ currentPage, setCurrentPage }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBranchTag, setSelectedBranchTag] = useState();
     const [selectedCourseTag, setSelectedCourseTag] = useState();
+    const icon = iconMap[currentPage];
 
     const { isLoading, isError, isSuccess, data: branches, error } = useFetchBranches();
     const { isLoading1, isError1, isSuccess1, data: profs, error1 } = useFetchProfessors(selectedBranchTag);
@@ -29,8 +30,6 @@ export default function Content({ currentPage, setCurrentPage }) {
     const toggleModal = useCallback(() => {
         setIsModalOpen(prevState => !prevState);
     }, []);
-
-    const icon = iconMap[currentPage];
 
     return (
         <div className="col-span-11 bg-gray-200">
@@ -70,13 +69,45 @@ export default function Content({ currentPage, setCurrentPage }) {
                 </>
             )}
             {currentPage === 'Curriculum' && courses && (
-                <><CourseItems courses={courses} onShowBranches={handleShowBranches} />
+                <>
+                    <CourseItems courses={courses} onShowBranches={handleShowBranches} />
                     <AddCourseModal courseTag={selectedCourseTag} branchTag={selectedBranchTag} isVisible={isModalOpen} onClose={toggleModal} />
                 </>
             )}
         </div >
     );
 }
+
+//Custom hook for fetching branches
+const useFetchBranches = () => {
+    return useQuery('branches', async () => {
+        const response = await axios.get('/admin/branches');
+
+        if (!response.data) throw new Error('Failed to fetch branches');
+
+        return response.data;
+    });
+};
+// Custom hook for fetching professors
+const useFetchProfessors = (selectedBranchTag) => {
+    return useQuery(['professors', selectedBranchTag], async () => {
+        const response = await axios.get(`/admin/professors/${selectedBranchTag}`);
+
+        if (!response.data) throw new Error('Failed to fetch professors');
+
+        return response.data;
+    });
+};
+// Custom hook for fetching courses
+const useFetchCourses = (selectedBranchTag) => {
+    return useQuery(['courses', selectedBranchTag], async () => {
+        const response = await axios.get(`/admin/courses/${selectedBranchTag}`);
+
+        if (!response.data) throw new Error('Failed to fetch courses');
+
+        return response.data;
+    });
+};
 
 import { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
@@ -94,39 +125,3 @@ import AddCourseModal from './Modals/AddCourseModal';
 import branchIcon from '../assets/branch.png';
 import curriculumIcon from '../assets/course.png';
 import profIcon from '../assets/user.png';
-
-//Custom hook for fetching branches
-const useFetchBranches = () => {
-    return useQuery('branches', async () => {
-        const response = await fetch('http://localhost:5000/admin/branches');
-
-        if (!response.ok) throw new Error('Failed to fetch branches');
-
-        const data = await response.json();
-        return data;
-    });
-};
-// Custom hook for fetching professors
-const useFetchProfessors = (selectedBranchTag) => {
-    return useQuery(['professors', selectedBranchTag], async () => {
-        const response = await fetch(`http://localhost:5000/admin/professors/${selectedBranchTag}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch professors');
-        }
-        const data = await response.json();
-        return data;
-    });
-};
-// Custom hook for fetching courses
-const useFetchCourses = (selectedBranchTag) => {
-    const fetchCourses = async () => {
-        try {
-            const response = await axios.get(`/admin/courses/${selectedBranchTag}`);
-            return response.data;
-        } catch (error) {
-            throw new Error('Failed to fetch courses');
-        }
-    };
-
-    return useQuery(['courses', selectedBranchTag], fetchCourses);
-};

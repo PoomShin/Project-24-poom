@@ -30,7 +30,7 @@ export default function CourseItems({ courses, onShowBranches }) {
 
             {/* Data Rows */}
             {courses.map((course) => (
-                <React.Fragment key={course.id}>
+                <React.Fragment key={course.coursecode}>
                     <div className="col-span-1">{course.coursecode}</div>
                     <div className="col-span-1">{course.curriculum}</div>
                     <div className="col-span-2">{course.thname}</div>
