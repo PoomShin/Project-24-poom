@@ -19,7 +19,7 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
 
     return isVisible ? (
         createPortal(
-            <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
                 <form method="post" onSubmit={handleSubmit} >
                     <h1 className='text-xl text-center text-white'>Add Prof</h1>
 
@@ -49,6 +49,7 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
                         <input
                             type='text'
                             id='branchtag'
+                            readOnly
                             className='mt-1 p-1 w-full border-2 border-solid border-black rounded'
                             onChange={handleChange}
                             value={formData.branchtag}
