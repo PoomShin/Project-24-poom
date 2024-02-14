@@ -13,14 +13,14 @@ export default function Sidebar({ setCurrentPage, currentPage }) {
     };
 
     return (
-        <div className="col-span-1 flex flex-col items-center border-2 border-t-0 border-l-0 border-black h-[calc(100vh-96px)]">
+        <div className="col-span-1 flex flex-col items-center border-2 border-t-0 border-l-0 border-black min-h-dvh">
             {menuItems.map(({ key, label, icon }) => (
                 <div className={`w-full my-3 py-1 ${currentPage === key ? 'bg-sky-200/75' : ''}`}
                     key={key}
                     onClick={() => handleChangePage(key)}
                 >
                     <img src={icon} className='inline mr-2 h-8' alt={`${label} icon`} />
-                    <p className='inline text-lg'>{label}</p>
+                    <p className='inline sm:text-lg text-[9px]'>{label}</p>
                 </div>
             ))}
         </div>
