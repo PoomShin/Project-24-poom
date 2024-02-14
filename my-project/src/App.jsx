@@ -29,4 +29,3 @@ import { UserContext } from "../public/context/user-context";
 import Admin from './admin/Admin';
 import Login from './login/Login';
 import Prof from "./prof/Prof";
-export const API_URL = 'http://localhost:5000';

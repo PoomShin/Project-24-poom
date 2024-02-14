@@ -102,18 +102,6 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     );
 }
 
-import { useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useMutation } from 'react-query';
-import axios from 'axios';
-import Papa from 'papaparse'; // Library for parsing CSV files
-
-import Table from '../components/Table';
-import TableRow from '../components/TableRow';
-import TableValidation from '../components/TableValidation';
-import TableImportButton from '../components/TableImportButton';
-import AddCourseSideBar from '../components/AddCourseSideBar';
-
 const generateOptions = () => {
     const options = [];
     for (let i = 0; i < 100; i++) {
@@ -137,3 +125,15 @@ const useImportCoursesMutation = () => {
         }
     });
 }
+
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useMutation } from 'react-query';
+import axios from 'axios';
+import Papa from 'papaparse'; // Library for parsing CSV files
+
+import Table from '../components/Table';
+import TableRow from '../components/TableRow';
+import TableValidation from '../components/TableValidation';
+import TableImportButton from '../components/TableImportButton';
+import AddCourseSideBar from '../components/AddCourseSideBar';
