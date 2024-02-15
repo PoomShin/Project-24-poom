@@ -96,7 +96,7 @@ export default function ProfItems({ profs, onShowBranches }) {
           <input
             type="text"
             id={`input-name-${row.id}`}
-            defaultValue={row.email}
+            defaultValue={row.name}
             className="ms-2 bg-gray-200  px-2 py-1 border rounded-full border-solid border-black hidden "
           />
         </>

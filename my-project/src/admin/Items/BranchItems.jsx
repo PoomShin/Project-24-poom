@@ -13,6 +13,7 @@ export default function BranchItems({ branches, onSelectBranch }) {
   );
 }
 
+// ทำด้วย
 const removeBranch = (branch) => {
   let deleteConfrim = confirm(
     `Delete Bracnh ${branch.branchtag} ${branch.branchname} ?`
