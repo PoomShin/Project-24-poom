@@ -1,46 +1,82 @@
 export default function CourseItems({ courses, onShowBranches }) {
-    const [searchTerm, setSearchTerm] = useState('');
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
+  const [searchTerm, setSearchTerm] = useState(""); // State to hold the search term
+  // Handler for updating the search term
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
-    return (
-        <div className='grid grid-cols-8 justify-items-center auto-rows-auto gap-y-16 mx-4 border-black bg-sky-200 border-2 '>
-            <input className="col-span-8 p-2 border rounded-md border-gray-300"
-                type="text"
-                placeholder="Search by Course Code"
-                value={searchTerm}
-                onChange={handleSearchChange}
-            />
+  // Filter the data based on the search term
+  const filteredData = courses.filter((courses) =>
+  courses.coursecode.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-            {/* Rest of your course items rendering */}
-            <button className="col-span-8 font-bold py-2 px-4 rounded text-white bg-blue-500 hover:bg-blue-700"
-                onClick={onShowBranches}
-            >
-                Return to Branch
-            </button>
+  const columns = [
+    {
+      name: "Course code",
+      selector: (row) => row.coursecode,
+      sortable: true,
+    },
+    {
+      name: "Curriculum",
+      selector: (row) => row.curriculum,
+      sortable: true,
+    },
+    {
+      name: "Thai Name",
+      selector: (row) => row.thname,
+      sortable: true,
+      cell: (row) => <div style={{ width: "100%", whiteSpace: "pre-wrap" }}>{row.thname}</div>,
+    },
+    {
+      name: "English Name",
+      selector: (row) => row.engname,
+      sortable: true,
+      cell: (row) => <div style={{ width: "100%", whiteSpace: "pre-wrap" }}>{row.engname}</div>,
+    },
+    {
+      name: "Credit",
+      selector: (row) => row.credit,
+      sortable: true,
+    },
+    {
+      name: "Course Type",
+      selector: (row) => row.coursetype,
+      sortable: true,
+    }
+  ];
 
-            <div className="col-span-1 font-bold">course code</div>
-            <div className="col-span-1 font-bold">curriculum</div>
-            <div className="col-span-2 font-bold">thname</div>
-            <div className="col-span-2 font-bold">engname</div>
-            <div className="col-span-1 font-bold">credit</div>
-            <div className="col-span-1 font-bold">course</div>
+  console.log(courses);
 
-            {/* Data Rows */}
-            {courses.map((course) => (
-                <React.Fragment key={course.coursecode}>
-                    <div className="col-span-1">{course.coursecode}</div>
-                    <div className="col-span-1">{course.curriculum}</div>
-                    <div className="col-span-2">{course.thname}</div>
-                    <div className="col-span-2">{course.engname}</div>
-                    <div className="col-span-1">{course.credit}</div>
-                    <div className="col-span-1">{course.coursetype}</div>
-                </React.Fragment>
-            ))}
-        </div>
-    )
+  return (
+    <>
+      <button
+        className="ms-10 mb-3 col-span-8 font-bold py-2 px-4 rounded text-white bg-blue-500 hover:bg-blue-700"
+        onClick={onShowBranches}>
+        Return to Branch
+      </button>
+    <br />
+      <input
+        type="text"
+        placeholder="Search by ID"
+        value={searchTerm}
+        onChange={handleSearch}
+        className="ms-10 mb-4 px-2 py-1 rounded border mt-5"
+      />
+
+      <div className="ms-10 w-[90%] -z-[9999999999]">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          highlightOnHover
+          striped
+          responsive          
+          pagination
+        />
+      </div>
+    </>
+  );
 }
 
 import React, { useState } from "react";
+import DataTable from "react-data-table-component";

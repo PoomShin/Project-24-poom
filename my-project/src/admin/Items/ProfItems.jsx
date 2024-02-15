@@ -68,7 +68,7 @@ export default function ProfItems({ profs, onShowBranches }) {
     //write your code แก้แค่ตรงนี้  ----- //
     //
     alert(
-      `User ID ${userID} Edited \nname:${name} \nemail:${email} \nrole:${role}`
+      `User ID ${userID} Edited \nname : ${name} \nemail : ${email} \nrole : ${role}`
     );
   };
   //---------------------------------------------
@@ -96,6 +96,7 @@ export default function ProfItems({ profs, onShowBranches }) {
           <input
             type="text"
             id={`input-name-${row.id}`}
+            defaultValue={row.email}
             className="ms-2 bg-gray-200  px-2 py-1 border rounded-full border-solid border-black hidden "
           />
         </>
@@ -112,6 +113,7 @@ export default function ProfItems({ profs, onShowBranches }) {
           <input
             type="text"
             id={`input-email-${row.id}`}
+            defaultValue={row.email}
             className="ms-2 bg-gray-200  px-2 py-1 border rounded-full border-solid border-black hidden "
           />
         </>
@@ -125,7 +127,7 @@ export default function ProfItems({ profs, onShowBranches }) {
     {
       name: "Role",
       selector: (row) => row.role,
-      width: "350px",
+      width: "250px",
       sortable: true,
       // ใช้ id แต่ละตัว hide form // แต่ละปุ่มมี id ของมันเอง
       cell: (row) => (
@@ -197,7 +199,10 @@ export default function ProfItems({ profs, onShowBranches }) {
       />
 
       <div className="ms-10 w-[90%]">
-        <DataTable columns={columns} data={filteredData} pagination />
+        <DataTable columns={columns} data={filteredData}  highlightOnHover
+          striped
+          responsive
+          pagination />
       </div>
     </>
   );
