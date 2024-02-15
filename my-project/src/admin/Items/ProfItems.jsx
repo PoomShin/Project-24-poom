@@ -61,12 +61,14 @@ export default function ProfItems({ profs, onShowBranches }) {
     let email = document.getElementById(`input-email-${id}`).value;
     let role = changeRoleValue;
 
-    document.getElementById(`name-${id}`).innerText = name;
-    document.getElementById(`email-${id}`).innerText = email;
-
+    
     // ใช้ ID เป็น PM key ไปอ้างอิง index
     //write your code แก้แค่ตรงนี้  ----- //
     //
+
+    //
+    document.getElementById(`name-${id}`).innerText = name;
+    document.getElementById(`email-${id}`).innerText = email;
     alert(
       `User ID ${userID} Edited \nname : ${name} \nemail : ${email} \nrole : ${role}`
     );
