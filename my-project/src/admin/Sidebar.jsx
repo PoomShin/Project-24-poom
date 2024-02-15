@@ -20,7 +20,7 @@ export default function Sidebar({ setCurrentPage, currentPage }) {
                     onClick={() => handleChangePage(key)}
                 >
                     <img src={icon} className='inline mr-2 h-8' alt={`${label} icon`} />
-                    <p className='inline sm:text-lg text-[9px]'>{label}</p>
+                    <p className='inline md:text-lg text-[7px]'>{label}</p>
                 </div>
             ))}
         </div>
