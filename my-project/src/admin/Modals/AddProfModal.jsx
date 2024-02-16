@@ -24,10 +24,9 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
                     <h1 className='text-xl text-center text-white'>Add Prof</h1>
 
                     <div className='my-3'>
-                        <input
+                        <input className='mt-1 p-1 w-full border-2 border-solid rounded border-black'
                             type='text'
                             id='name'
-                            className='mt-1 p-1 w-full border-2 border-solid rounded border-black'
                             placeholder="your name"
                             onChange={handleChange}
                             value={formData.name}
@@ -35,10 +34,9 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
                         />
                     </div>
                     <div className='mb-3'>
-                        <input
+                        <input className='mt-1 p-1 w-full border-2 border-solid rounded border-black'
                             type='email'
                             id='email'
-                            className='mt-1 p-1 w-full border-2 border-solid rounded border-black'
                             placeholder="your email"
                             onChange={handleChange}
                             value={formData.email}
@@ -46,11 +44,10 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
                         />
                     </div>
                     <div className='mb-3'>
-                        <input
+                        <input className='mt-1 p-1 w-full border-2 border-solid border-black rounded'
                             type='text'
                             id='branchtag'
                             readOnly
-                            className='mt-1 p-1 w-full border-2 border-solid border-black rounded'
                             onChange={handleChange}
                             value={formData.branchtag}
                         />

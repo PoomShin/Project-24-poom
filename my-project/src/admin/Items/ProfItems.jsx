@@ -1,181 +1,127 @@
-import { React, useState } from "react";
-import DataTable from "react-data-table-component";
-
 export default function ProfItems({ profs, onShowBranches }) {
-  // get data from profs
-  const data = profs;
-  console.log(data);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editToggle, setEditToggle] = useState(false);
+  //backend
+  const { mutate: updateProf } = useUpdateProfMutation();
+  const { mutate: deleteProf } = useDeleteProfMutation();
 
-  const [searchTerm, setSearchTerm] = useState(""); // State to hold the search term
-  // Handler for updating the search term
+  const filteredData = profs.filter((prof) =>   // Filter the data based on the search term
+    prof.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Filter the data based on the search term
-  const filteredData = profs.filter((prof) =>
-    prof.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // delete user not import to db yet!
+  const deleteUser = (id) => {
+    let isConfirm = window.confirm(`Delete ${id} ?`);
+    if (isConfirm) deleteProf(id);
+  };
 
-  //---------------ทำให้ด้วย------------------------------
-  // ปุ่ม delete user (ยังไม่ลงฐานข้อมูล)
-  const deleteUser = (id, e) => {
-    let isconfrim = confirm(`Delete ${id} ?`);
-    e.preventDefault();
-    if (isconfrim) {
-      //hide user
-      document.getElementById(`row-${id}`).style.display = "none";
-      alert(`User ID ${id} deleted`);
-      //ลบจาก database v
-      //write your code
-      let userID = id
-    } else {
-      console.log("nothing");
-    }
+  const showEdit = () => {
+    setEditToggle(prevState => !prevState);
   };
-  // edit user ไม่ต้องแก้
-  const showEdit = (id, e) => {
-    let getForm = document.getElementById("form-" + id);
-    getForm.classList.toggle("invisible");
-    document.getElementById(`submit-edit-${id}`).classList.toggle("hidden");
-    document.getElementById(`input-name-${id}`).classList.toggle("hidden");
-    document.getElementById(`input-email-${id}`).classList.toggle("hidden");
-  };
-  //
-  const submitEdit = (id, e) => {
-    e.preventDefault();
-    let getForm = document.getElementById("form-" + id);
-    getForm.classList.toggle("invisible");
-    document.getElementById(`submit-edit-${id}`).classList.toggle("hidden");
-    document.getElementById(`input-name-${id}`).classList.toggle("hidden");
-    document.getElementById(`input-email-${id}`).classList.toggle("hidden");
-    let roleSelect = document.getElementById("role-select-" + id);
-    // value ของ role ที่เปลี่ยน
+
+  const submitEdit = (id) => {
+    showEdit();
+
+    // change in roll
+    let roleSelect = document.getElementById('role-select-' + id);
     let changeRoleValue = roleSelect.value;
-    let roleText = document.getElementById("text-" + id);
-    roleText.textContent = changeRoleValue;
-
-    // ตัวแปรที่ให้ใช้
-    let userID = id;
     let name = document.getElementById(`input-name-${id}`).value;
     let email = document.getElementById(`input-email-${id}`).value;
     let role = changeRoleValue;
-
     
-    // ใช้ ID เป็น PM key ไปอ้างอิง index
-    //write your code แก้แค่ตรงนี้  ----- //
-    //
+    updateProf({ id, name, email, role });
 
-    //
-    document.getElementById(`name-${id}`).innerText = name;
-    document.getElementById(`email-${id}`).innerText = email;
-    alert(
-      `User ID ${userID} Edited \nname : ${name} \nemail : ${email} \nrole : ${role}`
-    );
   };
-  //---------------------------------------------
 
   const columns = [
     {
-      name: "ID",
+      name: 'ID', sortable: true,
       selector: (row) => row.id,
-
-      sortable: true,
       cell: (row) => (
-        <>
-          <p>{row.id}</p>
-        </>
+        <p>{row.id}</p>
       ),
     },
+
     {
-      name: "Name",
+      name: 'Name', sortable: true, width: '300px',
       selector: (row) => row.name,
-      sortable: true,
-      width: "300px",
       cell: (row) => (
         <>
-          <p id={`name-${row.id}`}>{row.name}</p>
-          <input
-            type="text"
+          <p>{row.name}</p>
+          <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-name-${row.id}`}
             defaultValue={row.name}
-            className="ms-2 bg-gray-200  px-2 py-1 border rounded-full border-solid border-black hidden "
+            type='text'
           />
         </>
       ),
     },
+
     {
-      name: "Email",
+      name: 'Email', sortable: true, width: '400px',
       selector: (row) => row.email,
-      width: "400px",
-      sortable: true,
       cell: (row) => (
         <>
-          <p id={`email-${row.id}`}>{row.email}</p>
-          <input
-            type="text"
+          <p>{row.email}</p>
+          <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-email-${row.id}`}
             defaultValue={row.email}
-            className="ms-2 bg-gray-200  px-2 py-1 border rounded-full border-solid border-black hidden "
+            type='text'
           />
         </>
       ),
     },
+
     {
-      name: "Branch",
+      name: 'Branch', sortable: true,
       selector: (row) => row.branchtag,
-      sortable: true,
     },
+
     {
-      name: "Role",
+      name: 'Role', sortable: true, width: '250px',
       selector: (row) => row.role,
-      width: "250px",
-      sortable: true,
-      // ใช้ id แต่ละตัว hide form // แต่ละปุ่มมี id ของมันเอง
       cell: (row) => (
         <>
-          <div className="flex justify-start items-center">
-            <div className="flex">
-              {/* id=text-number */}
-              <p id={`text-${row.id}`} className="me-3">
-                {row.role}
-              </p>
+          <div className='flex justify-start items-center'>
+            <div className='flex'>
+              <p className='me-3'>{row.role}</p>
             </div>
-            {/* dropdown form */}
-            {/* form-number --> กดปุ่มเพื่อเปิด อ้างอิงจาก form-number*/}
-            <form action="" id={`form-${row.id}`} className={`flex invisible `}>
-              {/* role-select-number */}
-              <select
+
+            {/* change role dropdown */}
+            <form action='' className={`flex ${!editToggle && 'invisible'}`}>
+              <select className='px-2 border rounded-2xl border-solid border-black hover:bg-slate-300'
                 id={`role-select-${row.id}`}
-                className={`px-2 border border-black rounded-2xl border-solid hover:bg-slate-300`}>
-                <option value="Professor">Professor</option>
-                <option value="Professor(SM)">Professor(SM)</option>
+              >
+                <option value='Prof'>Prof</option>
+                <option value='Prof(SM)'>Prof(SM)</option>
               </select>
             </form>
-            {/* end dropdown */}
           </div>
         </>
       ),
     },
+
     {
-      name: "Action",
-      width: "200px",
+      name: 'Action', width: '200px',
       cell: (row) => (
         <>
-          <button
-            onClick={(e) => showEdit(row.id, e)}
-            className="text-green-500 me-2">
+          <button className='me-2 text-green-500'
+            onClick={(e) => showEdit()}
+          >
             Edit
           </button>
-          <button
+          <button className='me-2 text-red-500'
             onClick={(e) => deleteUser(row.id, e)}
-            className="text-red-500 me-2">
+          >
             Delete
           </button>
-          <button
-            id={`submit-edit-${row.id}`}
-            onClick={(e) => submitEdit(row.id, e)}
-            className="text-blue-500 me-2 hidden">
+          <button className={`me-2 text-blue-500 ${!editToggle && 'hidden'}`}
+            onClick={(e) => submitEdit(row.id)}
+          >
             Submit
           </button>
         </>
@@ -185,19 +131,18 @@ export default function ProfItems({ profs, onShowBranches }) {
 
   return (
     <>
-      <button
-        className="ms-10 col-span-8 rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4"
+      <button className='col-span-8 py-2 px-4 ms-10 rounded font-bold text-white bg-blue-500 hover:bg-blue-700'
         onClick={onShowBranches}>
         <span>Return to Branch</span>
       </button>
       <br />
+
       {/* Search input */}
-      <input
-        type="text"
-        placeholder="Search by name"
+      <input className='mt-5 mb-4 ms-10 px-2 py-1 rounded border'
+        type='text'
+        placeholder='Search by name'
         value={searchTerm}
         onChange={handleSearch}
-        className="ms-10 mb-4 px-2 py-1 rounded border mt-5"
       />
 
       <div className="ms-10 w-[90%]">
@@ -205,7 +150,59 @@ export default function ProfItems({ profs, onShowBranches }) {
           striped
           responsive
           pagination />
-      </div>
     </>
   );
 }
+
+//backend code
+const useUpdateProfMutation = () => {
+  return useMutation(
+    async (prof) => {
+      try {
+        const response = await axios.put(`/admin/updateProf/${prof.id}`, prof);
+        return response.data;
+      } catch (error) {
+        throw new Error(error.response.data.error || 'Unknown error');
+      }
+    },
+    {
+      onSuccess: (data) => {
+        if (data.success) alert('Professor updated successfully');
+        else alert(data.error || 'Unknown error');
+      },
+      onError: (error) => {
+        console.error(error.message);
+        alert('An error occurred during update');
+      },
+    }
+  );
+};
+
+const useDeleteProfMutation = () => {
+  return useMutation(
+    async (id) => {
+      try {
+        const response = await axios.delete(`/admin/deleteProf/${id}`);
+        return response.data;
+      } catch (error) {
+        throw new Error(error.response.data.error || 'Unknown error');
+      }
+    },
+    {
+      onSuccess: (data) => {
+        if (data.success) alert(data.message);
+        else alert(data.error || 'Unknown error');
+      },
+      onError: (error) => {
+        console.error(error.message);
+        alert('An error occurred during delete');
+      },
+    }
+  );
+};
+
+import { useState } from "react";
+import { useMutation } from 'react-query';
+import axios from 'axios';
+import DataTable from "react-data-table-component";
+
