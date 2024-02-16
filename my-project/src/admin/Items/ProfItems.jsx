@@ -96,8 +96,8 @@ export default function ProfItems({ profs, onShowBranches }) {
               <select className='px-2 border rounded-2xl border-solid border-black hover:bg-slate-300'
                 id={`role-select-${row.id}`}
               >
-                <option value='Prof'>Prof</option>
-                <option value='Prof(SM)'>Prof(SM)</option>
+                <option value='prof'>prof</option>
+                <option value='prof(SM)'>prof(SM)</option>
               </select>
             </form>
           </div>

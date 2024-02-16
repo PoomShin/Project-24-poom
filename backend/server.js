@@ -140,9 +140,27 @@ app.delete('/admin/deleteProf/:id', async (req, res) => {
 
         if (deletedProf) res.json({ success: true, message: 'Professor deleted successfully', deletedProf });
         else res.status(404).json({ success: false, message: 'Professor not found' });
-        
+
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.post('/profs/login', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const result = await pool.query('SELECT * FROM profs WHERE email = $1', [email]);
+        const professor = result.rows[0];
+
+        if (professor) {
+            const { id, name, role, branchtag } = professor;
+            return res.json({ success: true, message: 'Professor login successful', id, name, email, role, branchtag });
+        } else {
+            return res.status(404).json({ success: false, message: 'Professor not found' });
+        }
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
     }
 });
 

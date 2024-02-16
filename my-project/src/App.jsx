@@ -7,24 +7,20 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  const storedUser = JSON.parse(localStorage.getItem('userData'));
-  const [userContextValues, setUserContextValues] = useState(storedUser);
-
   return (
-    <UserContext.Provider value={{ ...userContextValues, setUserContextValues }}>
+    <UserProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <ReactQueryDevtools />
       </QueryClientProvider>
-    </UserContext.Provider>
+    </UserProvider>
   );
 }
 
-import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { UserContext } from "../public/context/user-context";
+import UserProvider from "./context/User-Context";
 
 import Admin from './admin/Admin';
 import Login from './login/Login';

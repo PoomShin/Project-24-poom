@@ -1,32 +1,38 @@
 export default function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({ username: '', password: '', email: '' });
     const loginMutation = useLoginMutation();
+    const profLoginMutation = useProfLoginMutation();
 
-    const handleLogin = (e) => {
+    const handleAdminLogin = (e) => {
         e.preventDefault();
-        loginMutation.mutate({ username, password });
+        loginMutation.mutate(formData);
+    };
+    const handleProfLogin = () => {
+        profLoginMutation.mutate(formData);
+    };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
     return (
-        <div className='flex flex-col justify-center items-center min-h-dvh text-center bg-gradient-to-r from-sky-300 to-indigo-900'>
-            <div className='border border-solid border-black rounded-lg p-12 bg-white shadow-xl shadow-black w-1/4'>
-                {/* Header */}
-                <LoginHeader />
-
-                {/* Login section */}
-                <div className='flex flex-col items-center border border-solid border-black rounded-tl-lg rounded-tr-lg px-12 pt-3 pb-6 bg-emerald-600'>
-                    <h1 className='font-bold text-white'>For Professor</h1>
-                    <GoogleButton />
-                </div>
-                <div className='flex flex-col items-center border border-solid border-black px-12 py-3 bg-emerald-900'>
-                    <h1 className='font-bold text-white'>For Admin</h1>
-                    <AdminForm handleLogin={handleLogin} setPassword={setPassword} setUsername={setUsername} />
-                </div>
-            </div>
-        </div>
+        <Container>
+            <LoginHeader />
+            <GoogleButton setFormData={setFormData} handleLogin={handleProfLogin} />
+            <AdminForm formData={formData} handleLogin={handleAdminLogin} handleChange={handleChange} />
+        </Container>
     );
 };
+
+const Container = ({ children }) => {
+    return (
+        <div className='flex flex-col justify-center items-center min-h-dvh text-center bg-gradient-to-r from-sky-300 to-indigo-900'>
+            <div className='border border-solid border-black rounded-lg p-12 bg-white shadow-xl shadow-black w-1/4'>
+                {children}
+            </div>
+        </div>
+    )
+}
 
 const useLoginMutation = () => {
     const navigate = useNavigate();
@@ -39,12 +45,9 @@ const useLoginMutation = () => {
         {
             onSuccess: ({ success, message, name, role }) => {
                 if (success) {
-                    alert(`${message} Your name is ${name} and role is ${role}`);
                     localStorage.setItem('userData', JSON.stringify({ name, role }));
                     navigate('/admin');
-                } else {
-                    alert(message);
-                }
+                } else alert(message);
             },
             onError: (error) => {
                 console.log(error.message);
@@ -53,6 +56,30 @@ const useLoginMutation = () => {
         }
     );
 };
+
+const useProfLoginMutation = () => {
+    const navigate = useNavigate();
+
+    return useMutation(
+        async ({ email }) => {
+            const response = await axios.post('/profs/login', { email });
+            return response.data;
+        },
+        {
+            onSuccess: ({ success, message, id, name, role, branchtag }) => {
+                if (success) {
+                    localStorage.setItem('userData', JSON.stringify({ id, name, role, branchtag }));
+                    navigate('/prof');
+                } else alert(message);
+            },
+            onError: (error) => {
+                console.log(error.message);
+                alert('Error logging in!')
+            },
+        }
+    );
+};
+
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
