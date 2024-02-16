@@ -6,6 +6,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     const mutation = useImportCoursesMutation();
 
     const handleCurriculumChange = (e) => setSelectedCurriculum(e.target.value);
+    const handleImportDatabase = () => mutation.mutate(filteredData);
 
     const handleImport = (event) => {
         const file = event.target.files[0];
@@ -42,10 +43,8 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
         setImportedData(prevImportedData => prevImportedData.filter(item => item === rowData));
     };
 
-    const handleImportDatabase = () => mutation.mutate(filteredData);
-
     return isVisible && createPortal(
-        <div className="w-screen h-screen fixed flex bg-gray-800 bg-opacity-50">
+        <div className='w-screen h-screen fixed flex bg-gray-800 bg-opacity-50 z-[10]'>
             <AddCourseSideBar
                 options={options}
                 courseTag={courseTag}
@@ -54,7 +53,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                 handleImport={handleImport}
                 onClose={onClose}
             />
-            <div className="w-full flex flex-col rounded-lg bg-slate-400">
+            <div className='w-full flex flex-col rounded-lg bg-slate-400'>
                 <Table bg={'bg-orange-200'} text='Validation table'>
                     <tbody className="divide-y bg-white divide-gray-200">
                         {importedData.map((rowData, index) => (
@@ -77,7 +76,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                 <TableValidation filterDataByCourseTag={filterDataByCourseTag} />
 
                 <Table bg='bg-emerald-200' text='Import table'>
-                    <tbody className="divide-y bg-white divide-gray-200">
+                    <tbody className='divide-y bg-white divide-gray-200'>
                         {filteredData.map((rowData, index) => (
                             <TableRow
                                 key={index}
