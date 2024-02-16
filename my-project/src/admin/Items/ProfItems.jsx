@@ -32,8 +32,9 @@ export default function ProfItems({ profs, onShowBranches }) {
     let name = document.getElementById(`input-name-${id}`).value;
     let email = document.getElementById(`input-email-${id}`).value;
     let role = changeRoleValue;
-
+    
     updateProf({ id, name, email, role });
+
   };
 
   const columns = [
@@ -53,6 +54,7 @@ export default function ProfItems({ profs, onShowBranches }) {
           <p>{row.name}</p>
           <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-name-${row.id}`}
+            defaultValue={row.name}
             type='text'
           />
         </>
@@ -67,6 +69,7 @@ export default function ProfItems({ profs, onShowBranches }) {
           <p>{row.email}</p>
           <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-email-${row.id}`}
+            defaultValue={row.email}
             type='text'
           />
         </>
@@ -79,7 +82,7 @@ export default function ProfItems({ profs, onShowBranches }) {
     },
 
     {
-      name: 'Role', sortable: true, width: '350px',
+      name: 'Role', sortable: true, width: '250px',
       selector: (row) => row.role,
       cell: (row) => (
         <>
@@ -142,9 +145,11 @@ export default function ProfItems({ profs, onShowBranches }) {
         onChange={handleSearch}
       />
 
-      <div className='ms-10 w-[90%]'>
-        <DataTable columns={columns} data={filteredData} pagination />
-      </div>
+      <div className="ms-10 w-[90%]">
+        <DataTable columns={columns} data={filteredData}  highlightOnHover
+          striped
+          responsive
+          pagination />
     </>
   );
 }

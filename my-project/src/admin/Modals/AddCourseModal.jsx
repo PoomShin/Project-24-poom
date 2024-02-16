@@ -45,7 +45,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     const handleImportDatabase = () => mutation.mutate(filteredData);
 
     return isVisible && createPortal(
-        <div className="w-screen h-screen fixed flex bg-gray-800 bg-opacity-50">
+        <div className="w-screen h-screen fixed flex bg-gray-800 bg-opacity-50 z-[999999999999999999999999999999]">
             <AddCourseSideBar
                 options={options}
                 courseTag={courseTag}
@@ -80,7 +80,8 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                     <tbody className="divide-y bg-white divide-gray-200">
                         {filteredData.map((rowData, index) => (
                             <TableRow
-                                key={index}
+                                key={rowData.id}
+                                id={rowData.id}
                                 courseCode={rowData.coursecode}
                                 defaultCurriculum={rowData.curriculum}
                                 thName={rowData.thname}
