@@ -5,7 +5,7 @@ export default function ProfItems({ profs, onShowBranches }) {
   const { mutate: updateProf } = useUpdateProfMutation();
   const { mutate: deleteProf } = useDeleteProfMutation();
 
-  const filteredData = profs.filter((prof) =>   // Filter the data based on the search term
+  const filteredData = profs.filter((prof) => // Filter the data based on the search term
     prof.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -31,8 +31,9 @@ export default function ProfItems({ profs, onShowBranches }) {
     let changeRoleValue = roleSelect.value;
     let name = document.getElementById(`input-name-${id}`).value;
     let email = document.getElementById(`input-email-${id}`).value;
+    document.getElementById(`name-${id}`).innerText = name;
+    document.getElementById(`email-${id}`).innerText = email;
     let role = changeRoleValue;
-
     updateProf({ id, name, email, role });
   };
 
@@ -50,7 +51,7 @@ export default function ProfItems({ profs, onShowBranches }) {
       selector: (row) => row.name,
       cell: (row) => (
         <>
-          <p>{row.name}</p>
+          <p id={`name-${row.id}`}>{row.name}</p>
           <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-name-${row.id}`}
             defaultValue={row.name}
@@ -65,7 +66,7 @@ export default function ProfItems({ profs, onShowBranches }) {
       selector: (row) => row.email,
       cell: (row) => (
         <>
-          <p>{row.email}</p>
+          <p id={`email-${row.id}`}>{row.email}</p>
           <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-email-${row.id}`}
             defaultValue={row.email}

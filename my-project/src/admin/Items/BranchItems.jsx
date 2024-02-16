@@ -12,7 +12,6 @@ export default function BranchItems({ branches, onSelectBranch }) {
   );
 }
 
-// ทำด้วย
 const removeBranch = (branch) => {
   let deleteConfrim = confirm(
     `Delete Bracnh ${branch.branchtag} ${branch.branchname} ?`
@@ -40,7 +39,7 @@ const BranchItem = ({ branch, onSelectBranch }) => (
       {branch.branchtag}
     </p>
 
-    <div className='justify-self-end self-end  hover:bg-red-300'>
+    <div className='justify-self-end self-end hover:bg-red-300'>
       <img
         src={removeIcon}
         alt='removeIcon'

@@ -60,7 +60,7 @@ export default function CourseItems({ courses, onShowBranches }) {
         onChange={handleSearch}
       />
 
-      <div className='ms-10 w-[90%] -z-[9999999999]'>
+      <div className='ms-10 w-[90%] -z-[10]'>
         <DataTable
           columns={columns}
           data={filteredData}
