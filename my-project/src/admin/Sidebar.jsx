@@ -13,7 +13,7 @@ export default function Sidebar({ setCurrentPage, currentPage }) {
     };
 
     return (
-        <div className="col-span-1 flex flex-col items-center border-2 border-t-0 border-l-0 border-black min-h-dvh">
+        <div className='col-span-1 flex flex-col items-center border-2 border-t-0 border-l-0 border-black min-h-dvh'>
             {menuItems.map(({ key, label, icon }) => (
                 <div className={`w-full my-3 py-1 ${currentPage === key ? 'bg-sky-200/75' : ''}`}
                     key={key}

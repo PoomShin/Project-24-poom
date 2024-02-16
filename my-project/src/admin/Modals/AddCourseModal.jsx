@@ -45,7 +45,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     const handleImportDatabase = () => mutation.mutate(filteredData);
 
     return isVisible && createPortal(
-        <div className="w-screen h-screen fixed flex bg-gray-800 bg-opacity-50 z-[999999999999999999999999999999]">
+        <div className="w-screen h-screen fixed flex bg-gray-800 bg-opacity-50 z-[10]">
             <AddCourseSideBar
                 options={options}
                 courseTag={courseTag}
@@ -77,7 +77,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                 <TableValidation filterDataByCourseTag={filterDataByCourseTag} />
 
                 <Table bg='bg-emerald-200' text='Import table'>
-                    <tbody className="divide-y bg-white divide-gray-200">
+                    <tbody className='divide-y bg-white divide-gray-200'>
                         {filteredData.map((rowData, index) => (
                             <TableRow
                                 key={rowData.id}

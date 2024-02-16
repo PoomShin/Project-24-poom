@@ -32,9 +32,8 @@ export default function ProfItems({ profs, onShowBranches }) {
     let name = document.getElementById(`input-name-${id}`).value;
     let email = document.getElementById(`input-email-${id}`).value;
     let role = changeRoleValue;
-    
-    updateProf({ id, name, email, role });
 
+    updateProf({ id, name, email, role });
   };
 
   const columns = [
@@ -146,10 +145,11 @@ export default function ProfItems({ profs, onShowBranches }) {
       />
 
       <div className="ms-10 w-[90%]">
-        <DataTable columns={columns} data={filteredData}  highlightOnHover
+        <DataTable columns={columns} data={filteredData} highlightOnHover
           striped
           responsive
           pagination />
+      </div>
     </>
   );
 }
