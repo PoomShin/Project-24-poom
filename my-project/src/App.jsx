@@ -3,7 +3,8 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
   { path: '/', element: <Login /> },
   { path: '/admin', element: <Admin /> },
-  { path: '/prof', element: <Prof /> }
+  { path: '/prof', element: <Prof /> },
+  { path: '/Poom', element: <Prof_Layout /> }
 ]);
 
 export default function App() {
@@ -25,3 +26,4 @@ import UserProvider from "./context/User-Context";
 import Admin from './admin/Admin';
 import Login from './login/Login';
 import Prof from "./prof/Prof";
+import Prof_Layout from "./Poom/Prof_Layout";
