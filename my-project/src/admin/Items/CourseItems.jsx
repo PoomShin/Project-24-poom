@@ -1,12 +1,10 @@
 export default function CourseItems({ courses, onShowBranches }) {
-  const [searchTerm, setSearchTerm] = useState(''); // State to hold the search term
-  // Handler for updating the search term
+  const [searchTerm, setSearchTerm] = useState('');
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Filter the data based on the search term
-  const filteredData = courses.filter((courses) =>
+  const filteredData = courses.filter((courses) =>   // Filter the data based on the search term
     courses.coursecode.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -48,12 +46,12 @@ export default function CourseItems({ courses, onShowBranches }) {
   return (
     <>
       <button
-        className='col-span-8 font-bold ms-10 mb-3 py-2 px-4 rounded text-white bg-blue-500 hover:bg-blue-700'
+        className='col-span-8 rounded text-white font-bold bg-blue-500 hover:bg-blue-700 ms-10 mb-3 py-2 px-4'
         onClick={onShowBranches}>
         Return to Branch
       </button>
       <br />
-      <input className='ms-10 mb-4 px-2 py-1 rounded border mt-5'
+      <input className='ms-10  mt-5 mb-4 px-2 py-1 rounded border'
         type='text'
         placeholder='Search by ID'
         value={searchTerm}

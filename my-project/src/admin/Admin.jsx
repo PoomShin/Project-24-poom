@@ -1,13 +1,13 @@
 export default function Admin() {
-  const { userContextValues, setUserContextValues } = useContext(UserContext);
-  const { name, role } = userContextValues;
   const [currentPage, setCurrentPage] = useState('Branch');
+  const { userContextValues, setUserContextValues } = useContext(UserContext);
+  const { name } = userContextValues;
 
   // Memoize the Navbar component to avoid unnecessary re-renders
   const memoizedNavbar = useMemo(() => <Navbar name={name} />, [name]);
 
   return (
-    <div className="grid grid-cols-12 w-full h-full ">
+    <div className='grid grid-cols-12 w-full h-full'>
       {memoizedNavbar}
       <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
       <Content currentPage={currentPage} setCurrentPage={setCurrentPage} />

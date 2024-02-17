@@ -35,6 +35,7 @@ const BranchItem = ({ branch, onSelectBranch }) => (
       src={moreIcon}
       alt='moreIcon'
     />
+    
     <p className='justify-self-center self-center text-4xl font-sans'>
       {branch.branchtag}
     </p>

@@ -8,13 +8,13 @@ const buttonClass = `inline-block rounded-full bg-neutral-800 px-6 py-4 text-xs 
 
 export default function Content({ currentPage, setCurrentPage }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedBranchTag, setSelectedBranchTag] = useState();
-    const [selectedCourseTag, setSelectedCourseTag] = useState();
+    const [selectedBranchTag, setSelectedBranchTag] = useState(null);
+    const [selectedCourseTag, setSelectedCourseTag] = useState(null);
     const icon = iconMap[currentPage];
 
-    const { isLoading, isError, isSuccess, data: branches, error } = useFetchBranches();
-    const { isLoading1, isError1, isSuccess1, data: profs, error1 } = useFetchProfessors(selectedBranchTag);
-    const { isLoading2, isError2, isSuccess2, data: courses, error2 } = useFetchCourses(selectedBranchTag);
+    const { data: branches, error: branchError } = useFetchData(`/admin/branches`);
+    const { data: profs, error: profsError } = useFetchData(`/admin/professors/${selectedBranchTag}`);
+    const { data: courses, error: coursesError } = useFetchData(`/admin/courses/${selectedBranchTag}`);
 
     const handleSelectBranch = useCallback((branchTag, courseTag) => {
         setCurrentPage(prevPage => prevPage === 'Branch' ? 'Prof' : 'Curriculum');
@@ -32,31 +32,12 @@ export default function Content({ currentPage, setCurrentPage }) {
     }, []);
 
     return (
-        <div className="col-span-11 bg-gray-200">
-            <div className="grid grid-cols-6 items-center bg-sky-200/75 border-b border-solid border-black p-4 mb-6">
-                <div>
-                    <img src={icon} className="inline h-12" />
-                    <p className="inline text-3xl font-semibold ml-2">{currentPage}</p>
-                </div>
-                
-
-                {/* Add Button */}
-                <form className="col-start-7">
-                    <button className={`${buttonClass} ${currentPage === 'Course' ? 'invisible' : ''}`}
-                        type='button'
-                        onClick={toggleModal}
-                    >
-                        Add {currentPage}
-                    </button>
-                </form>
-            </div>
-
+        <div className='col-span-11 bg-gray-200'>
+            <TabBar icon={icon} currentPage={currentPage} toggleModal={toggleModal} />
             {currentPage === 'Branch' && branches && (
                 <>
                     <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />
-                    {/* ปุ่ม add brach */}
                     <AddBranchModal isVisible={isModalOpen} onClose={toggleModal} />
-                    
                 </>
             )}
             {currentPage === 'Course' && branches && (
@@ -78,33 +59,29 @@ export default function Content({ currentPage, setCurrentPage }) {
     );
 }
 
-//Custom hook for fetching branches
-const useFetchBranches = () => {
-    return useQuery('branches', async () => {
-        const response = await axios.get('/admin/branches');
+const TabBar = ({ icon, currentPage, toggleModal }) => {
+    return (
+        <div className='grid grid-cols-6 items-center bg-sky-200/75 border-b border-solid border-black p-4 mb-6'>
+            <div>
+                <img src={icon} className='inline h-12' />
+                <p className='inline text-3xl font-semibold ml-2'>{currentPage}</p>
+            </div>
+            <form className='col-start-7'>
+                <button className={`${buttonClass} ${currentPage === 'Course' ? 'invisible' : ''}`}
+                    type='button'
+                    onClick={toggleModal}
+                >
+                    Add {currentPage}
+                </button>
+            </form>
+        </div>
+    );
+}
 
-        if (!response.data) throw new Error('Failed to fetch branches');
-
-        return response.data;
-    });
-};
-// Custom hook for fetching professors
-const useFetchProfessors = (selectedBranchTag) => {
-    return useQuery(['professors', selectedBranchTag], async () => {
-        const response = await axios.get(`/admin/professors/${selectedBranchTag}`);
-
-        if (!response.data) throw new Error('Failed to fetch professors');
-
-        return response.data;
-    });
-};
-// Custom hook for fetching courses
-const useFetchCourses = (selectedBranchTag) => {
-    return useQuery(['courses', selectedBranchTag], async () => {
-        const response = await axios.get(`/admin/courses/${selectedBranchTag}`);
-
-        if (!response.data) throw new Error('Failed to fetch courses');
-
+const useFetchData = (url) => {
+    return useQuery(url, async () => {
+        const response = await axios.get(url);
+        if (!response.data) throw new Error(`Failed to fetch data from ${url}`);
         return response.data;
     });
 };

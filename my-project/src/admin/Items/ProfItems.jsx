@@ -13,7 +13,6 @@ export default function ProfItems({ profs, onShowBranches }) {
     setSearchTerm(e.target.value);
   };
 
-  // delete user not import to db yet!
   const deleteUser = (id) => {
     let isConfirm = window.confirm(`Delete ${id} ?`);
     if (isConfirm) deleteProf(id);
