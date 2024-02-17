@@ -80,7 +80,6 @@ const useProfLoginMutation = () => {
     );
 };
 
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
