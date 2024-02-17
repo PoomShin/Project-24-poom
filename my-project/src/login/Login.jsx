@@ -69,9 +69,9 @@ const useProfLoginMutation = () => {
             return response.data;
         },
         {
-            onSuccess: ({ success, message, id, name, role, branchtag }) => {
+            onSuccess: ({ success, message, id, name, email, role, branchtag }) => {
                 if (success) {
-                    localStorage.setItem('userData', JSON.stringify({ id, name, role, branchtag }));
+                    localStorage.setItem('userData', JSON.stringify({ id, name, email, role, branchtag }));
                     navigate(`/prof/${role}/${branchtag}`);
                     setTimeout(() => {
                         window.location.reload();

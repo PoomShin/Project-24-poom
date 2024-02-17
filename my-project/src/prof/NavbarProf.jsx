@@ -2,7 +2,7 @@ import ku_logo from '../assets/ku_logo.png';
 import notification from '../assets/notification.png';
 import userProfile from '../assets/profile.png';
 
-export default function Navbarpro({ name, role }) {
+export default function NavbarProf({ name, role }) {
     return (
         <div className='col-span-12 flex items-center justify-between bg-teal-900 text-white px-4'>
             <img src={ku_logo} alt="KU Logo" className='h-24' />

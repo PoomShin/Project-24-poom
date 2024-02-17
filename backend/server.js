@@ -164,6 +164,15 @@ app.post('/profs/login', async (req, res) => {
     }
 });
 
+app.get('/api/branches', async (req, res) => {
+    try {
+        const branches = await pool.query('SELECT * FROM branches');
+        res.json(branches.rows);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch branch tags' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

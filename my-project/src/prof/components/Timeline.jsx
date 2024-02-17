@@ -1,76 +1,46 @@
-import { useState } from 'react';
+import React from "react";
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-export default function Timeline() {
-  const [startHour, setStartHour] = useState(8); // Initial start hour
-  const [endHour, setEndHour] = useState(20); // Initial end hour
-  const timeSlots = generateTimeSlots(startHour, endHour);
-
-  const handleScrollForward = () => {
-    if (endHour < 20) {
-      setStartHour(startHour + 1);
-      setEndHour(endHour + 1);
-    }
-  };
-
-  const handleScrollBackward = () => {
-    if (startHour > 8) {
-      setStartHour(startHour - 1);
-      setEndHour(endHour - 1);
-    }
-  };
-
-  return (
-    <div className="max-w-4xl mx-auto">
-      <div className='overflow-x-auto overflow-y-hidden'> {/* Hide vertical scrollbar */}
-        <div className="flex justify-between">
-          <button onClick={handleScrollBackward} disabled={startHour <= 0}>Scroll Backward</button>
-          <button onClick={handleScrollForward} disabled={endHour >= 24}>Scroll Forward</button>
-        </div>
-        <table className='min-w-full bg-slate-200 border-collapse'>
-          <thead>
-            <tr>
-              <th className='border p-2'></th>
-              {timeSlots.map((time, timeIndex) => (
-                <th key={timeIndex} className='border p-2'>{time}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {daysOfWeek.map((day, dayIndex) => (
-              <tr key={dayIndex}>
-                <td className='border p-2'>{day}</td>
-                {timeSlots.map((_, timeIndex) => (
-                  <td key={`${dayIndex}-${timeIndex}`} className='border p-2'></td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-const generateTimeSlots = (startHour, endHour) => {
+const generateTimeSlots = () => {
   const timeSlots = [];
-  let hour = startHour;
-  let minute = 0;
-
-  while (!(hour === endHour && minute === 0)) {
-    const formattedHour = hour < 10 ? `0${hour}` : hour;
-    const formattedMinute = minute < 10 ? `0${minute}` : minute;
-    const time = `${formattedHour}:${formattedMinute}`;
-    timeSlots.push(time);
-
-    // Increment time by 30 minutes
-    minute += 30;
-    if (minute === 60) {
-      hour += 1;
-      minute = 0;
+  for (let hour = 8; hour <= 20; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const formattedHour = hour.toString().padStart(2, '0');
+      const formattedMinute = minute.toString().padStart(2, '0');
+      timeSlots.push(`${formattedHour}:${formattedMinute}`);
     }
   }
-
   return timeSlots;
 };
+
+const Timeline = () => {
+  const timeSlots = generateTimeSlots();
+
+  return (
+    <div className="overflow-x-auto overflow-y-hidden">
+      <table className="bg-white">
+        <thead>
+          <tr>
+            <th className="border px-4 py-2"></th>
+            {timeSlots.map(time => (
+              <th key={time} className="border px-4 py-2">{time}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {daysOfWeek.map(day => (
+            <tr key={day}>
+              <td className="border px-4 py-2">{day}</td>
+              {timeSlots.map(time => (
+                <td key={`${day}-${time}`} className="border px-4 py-2"></td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Timeline;
