@@ -6,6 +6,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     const mutation = useImportCoursesMutation();
 
     const handleCurriculumChange = (e) => setSelectedCurriculum(e.target.value);
+    const handleImportDatabase = () => mutation.mutate(filteredData);
 
     const handleImport = (event) => {
         const file = event.target.files[0];
@@ -42,63 +43,89 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
         setImportedData(prevImportedData => prevImportedData.filter(item => item === rowData));
     };
 
-    const handleImportDatabase = () => mutation.mutate(filteredData);
+    return isVisible && <PortalContainer>
+        <AddCourseSideBar
+            options={options}
+            courseTag={courseTag}
+            selectedCurriculum={selectedCurriculum}
+            handleCurriculumChange={handleCurriculumChange}
+            handleImport={handleImport}
+            onClose={onClose}
+        />
+        <div className='w-full flex flex-col rounded-lg bg-slate-400'>
+            <Table bg={'bg-orange-200'} text='Validation table'>
+                <tbody className="divide-y bg-white divide-gray-200">
+                    {importedData.map((rowData, index) => (
+                        <TableRow
+                            key={index}
+                            courseCode={rowData.coursecode}
+                            defaultCurriculum={selectedCurriculum}
+                            thName={rowData.thname}
+                            engName={rowData.engname}
+                            credits={rowData.credit}
+                            courseType={rowData.coursetype}
+                            rowData={rowData}
+                            onTransfer={handleTransfer}
+                            options={options}
+                        />
+                    ))}
+                </tbody>
+            </Table>
 
-    return isVisible && createPortal(
-        <div className="w-screen h-screen fixed flex bg-gray-800 bg-opacity-50">
-            <AddCourseSideBar
-                options={options}
-                courseTag={courseTag}
-                selectedCurriculum={selectedCurriculum}
-                handleCurriculumChange={handleCurriculumChange}
-                handleImport={handleImport}
-                onClose={onClose}
-            />
-            <div className="w-full flex flex-col rounded-lg bg-slate-400">
-                <Table bg={'bg-orange-200'} text='Validation table'>
-                    <tbody className="divide-y bg-white divide-gray-200">
-                        {importedData.map((rowData, index) => (
-                            <TableRow
-                                key={index}
-                                courseCode={rowData.coursecode}
-                                defaultCurriculum={selectedCurriculum}
-                                thName={rowData.thname}
-                                engName={rowData.engname}
-                                credits={rowData.credit}
-                                courseType={rowData.coursetype}
-                                rowData={rowData}
-                                onTransfer={handleTransfer}
-                                options={options}
-                            />
-                        ))}
-                    </tbody>
-                </Table>
+            <TableValidation filterDataByCourseTag={filterDataByCourseTag} />
 
-                <TableValidation filterDataByCourseTag={filterDataByCourseTag} />
+            <Table bg='bg-emerald-200' text='Import table'>
+                <tbody className='divide-y bg-white divide-gray-200'>
+                    {filteredData.map((rowData, index) => (
+                        <TableRow
+                            key={index}
+                            courseCode={rowData.coursecode}
+                            defaultCurriculum={rowData.curriculum}
+                            thName={rowData.thname}
+                            engName={rowData.engname}
+                            credits={rowData.credit}
+                            courseType={rowData.coursetype}
+                            rowData={rowData}
+                            onTransfer={handleTransfer}
+                            options={options}
+                        />
+                    ))}
+                </tbody>
+            </Table>
 
-                <Table bg='bg-emerald-200' text='Import table'>
-                    <tbody className="divide-y bg-white divide-gray-200">
-                        {filteredData.map((rowData, index) => (
-                            <TableRow
-                                key={index}
-                                courseCode={rowData.coursecode}
-                                defaultCurriculum={rowData.curriculum}
-                                thName={rowData.thname}
-                                engName={rowData.engname}
-                                credits={rowData.credit}
-                                courseType={rowData.coursetype}
-                                rowData={rowData}
-                                onTransfer={handleTransfer}
-                                options={options}
-                            />
-                        ))}
-                    </tbody>
-                </Table>
+            <TableImportButton handleImportDatabase={handleImportDatabase} />
+        </div>
+    </PortalContainer>
+}
 
-                <TableImportButton handleImportDatabase={handleImportDatabase} />
-            </div>
-        </div>,
-        document.getElementById('root-modal')
+const PortalContainer = ({ children }) => {
+    return (
+        createPortal(
+            <div className='w-screen h-screen fixed flex bg-gray-800 bg-opacity-50 z-[10]'>
+                {children}
+            </div>,
+            document.getElementById('root-modal')
+        )
+    )
+}
+
+function TableImportButton({ handleImportDatabase }) {
+    return (
+        <div className='flex justify-center my-4'>
+            <button className='font-bold text-white rounded bg-green-500 hover:bg-green-700 py-2 px-6 ' onClick={handleImportDatabase}>
+                Import to Database
+            </button>
+        </div>
+    );
+}
+
+function TableValidation({ filterDataByCourseTag }) {
+    return (
+        <div className='flex justify-center my-10'>
+            <button className='inline-block' onClick={filterDataByCourseTag}>
+                <img src={transferIcon} alt="transfer icon" className='h-16' />
+            </button>
+        </div>
     );
 }
 
@@ -134,6 +161,6 @@ import Papa from 'papaparse'; // Library for parsing CSV files
 
 import Table from '../components/Table';
 import TableRow from '../components/TableRow';
-import TableValidation from '../components/TableValidation';
-import TableImportButton from '../components/TableImportButton';
 import AddCourseSideBar from '../components/AddCourseSideBar';
+
+import transferIcon from '../../assets/transfer.png'
