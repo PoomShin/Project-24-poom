@@ -47,6 +47,9 @@ const useLoginMutation = () => {
                 if (success) {
                     localStorage.setItem('userData', JSON.stringify({ name, role }));
                     navigate('/admin');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
                 } else alert(message);
             },
             onError: (error) => {
@@ -69,7 +72,10 @@ const useProfLoginMutation = () => {
             onSuccess: ({ success, message, id, name, role, branchtag }) => {
                 if (success) {
                     localStorage.setItem('userData', JSON.stringify({ id, name, role, branchtag }));
-                    navigate('/prof');
+                    navigate(`/prof/${role}/${branchtag}`);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
                 } else alert(message);
             },
             onError: (error) => {

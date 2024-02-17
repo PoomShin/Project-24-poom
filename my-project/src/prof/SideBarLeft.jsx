@@ -1,3 +1,9 @@
+import { useNavigate } from 'react-router-dom';
+import homeIcon from '../assets/home.png'
+import proIcon from '../assets/teacher.png'
+import labIcon from '../assets/laboratory.png'
+import logoutIcon from '../assets/logoutIcon.png'
+
 const menuItems = [
     { key: 'Home', label: 'Home', icon: homeIcon },
     { key: 'Professors', label: 'Professors', icon: proIcon },
@@ -5,7 +11,7 @@ const menuItems = [
     { key: 'Logout', label: 'Log out', icon: logoutIcon }
 ];
 
-export default function Sidebar({ setCurrentPage, currentPage }) {
+export default function SideBarLeft({ currentPage, setCurrentPage }) {
     const navigate = useNavigate();
 
     const handleChangePage = (newPage) => {
@@ -27,9 +33,3 @@ export default function Sidebar({ setCurrentPage, currentPage }) {
         </div>
     );
 }
-
-import { useNavigate } from 'react-router-dom';
-import homeIcon from '../assets/home.png'
-import proIcon from '../assets/teacher.png'
-import labIcon from '../assets/laboratory.png'
-import logoutIcon from '../assets/logoutIcon.png'

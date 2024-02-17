@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import { gapi } from 'gapi-script';
+
 const clientId = "902199029700-1pv3edc1p4oqe8kj2k77ltqapea1ooa2.apps.googleusercontent.com";
 
 export default function GoogleButton({ setFormData, handleLogin }) {
@@ -27,6 +31,7 @@ export default function GoogleButton({ setFormData, handleLogin }) {
             email: res.profileObj.email
         }));
         handleLogin();
+        setProfile(null);
     };
 
     const handleFailure = (res) => {
@@ -47,8 +52,7 @@ export default function GoogleButton({ setFormData, handleLogin }) {
                     buttonText='Sign in with Google'
                     onSuccess={handleSuccess}
                     onFailure={handleFailure}
-                    cookiePolicy={'single_host_origin'}
-                    isSignedIn={true}
+                    isSignedIn={false}
                 />
             )}
         </Container>
@@ -74,7 +78,3 @@ const Profile = ({ imageUrl, name, email }) => {
         </>
     )
 }
-
-import { useEffect, useState } from 'react';
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
-import { gapi } from 'gapi-script';

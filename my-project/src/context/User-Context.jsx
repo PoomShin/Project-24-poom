@@ -1,11 +1,15 @@
-import React, { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
-export const UserContext = createContext(); //this have context value
+export const UserContext = createContext();
 
 export default function UserProvider({ children }) {
   const storedUser = JSON.parse(localStorage.getItem('userData')) || null;
-  //console.log(storedUser);
   const [userContextValues, setUserContextValues] = useState(storedUser);
+
+  // Update context values when user data changes
+  useEffect(() => {
+    localStorage.setItem('userData', JSON.stringify(userContextValues));
+  }, [userContextValues]);
 
   return (
     <UserContext.Provider value={{ userContextValues, setUserContextValues }}>
@@ -13,3 +17,4 @@ export default function UserProvider({ children }) {
     </UserContext.Provider>
   );
 };
+
