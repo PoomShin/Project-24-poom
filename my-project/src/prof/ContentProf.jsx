@@ -5,7 +5,6 @@ import { useBranchesContext } from '../context/Branch-Context';
 
 export default function ContentProf({ currentPage, userData }) {
     const { branches } = useBranchesContext();
-    console.log(branches)
     const [year, setYear] = useState('');
     const [branch, setBranch] = useState(userData.branchtag);
 
