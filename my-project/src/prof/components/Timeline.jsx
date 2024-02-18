@@ -29,28 +29,35 @@ export default function Timeline() {
         return cellIds;
     };
     const cellIds = generateCellIds();
-    console.log(cellIds);
 
-    const InsertTimeline = () => {
+    const InsertTimeline = ({ coursetag, dayID, startHour, endHour }) => {
         const tdElement = document.createElement('td');
+
+        const beforeTD = document.createElement('td');
+        beforeTD.className = 'border px-4 py-2';
+        beforeTD.colSpan = ((startHour - 8.00) * 2);
 
         // Set attributes for the td element
         tdElement.className = 'border px-4 py-2';
-        tdElement.colSpan = 4;
+        tdElement.colSpan = ((endHour - startHour) * 2) + 1;
 
         // Set text content for the td element
-        tdElement.textContent = '03603111';
+        tdElement.textContent = coursetag;
 
         // Get the element with id 'Monday'
-        const day = document.getElementById('Monday');
+        const day = document.getElementById(dayID);
 
         if (day) {
+            day.appendChild(beforeTD);
             day.appendChild(tdElement);
         }
     }
 
     return (
-        <Container InsertTimeline={InsertTimeline}>
+        <Container>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4" onClick={() => InsertTimeline({ coursetag: '03603111', dayID: 'Monday', startHour: '9.00', endHour: '12.00' })}>
+                Test Insert
+            </button>
 
             <table className='bg-white'>
                 <thead>
@@ -77,12 +84,9 @@ export default function Timeline() {
     );
 };
 
-const Container = ({ children, InsertTimeline }) => {
+const Container = ({ children }) => {
     return (
         <div className="overflow-x-auto overflow-y-hidden">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4" onClick={InsertTimeline}>
-                Test Insert
-            </button>
             <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4">
                 Test Overlapping
             </button>

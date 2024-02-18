@@ -1,6 +1,6 @@
-import Timeline from './components/Timeline';
 import { useState } from 'react';
 import { IconData } from './data/IconData';
+import Timeline from './components/Timeline';
 import { useBranchesContext } from '../context/Branch-Context';
 
 export default function ContentProf({ currentPage, userData }) {
