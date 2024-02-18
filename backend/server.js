@@ -98,8 +98,8 @@ app.post('/admin/importCourse', async (req, res) => {
         // Loop through the array of data and insert each item into the database
         for (const item of data) {
             await pool.query(
-                'INSERT INTO courses (coursecode, curriculum, thname, engname, credit, coursetype, branchtag, coursetag) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-                [item.coursecode, parseInt(item.curriculum), item.thname, item.engname, item.credit, item.coursetype, item.branchtag, item.coursetag]
+                'INSERT INTO courses (coursecode, curriculum, thname, engname, credit, coursetype, branchtag, coursetag, combined_code_curriculum) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+                [item.coursecode, parseInt(item.curriculum), item.thname, item.engname, item.credit, item.coursetype, item.branchtag, item.coursetag, `${item.coursecode}-${item.curriculum}`]
             );
         }
 
@@ -170,6 +170,17 @@ app.get('/api/branches', async (req, res) => {
         res.json(branches.rows);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch branch tags' });
+    }
+});
+
+app.get('/api/courses/:branchtag', async (req, res) => {
+    const { branchtag } = req.params;
+
+    try {
+        const courses = await pool.query('SELECT * FROM courses WHERE branchtag = $1', [branchtag]);
+        res.json(courses.rows);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch courses' });
     }
 });
 

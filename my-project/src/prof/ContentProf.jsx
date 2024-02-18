@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { IconData } from './data/IconData';
 import Timeline from './components/Timeline';
-import { useBranchesContext } from '../context/Branch-Context';
+import InsertCourseModal from './modals/InsertCourseModal';
+import { useBranchesContext } from '../context/Prof-Context';
 
 export default function ContentProf({ currentPage, userData }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { branches } = useBranchesContext();
     const [year, setYear] = useState('');
     const [branch, setBranch] = useState(userData.branchtag);
@@ -11,6 +13,7 @@ export default function ContentProf({ currentPage, userData }) {
     const { id, name, email, role, branchtag } = userData;
     const icon = IconData[currentPage];
 
+    const toggleModal = useCallback(() => { setIsModalOpen(prevState => !prevState); }, []);
     const handleYearChange = selectedYear => setYear(selectedYear);
     const handleBranchChange = selectBranch => setBranch(selectBranch);
 
@@ -49,24 +52,30 @@ export default function ContentProf({ currentPage, userData }) {
     };
 
     return (
-        <>
-            <div className='col-span-8 bg-gray-200'>
-                <div className="grid grid-cols-6 items-center bg-sky-200/75 border-b border-solid border-t-2 border-black p-4 mb-6">
-                    <div className='col-start-1'>
-                        <img src={icon} className='h-10' />
-                        <p className='inline text-[160%] font-semibold ml-2'>{currentPage}</p>
-                    </div>
-                    {renderBranchButton()}
-                    {renderYearDropdown()}
+        <div className='col-span-8 bg-gray-200'>
+            <div className="grid grid-cols-6 items-center bg-sky-200/75 border-b border-solid border-t-2 border-black p-4 mb-6">
+                <div className='col-start-1'>
+                    <img src={icon} className='h-10' />
+                    <p className='inline text-[160%] font-semibold ml-2'>{currentPage}</p>
                 </div>
-                <Timeline />
-                <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4'
-                    type='button'
-                >
-                    Add Course
-                </button>
+                {renderBranchButton()}
+                {renderYearDropdown()}
             </div>
-        </>
+
+            {currentPage === 'Home' && (
+                <>
+                    <Timeline />
+                    <InsertCourseModal isVisible={isModalOpen} onClose={toggleModal} />
+                    <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4'
+                        type='button'
+                        onClick={toggleModal}
+                    >
+                        Add Course
+                    </button>
+                </>
+            )}
+
+        </div>
     );
 }
 
