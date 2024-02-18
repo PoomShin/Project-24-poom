@@ -1,67 +1,63 @@
-import { useState } from "react";
-
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const generateTimeSlots = () => {
     const timeSlots = [];
-    for (let hour = 8; hour <= 20; hour++) {
+    for (let hour = 8; hour < 20; hour++) { // Adjusted loop condition to stop at 19:30
         for (let minute = 0; minute < 60; minute += 30) {
             const formattedHour = hour.toString().padStart(2, '0');
             const formattedMinute = minute.toString().padStart(2, '0');
             timeSlots.push(`${formattedHour}:${formattedMinute}`);
         }
     }
+    // Add the last time slot manually
+    timeSlots.push('20:00');
     return timeSlots;
 };
 
-const Timeline = () => {
+export default function Timeline() {
     const timeSlots = generateTimeSlots();
-    const initialTimelineData = daysOfWeek.map(day => Array(timeSlots.length).fill(false));
-    const [timelineData, setTimelineData] = useState(initialTimelineData);
 
-    const handleShowTimeline = (day, startHour, endHour) => {
-        const startIndex = Math.ceil((startHour - 8) * 2);
-        const endIndex = Math.ceil((endHour - 8) * 2) + 1;
-
-        const newTimelineData = [...timelineData];
-        const dayIndex = daysOfWeek.indexOf(day);
-
-        let overlapCount = 0;
-
-        for (let i = startIndex; i < endIndex; i++) {
-            if (newTimelineData[dayIndex][i]) {
-                overlapCount++;
-            }
-            newTimelineData[dayIndex][i] = true;
-        }
-
-        // Update the count of overlapping cells in the first row of timelineData
-        for (let i = startIndex; i < endIndex; i++) {
-            if (newTimelineData[0][i] !== false) {
-                newTimelineData[0][i] += overlapCount;
-            } else {
-                newTimelineData[0][i] = overlapCount;
-            }
-        }
-
-        setTimelineData(newTimelineData);
+    const generateCellIds = () => {
+        const cellIds = [];
+        daysOfWeek.forEach(day => {
+            const dayCellIds = []; // Create an array for the current day
+            timeSlots.forEach((time, index) => {
+                dayCellIds.push(`${day}-${time}`); // Push cell IDs for the current day
+            });
+            cellIds.push(dayCellIds); // Push the array of cell IDs for the current day to the main array
+        });
+        return cellIds;
     };
+    const cellIds = generateCellIds();
+    console.log(cellIds);
+
+    const InsertTimeline = () => {
+        const tdElement = document.createElement('td');
+
+        // Set attributes for the td element
+        tdElement.className = 'border px-4 py-2';
+        tdElement.colSpan = 4;
+
+        // Set text content for the td element
+        tdElement.textContent = '03603111';
+
+        // Get the element with id 'Monday'
+        const day = document.getElementById('Monday');
+
+        if (day) {
+            day.appendChild(tdElement);
+        }
+    }
 
     return (
-        <div className="overflow-x-auto overflow-y-hidden">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4" onClick={() => handleShowTimeline('Monday', 8, 10)}>
-                Insert Timeline for Monday 8:00 AM to 12:00 PM
-            </button>
-            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4" onClick={() => handleShowTimeline('Monday', 8, 10)}>
-                Test Overlapping
-            </button>
+        <Container InsertTimeline={InsertTimeline}>
 
-            <table className="bg-white">
+            <table className='bg-white'>
                 <thead>
                     <tr>
                         <th className="border px-4 py-2"></th>
-                        {timeSlots.map((time, index) => (
-                            <th key={index} className="border px-4 py-2">
+                        {timeSlots.map((time, timeIndex) => (
+                            <th key={timeIndex} id={time} className='border px-4 py-2'>
                                 {time}
                             </th>
                         ))}
@@ -70,19 +66,27 @@ const Timeline = () => {
 
                 <tbody>
                     {daysOfWeek.map((day, dayIndex) => (
-                        <tr key={day} id={day}>
-                            <td className="border px-4 py-2">{day}</td>
-                            {timelineData[dayIndex].map((isFilled, index) => (
-                                <td key={`${day}-${index}`} className={`border px-4 py-2 ${isFilled && timelineData[0][index] > 1 ? 'bg-red-500' : isFilled ? 'bg-blue-200' : ''}`}>
-                                    {isFilled ? 'Content' : null}
-                                </td>
-                            ))}
+                        <tr key={dayIndex} id={day}>
+                            <td className='border px-4 py-2' colSpan={1}>{day}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-        </div>
+
+        </Container>
     );
 };
 
-export default Timeline;
+const Container = ({ children, InsertTimeline }) => {
+    return (
+        <div className="overflow-x-auto overflow-y-hidden">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4" onClick={InsertTimeline}>
+                Test Insert
+            </button>
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4">
+                Test Overlapping
+            </button>
+            {children}
+        </div>
+    )
+}

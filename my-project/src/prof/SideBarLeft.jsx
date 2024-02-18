@@ -6,8 +6,8 @@ import logoutIcon from '../assets/logoutIcon.png'
 
 const menuItems = [
     { key: 'Home', label: 'Home', icon: homeIcon },
-    { key: 'Professors', label: 'Professors', icon: proIcon },
-    { key: 'Laboratory', label: 'Laboratory', icon: labIcon },
+    { key: 'Prof', label: 'Professors', icon: proIcon },
+    { key: 'Lab', label: 'Laboratory', icon: labIcon },
     { key: 'Logout', label: 'Log out', icon: logoutIcon }
 ];
 
