@@ -26,8 +26,8 @@ export default function Login() {
 
 const Container = ({ children }) => {
     return (
-        <div className='flex flex-col justify-center items-center min-h-dvh text-center bg-gradient-to-r from-sky-300 to-indigo-900 overflow-hidden'>
-            <div className='border border-solid border-black rounded-lg p-12 bg-white shadow-xl shadow-black w-1/4 min-w-[350px]'>
+        <div className='flex flex-col justify-center items-center min-h-dvh text-center bg-gradient-to-r from-sky-300 to-indigo-900'>
+            <div className='border border-solid border-black rounded-lg p-12 bg-white shadow-xl shadow-black w-1/4'>
                 {children}
             </div>
         </div>
