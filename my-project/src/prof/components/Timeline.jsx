@@ -1,4 +1,3 @@
-import DayDiv from "./DayDiv";
 import TimelineBlock from "./TimeLineBlock";
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -31,38 +30,47 @@ export default function Timeline() {
                         </div>
                     ))}
                 </div>
+                
                 {/* Days row */}
                 <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
-                    <DayDiv DayText={daysOfWeek[0]} colorStyle={'bg-yellow-200'} />
+                    <DayBlock DayText={daysOfWeek[0]} colorStyle={'bg-yellow-200'} />
                     <TimelineBlock startHour={'col-start-5'} endHour={'col-end-11'} />
                     <TimelineBlock startHour={'col-start-13'} endHour={'col-end-19'} />
                 </div>
 
                 <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
-                    <DayDiv DayText={daysOfWeek[1]} colorStyle={'bg-pink-400'} />
+                    <DayBlock DayText={daysOfWeek[1]} colorStyle={'bg-pink-400'} />
                 </div>
 
                 <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
-                    <DayDiv DayText={daysOfWeek[2]} colorStyle={'bg-green-400'} />
+                    <DayBlock DayText={daysOfWeek[2]} colorStyle={'bg-green-400'} />
                 </div>
 
                 <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
-                    <DayDiv DayText={daysOfWeek[3]} colorStyle={'bg-orange-400'} />
+                    <DayBlock DayText={daysOfWeek[3]} colorStyle={'bg-orange-400'} />
                 </div>
 
                 <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
-                    <DayDiv DayText={daysOfWeek[4]} colorStyle={'bg-blue-400'} />
+                    <DayBlock DayText={daysOfWeek[4]} colorStyle={'bg-blue-400'} />
                 </div>
 
                 <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
-                    <DayDiv DayText={daysOfWeek[5]} colorStyle={'bg-purple-400'} />
+                    <DayBlock DayText={daysOfWeek[5]} colorStyle={'bg-purple-400'} />
                 </div>
 
                 <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
-                    <DayDiv DayText={daysOfWeek[6]} colorStyle={'bg-red-400'} />
+                    <DayBlock DayText={daysOfWeek[6]} colorStyle={'bg-red-400'} />
                 </div>
             </div>
         </div>
     );
 };
+
+const DayBlock = ({ DayText, colorStyle }) => {
+    return (
+        <div className={`first-line:p-1 md:p-3 col-span-2 border-r-2 dark:border-gray-700 ${colorStyle}`}>
+            <span className='font-bold dark:text-gray-900'>{DayText}</span>
+        </div>
+    )
+}
 

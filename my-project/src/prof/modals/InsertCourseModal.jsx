@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
+import SectionAdd from '../Items/SectionAdd';
 import SectionItem from '../Items/SectionItem';
 
 function InputField({ width, ...props }) {
@@ -9,11 +10,11 @@ function InputField({ width, ...props }) {
 }
 
 export default function InsertCourseModal({ isVisible, onClose }) {
-    const [lectureSecs, setLectureSecs] = useState([]);
+    const [lectureSection, setLectureSection] = useState([]);
 
-    const handleAddLectureSec = () => {
-        setLectureSecs(prevSections => [...prevSections, <SectionItem key={prevSections.length} onAddSection={handleAddLectureSec} />]);
-    };
+    const handleAddLectureSection = curSection => {
+        setLectureSection([...lectureSection, curSection]);
+    }
 
     return isVisible ? (
         <PortalContainer>
@@ -23,8 +24,7 @@ export default function InsertCourseModal({ isVisible, onClose }) {
                     <InputField placeholder='thname' width={64} />
                     <InputField placeholder='engname' width={64} />
                 </div>
-                <hr className='my-4' />
-                <div className='flex'>
+                <div className='flex my-4'>
                     <InputField placeholder='credit' />
                     <InputField placeholder='course type' />
                 </div>
@@ -32,32 +32,29 @@ export default function InsertCourseModal({ isVisible, onClose }) {
 
             <div className='flex flex-col w-10/12'>
                 <span className='text-3xl text-white mb-2'>Lecture</span>
-                <div className='h-64 flex overflow-x-auto bg-green-100 p-4'>
-                    <SectionItem />
+                <div className='h-64 overflow-x-auto flex bg-green-100 p-4'>
+                    <SectionAdd onAddSection={handleAddLectureSection} />
                 </div>
 
-                <hr className='my-12' />
-
+                <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
                 <div className='h-64 flex overflow-x-auto bg-orange-100 p-4'>
                 </div>
             </div>
 
             <div className="absolute flex bottom-0 right-0 mb-4 mr-8">
-                <button
-                    className='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
+                <button className='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
                     type='button'
+                    onClick={() => { console.log(lectureSection) }}
                 >
                     Submit
                 </button>
-                <button
-                    className='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
-                    onClick={onClose}
+                <button className='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
                     type='button'
+                    onClick={onClose}
                 >
                     Close
                 </button>
             </div>
-
         </PortalContainer>
     ) : undefined;
 }
