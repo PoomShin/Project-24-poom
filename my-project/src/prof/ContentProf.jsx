@@ -53,11 +53,12 @@ export default function ContentProf({ currentPage, userData }) {
 
     return (
         <div className='col-span-8 bg-gray-200'>
-            <div className="grid grid-cols-6 items-center bg-sky-200/75 border-b border-solid border-t-2 border-black p-4 mb-6">
+            <div className="grid grid-cols-6 items-center bg-sky-200/75 border-b border-solid border-t-2 border-black p-4 mb-6 overflow-auto">
                 <div className='col-start-1'>
                     <img src={icon} className='h-10' />
                     <p className='inline text-[160%] font-semibold ml-2'>{currentPage}</p>
                 </div>
+               
                 {renderBranchButton()}
                 {renderYearDropdown()}
             </div>

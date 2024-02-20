@@ -94,6 +94,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
             </Table>
 
             <TableImportButton handleImportDatabase={handleImportDatabase} />
+            <Manualimport/>
         </div>
     </PortalContainer>
 }
@@ -164,3 +165,4 @@ import TableRow from '../components/TableRow';
 import AddCourseSideBar from '../components/AddCourseSideBar';
 
 import transferIcon from '../../assets/transfer.png'
+import Manualimport from '../components/ManualImport';
