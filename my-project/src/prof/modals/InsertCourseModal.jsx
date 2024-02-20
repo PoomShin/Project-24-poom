@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
+import SectionItem from '../Items/SectionItem';
 
 function InputField({ width, ...props }) {
     return <input className={`mx-2 p-1 rounded-lg bg-blue-100 w-${width}`}
@@ -8,6 +9,12 @@ function InputField({ width, ...props }) {
 }
 
 export default function InsertCourseModal({ isVisible, onClose }) {
+    const [lectureSecs, setLectureSecs] = useState([]);
+
+    const handleAddLectureSec = () => {
+        setLectureSecs(prevSections => [...prevSections, <SectionItem key={prevSections.length} onAddSection={handleAddLectureSec} />]);
+    };
+
     return isVisible ? (
         <PortalContainer>
             <div className='absolute top-0 left-1/2 transform -translate-x-1/2 p-4'>
@@ -21,27 +28,18 @@ export default function InsertCourseModal({ isVisible, onClose }) {
                     <InputField placeholder='credit' />
                     <InputField placeholder='course type' />
                 </div>
-
             </div>
 
             <div className='flex flex-col w-10/12'>
                 <span className='text-3xl text-white mb-2'>Lecture</span>
                 <div className='h-64 flex overflow-x-auto bg-green-100 p-4'>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
-                    <div className='h-full min-w-72 rounded-md bg-slate-700 mr-4'></div>
+                    <SectionItem />
                 </div>
 
                 <hr className='my-12' />
+
+                <div className='h-64 flex overflow-x-auto bg-orange-100 p-4'>
+                </div>
             </div>
 
             <div className="absolute flex bottom-0 right-0 mb-4 mr-8">
