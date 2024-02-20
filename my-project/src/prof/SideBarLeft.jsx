@@ -20,9 +20,9 @@ export default function SideBarLeft({ currentPage, setCurrentPage }) {
     };
 
     return (
-        <div className="col-span-2 flex flex-col items-center border-2 border-t-2 border-l-0 border-black min-h-dvh">
+        <div className="col-span-2 flex flex-col items-center border-2 border-t-2 border-l-0 border-black min-h-dvh hover:cursor-pointer ">
             {menuItems.map(({ key, label, icon }) => (
-                <div className={` w-full my-3 py-1 ${currentPage === key ? 'bg-sky-200/75' : ''}`}
+                <div className={` w-full my-3 py-1 hover:bg-slate-200 ${currentPage === key ? 'bg-sky-200/75' : ''}`}
                     key={key}
                     onClick={() => handleChangePage(key)}
                 >
