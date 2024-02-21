@@ -24,24 +24,27 @@ export default function GoogleButton({ setFormData, handleLogin }) {
         initializeGoogleApi();
     }, []);
 
-    const handleSuccess = (res) => {
+    const handleGoogleLoginSuccess = (res) => {
         setProfile(res.profileObj);
+        const { email, imageUrl } = res.profileObj;
         setFormData(prevFormData => ({
             ...prevFormData,
-            email: res.profileObj.email
+            email: email
         }));
+        localStorage.setItem('userData', JSON.stringify({ imageUrl }));
         handleLogin();
         setProfile(null);
     };
 
-    const handleFailure = (res) => {
+    const handleGoogleLoginFailure = (res) => {
         if (res.error !== "Cross-Origin-Opener-Policy") {
-            console.error('Login failure:', res);
+            console.error('Google login failure:', res);
         }
     };
 
     return (
-        <Container>
+        <div className='flex flex-col items-center border border-solid border-black rounded-tl-lg rounded-tr-lg px-12 pt-3 pb-6 bg-emerald-600'>
+            <h1 className='font-bold text-white'>For Professor</h1>
             {profile ? (
                 <div>
                     <GoogleLogout clientId={clientId} buttonText='Log out' onLogoutSuccess={() => setProfile(null)} />
@@ -50,31 +53,11 @@ export default function GoogleButton({ setFormData, handleLogin }) {
                 <GoogleLogin
                     clientId={clientId}
                     buttonText='Sign in with Google'
-                    onSuccess={handleSuccess}
-                    onFailure={handleFailure}
+                    onSuccess={handleGoogleLoginSuccess}
+                    onFailure={handleGoogleLoginFailure}
                     isSignedIn={false}
                 />
             )}
-        </Container>
-    );
-}
-
-const Container = ({ children }) => {
-    return (
-        <div className='flex flex-col items-center border border-solid border-black rounded-tl-lg rounded-tr-lg px-12 pt-3 pb-6 bg-emerald-600'>
-            <h1 className='font-bold text-white'>For Professor</h1>
-            {children}
         </div>
-    )
-}
-
-const Profile = ({ imageUrl, name, email }) => {
-    return (
-        <>
-            <img src={imageUrl} alt="user image" />
-            <h2>Login success</h2>
-            <p>Name: {name}</p>
-            <p>Email: {email}</p>
-        </>
-    )
+    );
 }

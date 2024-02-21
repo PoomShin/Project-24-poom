@@ -1,3 +1,8 @@
+import { useNavigate } from 'react-router-dom';
+import branchIcon from '../assets/branch.png'
+import courseIcon from '../assets/course.png'
+import logoutIcon from '../assets/logoutIcon.png'
+
 const menuItems = [
     { key: 'Branch', label: 'Branch', icon: branchIcon },
     { key: 'Course', label: 'Course', icon: courseIcon },
@@ -26,8 +31,3 @@ export default function Sidebar({ setCurrentPage, currentPage }) {
         </div>
     );
 }
-
-import { useNavigate } from 'react-router-dom';
-import branchIcon from '../assets/branch.png'
-import courseIcon from '../assets/course.png'
-import logoutIcon from '../assets/logoutIcon.png'

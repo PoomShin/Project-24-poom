@@ -1,3 +1,5 @@
+import src_logo from '../../assets/SRC_ENG_LOGO.gif';
+
 export default function LoginHeader() {
     return (
         <div className='flex flex-col items-center mb-6'>
@@ -6,5 +8,3 @@ export default function LoginHeader() {
         </div>
     );
 }
-
-import src_logo from '../../assets/SRC_ENG_LOGO.gif';

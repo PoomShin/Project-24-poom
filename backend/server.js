@@ -4,21 +4,41 @@ const cors = require('cors');
 const pool = require('./db');
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ success: false, error: 'Something went wrong!' });
+
+//logging middleware
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
 });
 
+app.post('/admin/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const result = await pool.query('SELECT name, role FROM admin WHERE username = $1 AND password = $2', [username, password]);
+        const user = result.rows[0];
+
+        if (user) {
+            const { name, role } = user;
+            return res.json({ success: true, message: 'Login successful', name, role });
+        } else
+            return res.status(404).json({ success: false, message: 'User not found' });
+
+    } catch (error) {
+        return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
 app.get('/admin/branches', async (req, res) => {
     try {
-        const branches = await pool.query('SELECT * FROM branches');
-        res.json(branches.rows);
+        const branchRecords = await pool.query('SELECT * FROM branches');
+        res.json(branchRecords.rows);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch branches' });
+        console.error('Error fetching branches:', error);
+        res.status(500).json({ error: 'Failed to fetch branches. Please try again later.' });
     }
 });
 app.get('/admin/professors/:branchtag', async (req, res) => {
@@ -42,23 +62,6 @@ app.get('/admin/courses/:branchtag', async (req, res) => {
     }
 });
 
-app.post('/admin/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        const result = await pool.query('SELECT * FROM admin WHERE username = $1 AND password = $2', [username, password]);
-        const user = result.rows[0];
-
-        if (user) {
-            const { name, role } = user;
-            return res.json({ success: true, message: 'Login successful', name, role });
-        } else {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
-});
 app.post('/admin/addBranch', async (req, res) => {
     const { branchname, branchtag, coursetag } = req.body;
 
@@ -150,7 +153,7 @@ app.post('/profs/login', async (req, res) => {
     const { email } = req.body;
 
     try {
-        const result = await pool.query('SELECT * FROM profs WHERE email = $1', [email]);
+        const result = await pool.query('SELECT id, name, role, branchtag FROM profs WHERE email = $1', [email]);
         const professor = result.rows[0];
 
         if (professor) {
@@ -160,7 +163,8 @@ app.post('/profs/login', async (req, res) => {
             return res.status(404).json({ success: false, message: 'Professor not found' });
         }
     } catch (error) {
-        return res.status(500).json({ success: false, error: error.message });
+        console.error('Error in professor login:', error);
+        return res.status(500).json({ success: false, error: 'Internal server error' });
     }
 });
 
@@ -182,6 +186,12 @@ app.get('/api/courses/:branchtag', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch courses' });
     }
+});
+
+// Generic error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ success: false, error: 'Something went wrong!' });
 });
 
 app.listen(port, () => {
