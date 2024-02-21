@@ -1,7 +1,11 @@
+import { useState } from "react";
+import DataTable from "react-data-table-component";
+import { useUpdateProfMutation, useDeleteProfMutation } from "../../context/Admin-Context";
+
 export default function ProfItems({ profs, onShowBranches }) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [editToggle, setEditToggle] = useState(false);
-  //backend
+
   const { mutate: updateProf } = useUpdateProfMutation();
   const { mutate: deleteProf } = useDeleteProfMutation();
 
@@ -25,15 +29,11 @@ export default function ProfItems({ profs, onShowBranches }) {
   const submitEdit = (id) => {
     showEdit();
 
-    // change in roll
     let roleSelect = document.getElementById('role-select-' + id);
     let changeRoleValue = roleSelect.value;
     let name = document.getElementById(`input-name-${id}`).value;
     let email = document.getElementById(`input-email-${id}`).value;
-    document.getElementById(`name-${id}`).innerText = name;
-    document.getElementById(`email-${id}`).innerText = email;
-    let role = changeRoleValue;
-    updateProf({ id, name, email, role });
+    updateProf({ id, name, email, role: changeRoleValue });
   };
 
   const columns = [
@@ -53,8 +53,8 @@ export default function ProfItems({ profs, onShowBranches }) {
           <p id={`name-${row.id}`}>{row.name}</p>
           <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-name-${row.id}`}
-            defaultValue={row.name}
             type='text'
+            defaultValue={row.name}
           />
         </>
       ),
@@ -68,16 +68,16 @@ export default function ProfItems({ profs, onShowBranches }) {
           <p id={`email-${row.id}`}>{row.email}</p>
           <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
             id={`input-email-${row.id}`}
-            defaultValue={row.email}
             type='text'
+            defaultValue={row.email}
           />
         </>
       ),
     },
 
     {
-      name: 'Branch', sortable: true,
-      selector: (row) => row.branchtag,
+      name: 'BranchTag', sortable: true,
+      selector: (row) => row.branch_tag,
     },
 
     {
@@ -131,7 +131,8 @@ export default function ProfItems({ profs, onShowBranches }) {
   return (
     <>
       <button className='col-span-8 py-2 px-4 ms-10 rounded font-bold text-white bg-blue-500 hover:bg-blue-700'
-        onClick={onShowBranches}>
+        onClick={onShowBranches}
+      >
         <span>Return to Branch</span>
       </button>
       <br />
@@ -144,7 +145,7 @@ export default function ProfItems({ profs, onShowBranches }) {
         onChange={handleSearch}
       />
 
-      <div className="ms-10 w-[90%]">
+      <div className='ms-10 w-[90%]'>
         <DataTable columns={columns} data={filteredData} highlightOnHover
           striped
           responsive
@@ -153,56 +154,3 @@ export default function ProfItems({ profs, onShowBranches }) {
     </>
   );
 }
-
-//backend code
-const useUpdateProfMutation = () => {
-  return useMutation(
-    async (prof) => {
-      try {
-        const response = await axios.put(`/admin/updateProf/${prof.id}`, prof);
-        return response.data;
-      } catch (error) {
-        throw new Error(error.response.data.error || 'Unknown error');
-      }
-    },
-    {
-      onSuccess: (data) => {
-        if (data.success) alert('Professor updated successfully');
-        else alert(data.error || 'Unknown error');
-      },
-      onError: (error) => {
-        console.error(error.message);
-        alert('An error occurred during update');
-      },
-    }
-  );
-};
-
-const useDeleteProfMutation = () => {
-  return useMutation(
-    async (id) => {
-      try {
-        const response = await axios.delete(`/admin/deleteProf/${id}`);
-        return response.data;
-      } catch (error) {
-        throw new Error(error.response.data.error || 'Unknown error');
-      }
-    },
-    {
-      onSuccess: (data) => {
-        if (data.success) alert(data.message);
-        else alert(data.error || 'Unknown error');
-      },
-      onError: (error) => {
-        console.error(error.message);
-        alert('An error occurred during delete');
-      },
-    }
-  );
-};
-
-import { useState } from "react";
-import { useMutation } from 'react-query';
-import axios from 'axios';
-import DataTable from "react-data-table-component";
-

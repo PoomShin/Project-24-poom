@@ -1,12 +1,40 @@
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import Papa from 'papaparse'; // Library for parsing CSV files
+
+import Table from '../components/Table';
+import TableRow from '../components/TableRow';
+import AddCourseSideBar from '../components/AddCourseSideBar';
+
+import transferIcon from '../../assets/transfer.png'
+import Manualimport from '../components/ManualImport';
+import { useImportCourseMutation } from '../../context/Admin-Context';
+
+const generateOptions = () => {
+    const options = [];
+    for (let i = 0; i < 100; i++) {
+        const value = i.toString().padStart(2, '0');
+        options.push(
+            <option key={i} value={value}>
+                {value}
+            </option>
+        );
+    }
+    return options;
+};
+
 export default function AddCourseModal({ courseTag, branchTag, isVisible, onClose }) {
     const [selectedCurriculum, setSelectedCurriculum] = useState('65');
     const [importedData, setImportedData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const options = generateOptions();
-    const mutation = useImportCoursesMutation();
 
-    const handleCurriculumChange = (e) => setSelectedCurriculum(e.target.value);
+    const mutation = useImportCourseMutation();
     const handleImportDatabase = () => mutation.mutate(filteredData);
+
+    const handleCurriculumChange = (e) => {
+        setSelectedCurriculum(e.target.value);
+    }
 
     const handleImport = (event) => {
         const file = event.target.files[0];
@@ -22,8 +50,8 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
 
         const dataWithTags = result.data.map(item => ({
             ...item,
-            branchtag: branchTag,
-            coursetag: courseTag,
+            branch_tag: branchTag,
+            course_tag: courseTag,
             curriculum: selectedCurriculum
         }));
 
@@ -31,10 +59,10 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     };
 
     const filterDataByCourseTag = () => {
-        const filtered = importedData.filter(row => row.coursecode.startsWith(courseTag));
+        const filtered = importedData.filter(row => row.course_code.startsWith(courseTag));
         setFilteredData(filtered);
 
-        const remainingData = importedData.filter(row => !row.coursecode.startsWith(courseTag));
+        const remainingData = importedData.filter(row => !row.course_code.startsWith(courseTag));
         setImportedData(remainingData);
     };
 
@@ -52,18 +80,18 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
             handleImport={handleImport}
             onClose={onClose}
         />
+        
         <div className='w-full flex flex-col rounded-lg bg-slate-400'>
             <Table bg={'bg-orange-200'} text='Validation table'>
                 <tbody className="divide-y bg-white divide-gray-200">
                     {importedData.map((rowData, index) => (
-                        <TableRow
-                            key={index}
-                            courseCode={rowData.coursecode}
+                        <TableRow key={index}
+                            courseCode={rowData.course_code}
                             defaultCurriculum={selectedCurriculum}
-                            thName={rowData.thname}
-                            engName={rowData.engname}
+                            thName={rowData.th_name}
+                            engName={rowData.eng_name}
                             credits={rowData.credit}
-                            courseType={rowData.coursetype}
+                            courseType={rowData.course_type}
                             rowData={rowData}
                             onTransfer={handleTransfer}
                             options={options}
@@ -79,12 +107,12 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                     {filteredData.map((rowData, index) => (
                         <TableRow
                             key={index}
-                            courseCode={rowData.coursecode}
+                            courseCode={rowData.course_code}
                             defaultCurriculum={rowData.curriculum}
-                            thName={rowData.thname}
-                            engName={rowData.engname}
+                            thName={rowData.th_name}
+                            engName={rowData.eng_name}
                             credits={rowData.credit}
-                            courseType={rowData.coursetype}
+                            courseType={rowData.course_type}
                             rowData={rowData}
                             onTransfer={handleTransfer}
                             options={options}
@@ -94,7 +122,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
             </Table>
 
             <TableImportButton handleImportDatabase={handleImportDatabase} />
-            <Manualimport/>
+            <Manualimport />
         </div>
     </PortalContainer>
 }
@@ -129,40 +157,3 @@ function TableValidation({ filterDataByCourseTag }) {
         </div>
     );
 }
-
-const generateOptions = () => {
-    const options = [];
-    for (let i = 0; i < 100; i++) {
-        const value = i.toString().padStart(2, '0');
-        options.push(
-            <option key={i} value={value}>
-                {value}
-            </option>
-        );
-    }
-    return options;
-};
-
-const useImportCoursesMutation = () => {
-    return useMutation(async (data) => axios.post('/admin/importCourse', { data }), {
-        onSuccess: () => {
-            alert('Data imported successfully');
-        },
-        onError: (error) => {
-            alert('Error importing data: ' + error.message);
-        }
-    });
-}
-
-import { useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useMutation } from 'react-query';
-import axios from 'axios';
-import Papa from 'papaparse'; // Library for parsing CSV files
-
-import Table from '../components/Table';
-import TableRow from '../components/TableRow';
-import AddCourseSideBar from '../components/AddCourseSideBar';
-
-import transferIcon from '../../assets/transfer.png'
-import Manualimport from '../components/ManualImport';

@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import DataTable from 'react-data-table-component';
+
 export default function CourseItems({ courses, onShowBranches }) {
   const [searchTerm, setSearchTerm] = useState('');
   const handleSearch = (e) => {
@@ -5,13 +8,13 @@ export default function CourseItems({ courses, onShowBranches }) {
   };
 
   const filteredData = courses.filter((courses) =>   // Filter the data based on the search term
-    courses.coursecode.toLowerCase().includes(searchTerm.toLowerCase())
+    courses.course_code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const columns = [
     {
       name: 'Course code',
-      selector: (row) => row.coursecode,
+      selector: (row) => row.course_code,
       sortable: true,
     },
     {
@@ -21,15 +24,15 @@ export default function CourseItems({ courses, onShowBranches }) {
     },
     {
       name: 'Thai Name',
-      selector: (row) => row.thname,
+      selector: (row) => row.th_name,
       sortable: true,
-      cell: (row) => <div style={{ width: '100%', whiteSpace: 'pre-wrap' }}>{row.thname}</div>,
+      cell: (row) => <div style={{ width: '100%', whiteSpace: 'pre-wrap' }}>{row.th_name}</div>,
     },
     {
       name: 'English Name',
-      selector: (row) => row.engname,
+      selector: (row) => row.eng_name,
       sortable: true,
-      cell: (row) => <div style={{ width: '100%', whiteSpace: 'pre-wrap' }}>{row.engname}</div>,
+      cell: (row) => <div style={{ width: '100%', whiteSpace: 'pre-wrap' }}>{row.eng_name}</div>,
     },
     {
       name: 'Credit',
@@ -38,15 +41,14 @@ export default function CourseItems({ courses, onShowBranches }) {
     },
     {
       name: 'Course Type',
-      selector: (row) => row.coursetype,
+      selector: (row) => row.course_type,
       sortable: true,
     }
   ];
 
   return (
     <>
-      <button
-        className='col-span-8 rounded text-white font-bold bg-blue-500 hover:bg-blue-700 ms-10 mb-3 py-2 px-4'
+      <button className='col-span-8 rounded text-white font-bold bg-blue-500 hover:bg-blue-700 ms-10 mb-3 py-2 px-4'
         onClick={onShowBranches}>
         Return to Branch
       </button>
@@ -72,5 +74,3 @@ export default function CourseItems({ courses, onShowBranches }) {
   );
 }
 
-import { useState } from 'react';
-import DataTable from 'react-data-table-component';

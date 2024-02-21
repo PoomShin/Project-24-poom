@@ -15,6 +15,7 @@ app.use((req, res, next) => {
     next();
 });
 
+//admin api
 app.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -32,6 +33,7 @@ app.post('/admin/login', async (req, res) => {
         return res.status(500).json({ success: false, error: 'Internal server error' });
     }
 });
+
 app.get('/admin/branches', async (req, res) => {
     try {
         const branchRecords = await pool.query('SELECT * FROM branches');
@@ -41,34 +43,13 @@ app.get('/admin/branches', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch branches. Please try again later.' });
     }
 });
-app.get('/admin/professors/:branchtag', async (req, res) => {
-    const { branchtag } = req.params;
-
-    try {
-        const professors = await pool.query('SELECT * FROM profs WHERE branchtag = $1', [branchtag]);
-        res.json(professors.rows);
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-app.get('/admin/courses/:branchtag', async (req, res) => {
-    const { branchtag } = req.params;
-
-    try {
-        const courses = await pool.query(`SELECT coursecode, curriculum, thname, engname, credit, coursetype FROM courses WHERE branchtag = $1`, [branchtag]);
-        res.json(courses.rows);
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
 app.post('/admin/addBranch', async (req, res) => {
-    const { branchname, branchtag, coursetag } = req.body;
+    const { branch_name, branch_tag, course_tag } = req.body;
 
     try {
         const result = await pool.query(
-            'INSERT INTO branches (branchname, branchtag, coursetag) VALUES ($1, $2, $3) RETURNING *',
-            [branchname, "T" + branchtag, coursetag]
+            'INSERT INTO branches (branch_name, branch_tag, course_tag) VALUES ($1, $2, $3) RETURNING *',
+            [branch_name, "T" + branch_tag, course_tag]
         );
 
         const { rows: [newBranch] } = result;
@@ -78,13 +59,44 @@ app.post('/admin/addBranch', async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
-app.post('/admin/addProf', async (req, res) => {
-    const { name, email, role, branchtag } = req.body;
+app.delete('/admin/delBranch/:branch_tag', async (req, res) => {
+    const { branch_tag } = req.params;
 
     try {
         const result = await pool.query(
-            'INSERT INTO profs (name, email, role, branchtag) VALUES ($1, $2, $3, $4) RETURNING *',
-            [name, email, role, branchtag]
+            'DELETE FROM branches WHERE branch_tag = $1 RETURNING *',
+            [branch_tag]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ success: false, error: 'Branch not found' });
+        }
+
+        res.json({ success: true, message: 'Branch deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting branch:', error);
+        res.status(500).json({ success: false, error: 'Failed to delete branch. Please try again later.' });
+    }
+});
+
+
+app.get('/admin/profs/:branch_tag', async (req, res) => {
+    const { branch_tag } = req.params;
+
+    try {
+        const profs = await pool.query('SELECT * FROM profs WHERE branch_tag = $1', [branch_tag]);
+        res.json(profs.rows);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+app.post('/admin/addProf', async (req, res) => {
+    const { name, email, role, branch_tag } = req.body;
+
+    try {
+        const result = await pool.query(
+            'INSERT INTO profs (name, email, role, branch_tag) VALUES ($1, $2, $3, $4) RETURNING *',
+            [name, email, role, branch_tag]
         );
 
         const newProf = result.rows[0];
@@ -94,24 +106,6 @@ app.post('/admin/addProf', async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
-app.post('/admin/importCourse', async (req, res) => {
-    const { data } = req.body;
-
-    try {
-        // Loop through the array of data and insert each item into the database
-        for (const item of data) {
-            await pool.query(
-                'INSERT INTO courses (coursecode, curriculum, thname, engname, credit, coursetype, branchtag, coursetag, combined_code_curriculum) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-                [item.coursecode, parseInt(item.curriculum), item.thname, item.engname, item.credit, item.coursetype, item.branchtag, item.coursetag, `${item.coursecode}-${item.curriculum}`]
-            );
-        }
-
-        res.json({ success: true, message: 'Course data imported successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
 app.put('/admin/updateProf/:id', async (req, res) => {
     const { id } = req.params;
     const { name, email, role } = req.body;
@@ -133,7 +127,6 @@ app.put('/admin/updateProf/:id', async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
-
 app.delete('/admin/deleteProf/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -149,6 +142,34 @@ app.delete('/admin/deleteProf/:id', async (req, res) => {
     }
 });
 
+app.get('/admin/courses/:branch_tag', async (req, res) => {
+    const { branch_tag } = req.params;
+
+    try {
+        const courses = await pool.query(`SELECT course_code, curriculum, th_name, eng_name, credit, course_type FROM courses WHERE branch_tag = $1`, [branch_tag]);
+        res.json(courses.rows);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+app.post('/admin/importCourse', async (req, res) => {
+    const { data } = req.body;
+
+    try {
+        for (const item of data) {
+            await pool.query(
+                'INSERT INTO courses (course_code, curriculum, th_name, eng_name, credit, course_type, branch_tag, course_tag, combined_code_curriculum) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+                [item.course_code, parseInt(item.curriculum), item.th_name, item.eng_name, item.credit, item.course_type, item.branch_tag, item.course_tag, `${item.course_code}-${item.curriculum}`]
+            );
+        }
+
+        res.json({ success: true, message: 'Course data imported successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+//profs api
 app.post('/profs/login', async (req, res) => {
     const { email } = req.body;
 

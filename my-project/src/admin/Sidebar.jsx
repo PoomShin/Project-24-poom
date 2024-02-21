@@ -9,7 +9,7 @@ const menuItems = [
     { key: 'Logout', label: 'Log out', icon: logoutIcon },
 ];
 
-export default function Sidebar({ setCurrentPage, currentPage }) {
+export default function Sidebar({ currentPage, setCurrentPage }) {
     const navigate = useNavigate();
 
     const handleChangePage = (newPage) => {

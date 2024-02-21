@@ -1,5 +1,17 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useAdminContext } from '../context/Admin-Context';
+//components
+import TabBar from './components/TabBar';
+import BranchItems from './Items/BranchItems';
+import ProfItems from './Items/ProfItems';
+import CourseItems from './Items/CourseItems';
+import AddBranchModal from './Modals/AddBranchModal';
+import AddProfModal from './Modals/AddProfModal';
+import AddCourseModal from './Modals/AddCourseModal';
+//assets
+import branchIcon from '../assets/branch.png';
+import curriculumIcon from '../assets/course.png';
+import profIcon from '../assets/user.png';
 
 const iconMap = {
     'Branch': branchIcon,
@@ -9,16 +21,17 @@ const iconMap = {
 };
 
 export default function Content({ currentPage, setCurrentPage, selectedBranchTag, setSelectedBranchTag }) {
-    const { branches, profs, courses, branchError, profsError, coursesError } = useAdminContext();
-    const [selectedCourseTag, setSelectedCourseTag] = useState(null);
+    const [courseTag, setCourseTag] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const icon = useMemo(() => iconMap[currentPage], [currentPage]); //prevent unnecessary re-renders
+
+    const { branches, profs, courses } = useAdminContext();
+    const icon = useMemo(() => iconMap[currentPage], [currentPage]);
 
     const handleSelectBranch = useCallback((branchTag, courseTag) => {
         setCurrentPage(prevPage => prevPage === 'Branch' ? 'Prof' : 'Curriculum');
         setSelectedBranchTag(branchTag);
-        setSelectedCourseTag(courseTag);
-    }, [setCurrentPage, setSelectedBranchTag, setSelectedCourseTag]);
+        setCourseTag(courseTag);
+    }, [setCurrentPage, setSelectedBranchTag, setCourseTag]);
 
     const handleShowBranches = useCallback(() => {
         setCurrentPage(prevPage => prevPage === 'Curriculum' ? 'Course' : 'Branch');
@@ -35,7 +48,7 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
 
             {currentPage === 'Branch' && branches && (
                 <>
-                    <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />
+                    <BranchItems branches={branches} onSelectBranch={handleSelectBranch} setCurrentPage={setCurrentPage} />
                     <AddBranchModal isVisible={isModalOpen} onClose={toggleModal} />
                 </>
             )}
@@ -44,30 +57,16 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
             )}
             {currentPage === 'Prof' && profs && (
                 <>
-                    <ProfItems profs={profs} onShowBranches={handleShowBranches} />
                     <AddProfModal branchTag={selectedBranchTag} isVisible={isModalOpen} onClose={toggleModal} />
+                    <ProfItems profs={profs} onShowBranches={handleShowBranches} />
                 </>
             )}
             {currentPage === 'Curriculum' && courses && (
                 <>
                     <CourseItems courses={courses} onShowBranches={handleShowBranches} />
-                    <AddCourseModal courseTag={selectedCourseTag} branchTag={selectedBranchTag} isVisible={isModalOpen} onClose={toggleModal} />
+                    <AddCourseModal courseTag={courseTag} branchTag={selectedBranchTag} isVisible={isModalOpen} onClose={toggleModal} />
                 </>
             )}
         </div>
     );
 }
-
-// Import components
-import BranchItems from './Items/BranchItems';
-import ProfItems from './Items/ProfItems';
-import CourseItems from './Items/CourseItems';
-import AddBranchModal from './Modals/AddBranchModal';
-import AddProfModal from './Modals/AddProfModal';
-import AddCourseModal from './Modals/AddCourseModal';
-import TabBar from './components/TabBar';
-
-// Import assets
-import branchIcon from '../assets/branch.png';
-import curriculumIcon from '../assets/course.png';
-import profIcon from '../assets/user.png';

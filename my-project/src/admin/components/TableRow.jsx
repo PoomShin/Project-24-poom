@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export default function TableRow({ courseCode, defaultCurriculum, thName, engName, credits, courseType, onTransfer, rowData, options }) {
     const [localSelectedCurriculum, setLocalSelectedCurriculum] = useState('');
 
@@ -39,5 +41,3 @@ export default function TableRow({ courseCode, defaultCurriculum, thName, engNam
         </tr>
     );
 }
-
-import { useState } from "react";
