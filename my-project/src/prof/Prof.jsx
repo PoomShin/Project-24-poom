@@ -1,6 +1,6 @@
 import { useState, useMemo, useContext } from "react";
-import { UserContext } from "../context/User-Context";
 import { BranchProvider, CourseProvider } from "../context/Prof-Context";
+import { UserContext } from "../context/User-Context";
 import NavbarProf from "./NavbarProf";
 import SideBarLeft from "./SideBarLeft";
 import ContentProf from "./ContentProf";
@@ -9,9 +9,9 @@ import SideBarRight from "./SideBarRight";
 export default function Prof() {
     const { userContextValues, setUserContextValues } = useContext(UserContext);
     const [currentPage, setCurrentPage] = useState('Home');
-    const { name, role, branchtag } = userContextValues;
+    const { name, role, branchtag, imageUrl } = userContextValues;
 
-    const memoizedNavbar = useMemo(() => <NavbarProf name={name} role={role} />, [name, role]);
+    const memoizedNavbar = useMemo(() => <NavbarProf name={name} role={role} img={imageUrl} />, [name, role, imageUrl]);
 
     return (
         <BranchProvider>

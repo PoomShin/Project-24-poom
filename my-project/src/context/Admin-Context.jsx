@@ -27,9 +27,9 @@ const AdminProvider = ({ children, selectedBranchTag }) => {
 };
 
 const useFetchValue = (branch_tag) => {
-    const fetchBranches = useFetchData('/admin/branches');
+    const fetchBranches = useFetchData('/api/branches');
     const fetchProfs = useFetchData(`/admin/profs/${branch_tag}`);
-    const fetchCourses = useFetchData(`/admin/courses/${branch_tag}`);
+    const fetchCourses = useFetchData(`/api/courses/${branch_tag}`);
 
     return useMemo(() => ({
         branches: fetchBranches.data,

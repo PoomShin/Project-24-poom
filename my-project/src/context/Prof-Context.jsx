@@ -20,7 +20,6 @@ export const BranchProvider = ({ children }) => {
         </BranchContext.Provider>
     );
 };
-
 export const useBranchesContext = () => useContext(BranchContext);
 
 //courses table context
@@ -41,5 +40,4 @@ export const CourseProvider = ({ branchtag, children }) => {
         </CourseContext.Provider>
     );
 };
-
 export const useCoursesContext = () => useContext(CourseContext);

@@ -1,4 +1,4 @@
-export default function SectionItem({ group, quantity, unit, hours, day, start, end, professor, branch}) {
+export default function SectionItem({ group, quantity, unit, hours, day, start, end, professor, branch }) {
     return (
         <div className='relative h-full min-w-80 flex flex-col justify-center rounded-md bg-slate-700 mr-4'>
 

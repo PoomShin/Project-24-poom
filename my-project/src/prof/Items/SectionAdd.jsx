@@ -3,6 +3,7 @@ import plusIcon from '../../assets/plus.png';
 
 export default function SectionAdd({ onAddSection }) {
     const [isFormVisible, setIsFormVisible] = useState(false);
+
     const [formData, setFormData] = useState({
         group: '',
         quantity: '',
@@ -11,8 +12,8 @@ export default function SectionAdd({ onAddSection }) {
         day: '',
         start: '',
         end: '',
-        prof: '',
-        branchtag: ''
+        prof_name: '',
+        branch_tag: ''
     });
 
     const handleInputChange = (e) => {
@@ -30,8 +31,7 @@ export default function SectionAdd({ onAddSection }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         onAddSection(formData);
-        // Reset form data
-        setFormData({
+        setFormData({  // Reset form data
             group: '',
             quantity: '',
             unit: '',
@@ -39,8 +39,8 @@ export default function SectionAdd({ onAddSection }) {
             days: '',
             start: '',
             end: '',
-            prof: '',
-            branchtag: ''
+            prof_name: '',
+            branch_tag: ''
         });
         handleShowForm();
     };
@@ -52,15 +52,12 @@ export default function SectionAdd({ onAddSection }) {
                     <div className='absolute top-0 right-0 flex text-xs text-white mt-2 mr-2'>
                         <button className='bg-green-500 hover:bg-green-700 rounded mr-2 px-2 py-1'
                             type='submit'
-                        >
-                            Add
-                        </button>
+                        >Add</button>
+
                         <button className='bg-red-500 hover:bg-red-700  rounded px-2 py-1'
                             type='button'
                             onClick={handleShowForm}
-                        >
-                            Cancle
-                        </button>
+                        >Cancle</button>
                     </div>
 
                     <div className='flex self-center text-xs text-white'>
@@ -107,15 +104,15 @@ export default function SectionAdd({ onAddSection }) {
 
                     <div className='flex flex-col self-center text-xs text-white mt-3'>
                         <div>
-                            <InputSpan spanText={'อาจารย์'} spanClass={'ml-4 mr-1'} inputClass={' w-60 h-5'}
-                                name='prof'
+                            <InputSpan spanText={'อาจารย์'} spanClass={'ml-4 mr-1'} inputClass={'w-60 h-5'}
+                                name='prof_name'
                                 value={formData.prof}
                                 onChange={handleInputChange}
                             />
                         </div>
                         <div className='mt-4'>
                             <InputSpan spanText={'สาขา'} spanClass={'ml-4 mr-4'} inputClass={'w-60 h-5'}
-                                name='branchtag'
+                                name='branch_tag'
                                 value={formData.branchtag}
                                 onChange={handleInputChange}
                             />

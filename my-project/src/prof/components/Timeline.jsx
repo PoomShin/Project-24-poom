@@ -1,6 +1,7 @@
 import TimelineBlock from "./TimeLineBlock";
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 const generateTimeSlots = () => {
     const timeSlots = [];
     for (let hour = 8; hour < 20; hour++) {
@@ -17,48 +18,48 @@ export default function Timeline() {
     const timeSlots = generateTimeSlots();
 
     return (
-        <div className='overflow-x-auto border mx-1 rounded-lg bg-gray-800'>
+        <div className='overflow-x-auto border rounded-lg bg-gray-800 mx-1'>
             <div>
                 {/* Times row */}
-                <div className="grid grid-cols-26">
-                    <div className="border py-1 pl-1 col-span-2 dark:text-white dark:border-gray-700">
+                <div className='grid grid-cols-26'>
+                    <div className='col-span-2 border dark:text-white dark:border-gray-700 py-1 pl-1'>
                         Day/Time
                     </div>
                     {timeSlots.map((timeSlot, index) => (
-                        <div key={index} className="border py-1 pl-1 col-span-2 dark:text-white dark:border-gray-700">
+                        <div key={index} className='col-span-2 border dark:text-white dark:border-gray-700 py-1 pl-1'>
                             {timeSlot}
                         </div>
                     ))}
                 </div>
-                
+
                 {/* Days row */}
-                <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
+                <div className='min-h-4 grid grid-cols-26 md:min-h-12 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[0]} colorStyle={'bg-yellow-200'} />
                     <TimelineBlock startHour={'col-start-5'} endHour={'col-end-11'} />
                     <TimelineBlock startHour={'col-start-13'} endHour={'col-end-19'} />
                 </div>
 
-                <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
+                <div className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[1]} colorStyle={'bg-pink-400'} />
                 </div>
 
-                <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
+                <div className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[2]} colorStyle={'bg-green-400'} />
                 </div>
 
-                <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
+                <div className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[3]} colorStyle={'bg-orange-400'} />
                 </div>
 
-                <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
+                <div className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[4]} colorStyle={'bg-blue-400'} />
                 </div>
 
-                <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
+                <div className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[5]} colorStyle={'bg-purple-400'} />
                 </div>
 
-                <div className="grid grid-cols-26 min-h-4 md:min-h-12 border dark:border-gray-700">
+                <div className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[6]} colorStyle={'bg-red-400'} />
                 </div>
             </div>

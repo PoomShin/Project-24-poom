@@ -20,7 +20,7 @@ export default function Login() {
             }, 100);
         } else alert(message);
     });
-    const profLoginMutation = useLoginMutation('/profs/login', ({ success, message, id, name, email, role, branchtag }) => {
+    const profLoginMutation = useLoginMutation('/profs/login', ({ success, message, id, name, email, role, branch_tag }) => {
         if (success) {
             const existingUserData = JSON.parse(localStorage.getItem('userData')) || {};
             const updatedUserData = {
@@ -28,11 +28,11 @@ export default function Login() {
                 name,
                 email,
                 role,
-                branchtag,
+                branch_tag,
                 ...existingUserData
             };
             localStorage.setItem('userData', JSON.stringify(updatedUserData));
-            navigate(`/prof/${role}/${branchtag}`);
+            navigate(`/prof/${role}/${branch_tag}`);
             setTimeout(() => {
                 window.location.reload();
             }, 100);

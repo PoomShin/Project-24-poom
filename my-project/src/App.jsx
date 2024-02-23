@@ -3,7 +3,7 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
   { path: '/', element: <Login /> },
   { path: '/admin', element: <Admin /> },
-  { path: '/prof/:role/:branchtag', element: <Prof /> },
+  { path: '/prof/:role/:branch_tag', element: <Prof /> },
 ]);
 
 export default function App() {

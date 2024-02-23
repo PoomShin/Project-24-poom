@@ -34,7 +34,7 @@ app.post('/admin/login', async (req, res) => {
     }
 });
 
-app.get('/admin/branches', async (req, res) => {
+app.get('/api/branches', async (req, res) => {
     try {
         const branchRecords = await pool.query('SELECT * FROM branches');
         res.json(branchRecords.rows);
@@ -142,16 +142,6 @@ app.delete('/admin/deleteProf/:id', async (req, res) => {
     }
 });
 
-app.get('/admin/courses/:branch_tag', async (req, res) => {
-    const { branch_tag } = req.params;
-
-    try {
-        const courses = await pool.query(`SELECT course_code, curriculum, th_name, eng_name, credit, course_type FROM courses WHERE branch_tag = $1`, [branch_tag]);
-        res.json(courses.rows);
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
 app.post('/admin/importCourse', async (req, res) => {
     const { data } = req.body;
 
@@ -174,12 +164,12 @@ app.post('/profs/login', async (req, res) => {
     const { email } = req.body;
 
     try {
-        const result = await pool.query('SELECT id, name, role, branchtag FROM profs WHERE email = $1', [email]);
+        const result = await pool.query('SELECT id, name, role, branch_tag FROM profs WHERE email = $1', [email]);
         const professor = result.rows[0];
 
         if (professor) {
-            const { id, name, role, branchtag } = professor;
-            return res.json({ success: true, message: 'Professor login successful', id, name, email, role, branchtag });
+            const { id, name, role, branch_tag } = professor;
+            return res.json({ success: true, message: 'Professor login successful', id, name, email, role, branch_tag });
         } else {
             return res.status(404).json({ success: false, message: 'Professor not found' });
         }
@@ -189,20 +179,11 @@ app.post('/profs/login', async (req, res) => {
     }
 });
 
-app.get('/api/branches', async (req, res) => {
-    try {
-        const branches = await pool.query('SELECT * FROM branches');
-        res.json(branches.rows);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch branch tags' });
-    }
-});
-
-app.get('/api/courses/:branchtag', async (req, res) => {
-    const { branchtag } = req.params;
+app.get('/api/courses/:branch_tag', async (req, res) => {
+    const { branch_tag } = req.params;
 
     try {
-        const courses = await pool.query('SELECT * FROM courses WHERE branchtag = $1', [branchtag]);
+        const courses = await pool.query('SELECT * FROM courses WHERE branch_tag = $1', [branch_tag]);
         res.json(courses.rows);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch courses' });

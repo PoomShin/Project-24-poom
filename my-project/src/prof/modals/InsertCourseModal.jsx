@@ -4,7 +4,7 @@ import SectionAdd from '../Items/SectionAdd';
 import SectionItem from '../Items/SectionItem';
 
 function InputField({ width, ...props }) {
-    return <input className={`mx-2 p-1 rounded-lg bg-blue-100 w-${width}`}
+    return <input className={`w-${width} rounded-lg bg-blue-100 mx-2 p-1`}
         {...props}
     />;
 }
@@ -41,7 +41,7 @@ export default function InsertCourseModal({ isVisible, onClose }) {
                 </div>
             </div>
 
-            <div className="absolute flex bottom-0 right-0 mb-4 mr-8">
+            <div className='absolute flex bottom-0 right-0 mb-4 mr-8'>
                 <button className='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
                     type='button'
                     onClick={() => { console.log(lectureSection) }}
@@ -61,7 +61,7 @@ export default function InsertCourseModal({ isVisible, onClose }) {
 
 const PortalContainer = ({ children }) => {
     return createPortal(
-        <div className="fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50">
+        <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50'>
             {children}
         </div>,
         document.getElementById('root-modal')
