@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 
 //branches table context
@@ -13,8 +13,20 @@ export const BranchProvider = ({ children }) => {
         }
     );
 
+    const generateBranchesWithYears = (branches) => {
+        const branch_year = [];
+        for (const branch of branches) {
+            for (let i = 1; i <= 4; i++) {
+                branch_year.push(`${branch.branch_tag}/${i}`);
+            }
+        }
+        return branch_year;
+    };
+    const branch_year = useMemo(() => generateBranchesWithYears(branches || []), [branches]);
+
     const contextValue = useMemo(() => ({
         branches,
+        branch_year,
         isLoading,
         isError
     }), [branches, isLoading, isError]);
@@ -29,11 +41,11 @@ export const useBranchesContext = () => useContext(BranchContext);
 
 //courses table context
 const CourseContext = createContext();
-export const CourseProvider = ({ branchtag, children }) => {
+export const CourseProvider = ({ branch_tag, children }) => {
     const { data: courses, isLoading: coursesLoading, isError: coursesError } = useQuery(
         'courseData',
         async () => {
-            const response = await axios.get(`/api/courses/${branchtag}`);
+            const response = await axios.get(`/api/courses/${branch_tag}`);
             return response.data;
         }
     );
@@ -52,14 +64,14 @@ export const CourseProvider = ({ branchtag, children }) => {
 };
 export const useCoursesContext = () => useContext(CourseContext);
 
-// Professors with branch_tag context
+// Profs table with branch_tag parameter
 const ProfsContext = createContext();
-export const ProfsProvider = ({ branchTag, children }) => {
+export const ProfsProvider = ({ branch_tag, children }) => {
     const { data: profs, isLoading, isError } = useQuery(
-        ['profsData', branchTag], // Providing branchTag as a query key
+        ['profsData', branch_tag], // Providing branchTag as a query key
         async () => {
             try {
-                const response = await axios.get(`/api/profs/${branchTag}`);
+                const response = await axios.get(`/api/profs/${branch_tag}`);
                 return response.data;
             } catch (error) {
                 throw new Error(`Failed to fetch professors: ${error.message}`);
@@ -80,3 +92,25 @@ export const ProfsProvider = ({ branchTag, children }) => {
     );
 };
 export const useProfsContext = () => useContext(ProfsContext);
+
+//API Context
+const addGroup = async (groupData) => {
+    try {
+        const response = await axios.post('/api/groups', groupData);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data.error || 'Failed to add group. Please try again later.');
+    }
+};
+
+const useAddGroupMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation((groupData) => addGroup(groupData), {
+        onSuccess: () => {
+            queryClient.invalidateQueries('groups');
+        },
+    });
+};
+
+export { useAddGroupMutation }

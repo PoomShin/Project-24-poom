@@ -1,22 +1,22 @@
-import { useState, useMemo, useContext } from "react";
+import { useState, useMemo } from "react";
 import { BranchProvider, CourseProvider, ProfsProvider } from "../context/Prof-Context";
-import { UserContext } from "../context/User-Context";
-import NavbarProf from "./NavbarProf";
-import SideBarLeft from "./SideBarLeft";
-import ContentProf from "./ContentProf";
-import SideBarRight from "./SideBarRight";
+import { useUserContext } from "../context/User-Context";
+import NavbarProf from "./layouts/NavbarProf";
+import SideBarLeft from "./layouts/SideBarLeft";
+import ContentProf from "./layouts/ContentProf";
+import SideBarRight from "./layouts/SideBarRight";
 
 export default function Prof() {
-    const { userContextValues, setUserContextValues } = useContext(UserContext);
+    const { userContextValues, setUserContextValues } = useUserContext()
     const [currentPage, setCurrentPage] = useState('Home');
-    const { name, role, branchtag, imageUrl } = userContextValues;
+    const { name, role, branch_tag, imageUrl } = userContextValues;
 
     const memoizedNavbar = useMemo(() => <NavbarProf name={name} role={role} img={imageUrl} />, [name, role, imageUrl]);
 
     return (
         <BranchProvider>
-            <CourseProvider branchtag={branchtag}>
-                <ProfsProvider branchTag={branchtag}>
+            <CourseProvider branch_tag={branch_tag}>
+                <ProfsProvider branch_tag={branch_tag}>
                     <div className="grid grid-cols-12 w-full h-full">
                         {memoizedNavbar}
                         <SideBarLeft currentPage={currentPage} setCurrentPage={setCurrentPage} />

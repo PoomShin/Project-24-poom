@@ -79,7 +79,6 @@ app.delete('/admin/delBranch/:branch_tag', async (req, res) => {
     }
 });
 
-
 app.get('/api/profs/:branch_tag', async (req, res) => {
     const { branch_tag } = req.params;
 
@@ -94,6 +93,15 @@ app.post('/admin/addProf', async (req, res) => {
     const { name, email, role, branch_tag } = req.body;
 
     try {
+        const existingProf = await pool.query(
+            'SELECT * FROM profs WHERE name = $1',
+            [name]
+        );
+
+        if (existingProf.rows.length > 0) {
+            return res.status(400).json({ success: false, error: 'Professor with the same name already exists' });
+        }
+
         const result = await pool.query(
             'INSERT INTO profs (name, email, role, branch_tag) VALUES ($1, $2, $3, $4) RETURNING *',
             [name, email, role, branch_tag]
@@ -187,6 +195,39 @@ app.get('/api/courses/:branch_tag', async (req, res) => {
         res.json(courses.rows);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch courses' });
+    }
+});
+
+app.post('/api/groups', async (req, res) => {
+    const { mergedSections, course_id } = req.body;
+
+    try {
+        for (const groupData of mergedSections) {
+            const { group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, prof_name, branch_year } = groupData;
+
+            const groupResult = await pool.query(
+                'INSERT INTO groups (course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
+                [course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room]
+            );
+
+            const groupId = groupResult.rows[0].id;
+
+            // Add data to group_profs table
+            for (const prof of prof_name) {
+                await pool.query('INSERT INTO group_profs (group_id, prof_name) VALUES ($1, $2)', [groupId, prof]);
+            }
+
+            // Add data to group_branches table
+            for (const branch of branch_year) {
+                const branch_tag = branch.substring(0, 3);
+                await pool.query('INSERT INTO group_branch_year (group_id, branch_year, branch_tag) VALUES ($1, $2, $3)', [groupId, branch, branch_tag]);
+            }
+        }
+
+        res.json({ success: true, message: 'Data added successfully' });
+    } catch (error) {
+        console.error('Error adding data:', error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 });
 

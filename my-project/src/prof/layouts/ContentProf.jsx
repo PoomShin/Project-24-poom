@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react';
-import { useBranchesContext } from '../context/Prof-Context';
-import Timeline from './components/Timeline';
-import InsertCourseModal from './modals/InsertCourseModal';
-import { IconData } from './data/IconData';
+import { useBranchesContext } from '../../context/Prof-Context';
+import Timeline from '../components/Timeline';
+import InsertCourseModal from '../modules/InsertCourseModal';
+import { IconData } from '../data/IconData';
 
 export default function ContentProf({ currentPage, userData }) {
+    const { branches } = useBranchesContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [branch, setBranch] = useState(userData.branchtag);
     const [year, setYear] = useState('');
-    const { branches } = useBranchesContext();
     const icon = IconData[currentPage];
 
     const { id, name, email, role, branch_tag } = userData;

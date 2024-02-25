@@ -92,7 +92,7 @@ const useAddProfMutation = () => {
         onSuccess: (data) => {
             if (data.success) {
                 const { newProf } = data;
-                alert('Professor added successfully', newProf);
+                alert(`Professor added successfully:\nName: ${newProf.name}\nEmail: ${newProf.email}\nRole: ${newProf.role}`);
             } else {
                 alert(data.error || 'Unknown error');
             }
@@ -100,7 +100,11 @@ const useAddProfMutation = () => {
         },
         onError: (error) => {
             console.error(error.message);
-            alert('An error occurred during submission');
+            if (error.message === 'Professor with the same name already exists') {
+                alert('A professor with the same name already exists');
+            } else {
+                alert('An error occurred during submission');
+            }
         },
     });
 };

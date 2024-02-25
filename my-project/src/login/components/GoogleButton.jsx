@@ -25,15 +25,14 @@ export default function GoogleButton({ setFormData, handleLogin }) {
     }, []);
 
     const handleGoogleLoginSuccess = (res) => {
-        setProfile(res.profileObj);
         const { email, imageUrl } = res.profileObj;
+        setProfile(res.profileObj);
         setFormData(prevFormData => ({
             ...prevFormData,
             email: email
         }));
         localStorage.setItem('userData', JSON.stringify({ imageUrl }));
         handleLogin();
-        setProfile(null);
     };
 
     const handleGoogleLoginFailure = (res) => {
@@ -46,9 +45,7 @@ export default function GoogleButton({ setFormData, handleLogin }) {
         <div className='flex flex-col items-center border border-solid border-black rounded-tl-lg rounded-tr-lg px-12 pt-3 pb-6 bg-emerald-600'>
             <h1 className='font-bold text-white'>For Professor</h1>
             {profile ? (
-                <div>
-                    <GoogleLogout clientId={clientId} buttonText='Log out' onLogoutSuccess={() => setProfile(null)} />
-                </div>
+                <GoogleLogout clientId={clientId} buttonText='Log out' onLogoutSuccess={() => setProfile(null)} />
             ) : (
                 <GoogleLogin
                     clientId={clientId}
