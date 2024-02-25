@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import plusIcon from '../../assets/plus.png';
+import '../../../css/Minimal_Scrollbar.css'
 
-export default function SectionAdd({ onAddSection, isLab }) {
+export default function GroupAdd({ onAddSection, isLab }) {
     const [isFormVisible, setIsFormVisible] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -12,8 +13,8 @@ export default function SectionAdd({ onAddSection, isLab }) {
         day: '',
         start: '',
         end: '',
-        prof_name: '',
-        branch_tag: '',
+        prof_name: [],
+        branch_tags: [],
         lab_room: ''
     });
 
@@ -59,12 +60,10 @@ export default function SectionAdd({ onAddSection, isLab }) {
                     </div>
 
                     <div className='flex flex-col self-center text-xs text-white mt-3'>
-                        <div>
-                            <InputSpan spanText='อาจารย์' spanClass='ml-4 mr-1' inputClass='w-60 h-5' name='prof_name' value={formData.prof_name} onChange={handleInputChange} />
-                        </div>
-                        <div className='mt-4'>
-                            <InputSpan spanText='สาขา' spanClass='ml-4 mr-4' inputClass='w-60 h-5' name='branch_tag' value={formData.branch_tag} onChange={handleInputChange} />
-                        </div>
+                        <MultipleInput spanText='อาจารย์' spanClass={'ml-2 mr-4'} formData={formData} setFormData={setFormData} inputType='prof_name' />
+                        <br className='my-2' />
+                        <MultipleInput spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_tags' />
+
                         {isLab &&
                             <div className='mt-4'>
                                 <InputSpan spanText='ห้องแลป' spanClass='ml-3 mr-1' inputClass='w-60 h-5' name='lab_room' value={formData.lab_room} onChange={handleInputChange} />
@@ -85,3 +84,50 @@ const InputSpan = ({ spanText, spanClass, inputClass, name, value, onChange }) =
         </>
     )
 }
+
+const MultipleInput = ({ spanText, spanClass, formData, setFormData, inputType }) => {
+    const handleAdd = () => {
+        setFormData(prevData => ({
+            ...prevData,
+            [inputType]: [...prevData[inputType], ''] // Add an empty string to the specified inputType array
+        }));
+    };
+    const handleChange = (e, index) => {
+        const { value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [inputType]: prevData[inputType].map((item, i) => (i === index ? value : item))
+        }));
+    };
+    const handleRemove = (index) => {
+        setFormData(prevData => ({
+            ...prevData,
+            [inputType]: prevData[inputType].filter((_, i) => i !== index)
+        }));
+    };
+
+    return (
+        <div className='w-72 flex items-center text-xs text-white'>
+            <span className={spanClass}>{spanText}</span>
+            <div className='overflow-x-auto flex items-center'>
+                {formData[inputType].map((item, index) => (
+                    <div key={index} className='relative inline-block mr-2'>
+                        <input
+                            className='border rounded-sm text-black p-1 mr-2 w-10'
+                            type='text'
+                            maxLength={3}
+                            value={item}
+                            onChange={(e) => handleChange(e, index)}
+                        />
+                        {index !== formData[inputType].length - 1 && (
+                            <button type='button' className='absolute top-0 right-2 text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
+                        )}
+                    </div>
+                ))}
+                <img src={plusIcon} alt={`Add ${inputType}`} className='h-5 cursor-pointer' onClick={handleAdd} />
+            </div>
+        </div>
+    );
+};
+
+

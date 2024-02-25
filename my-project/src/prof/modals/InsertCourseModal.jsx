@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import SectionAdd from '../Items/SectionAdd';
-import SectionItem from '../Items/SectionItem';
+import GroupAdd from '../Modules/GroupAdd';
+import GroupItem from '../Modules/GroupItem';
+import { useCoursesContext } from '../../context/Prof-Context';
 
 export default function InsertCourseModal({ isVisible, onClose }) {
     const [lectureSection, setLectureSection] = useState([]);
@@ -66,9 +67,9 @@ const SectionList = ({ sections, onAddSection, isLab }) => {
     return (
         <div className={`h-64 flex overflow-x-auto ${isLab ? 'bg-orange-100' : 'bg-green-100'} p-4`}>
             {sections.map((sec, index) => (
-                <SectionItem key={index} {...sec} isLab={isLab} />
+                <GroupItem key={index} {...sec} isLab={isLab} />
             ))}
-            <SectionAdd onAddSection={onAddSection} isLab={isLab} />
+            <GroupAdd onAddSection={onAddSection} isLab={isLab} />
         </div>
     );
 }

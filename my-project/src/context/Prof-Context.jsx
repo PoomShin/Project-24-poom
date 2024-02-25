@@ -1,10 +1,9 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
 //branches table context
 const BranchContext = createContext();
-
 export const BranchProvider = ({ children }) => {
     const { data: branches, isLoading, isError } = useQuery(
         'branchTags',
@@ -14,8 +13,14 @@ export const BranchProvider = ({ children }) => {
         }
     );
 
+    const contextValue = useMemo(() => ({
+        branches,
+        isLoading,
+        isError
+    }), [branches, isLoading, isError]);
+
     return (
-        <BranchContext.Provider value={{ branches }}>
+        <BranchContext.Provider value={contextValue}>
             {children}
         </BranchContext.Provider>
     );
@@ -24,7 +29,6 @@ export const useBranchesContext = () => useContext(BranchContext);
 
 //courses table context
 const CourseContext = createContext();
-
 export const CourseProvider = ({ branchtag, children }) => {
     const { data: courses, isLoading: coursesLoading, isError: coursesError } = useQuery(
         'courseData',
@@ -34,8 +38,14 @@ export const CourseProvider = ({ branchtag, children }) => {
         }
     );
 
+    const contextValue = useMemo(() => ({
+        courses,
+        coursesLoading,
+        coursesError
+    }), [courses, coursesLoading, coursesError]);
+
     return (
-        <CourseContext.Provider value={{ courses }}>
+        <CourseContext.Provider value={contextValue}>
             {children}
         </CourseContext.Provider>
     );

@@ -1,7 +1,5 @@
 import TimelineBlock from "./TimeLineBlock";
 
-const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 const generateTimeSlots = () => {
     const timeSlots = [];
     for (let hour = 8; hour < 20; hour++) {
@@ -14,9 +12,10 @@ const generateTimeSlots = () => {
     return timeSlots;
 };
 
-export default function Timeline() {
-    const timeSlots = generateTimeSlots();
+const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const timeSlots = generateTimeSlots();
 
+export default function Timeline() {
     return (
         <div className='overflow-x-auto border rounded-lg bg-gray-800 mx-1'>
             <div>
@@ -31,12 +30,9 @@ export default function Timeline() {
                         </div>
                     ))}
                 </div>
-
                 {/* Days row */}
                 <div className='min-h-4 grid grid-cols-26 md:min-h-12 border dark:border-gray-700'>
                     <DayBlock DayText={daysOfWeek[0]} colorStyle={'bg-yellow-200'} />
-                    <TimelineBlock startHour={'col-start-5'} endHour={'col-end-11'} />
-                    <TimelineBlock startHour={'col-start-13'} endHour={'col-end-19'} />
                 </div>
 
                 <div className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
