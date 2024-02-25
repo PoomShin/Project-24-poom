@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import SectionAdd from '../Items/SectionAdd';
 import SectionItem from '../Items/SectionItem';
 
-function InputField({ width, ...props }) {
-    return <input className={`w-${width} rounded-lg bg-blue-100 mx-2 p-1`}
-        {...props}
-    />;
-}
-
 export default function InsertCourseModal({ isVisible, onClose }) {
     const [lectureSection, setLectureSection] = useState([]);
+    const [labSection, setLabSection] = useState([]);
 
     const handleAddLectureSection = curSection => {
         setLectureSection([...lectureSection, curSection]);
+    }
+
+    const handleAddLabSection = curSection => {
+        setLabSection([...labSection, curSection]);
     }
 
     return isVisible ? (
@@ -32,31 +31,22 @@ export default function InsertCourseModal({ isVisible, onClose }) {
 
             <div className='flex flex-col w-10/12'>
                 <span className='text-3xl text-white mb-2'>Lecture</span>
-                <div className='h-64 overflow-x-auto flex bg-green-100 p-4'>
-                    <SectionAdd onAddSection={handleAddLectureSection} />
-                </div>
+                <SectionList sections={lectureSection} onAddSection={handleAddLectureSection} />
 
                 <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
-                <div className='h-64 flex overflow-x-auto bg-orange-100 p-4'>
-                </div>
+                <SectionList sections={labSection} onAddSection={handleAddLabSection} isLab />
             </div>
 
             <div className='absolute flex bottom-0 right-0 mb-4 mr-8'>
-                <button className='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
-                    type='button'
-                    onClick={() => { console.log(lectureSection) }}
-                >
+                <button className='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4' type='button' onClick={() => { console.log(lectureSection) }}>
                     Submit
                 </button>
-                <button className='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
-                    type='button'
-                    onClick={onClose}
-                >
+                <button className='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4' type='button' onClick={onClose}>
                     Close
                 </button>
             </div>
         </PortalContainer>
-    ) : undefined;
+    ) : null;
 }
 
 const PortalContainer = ({ children }) => {
@@ -67,3 +57,18 @@ const PortalContainer = ({ children }) => {
         document.getElementById('root-modal')
     );
 };
+
+const InputField = ({ width, ...props }) => {
+    return <input className={`w-${width} rounded-lg bg-blue-100 mx-2 p-1`} {...props} />;
+}
+
+const SectionList = ({ sections, onAddSection, isLab }) => {
+    return (
+        <div className={`h-64 flex overflow-x-auto ${isLab ? 'bg-orange-100' : 'bg-green-100'} p-4`}>
+            {sections.map((sec, index) => (
+                <SectionItem key={index} {...sec} isLab={isLab} />
+            ))}
+            <SectionAdd onAddSection={onAddSection} isLab={isLab} />
+        </div>
+    );
+}
