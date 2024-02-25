@@ -80,7 +80,7 @@ app.delete('/admin/delBranch/:branch_tag', async (req, res) => {
 });
 
 
-app.get('/admin/profs/:branch_tag', async (req, res) => {
+app.get('/api/profs/:branch_tag', async (req, res) => {
     const { branch_tag } = req.params;
 
     try {

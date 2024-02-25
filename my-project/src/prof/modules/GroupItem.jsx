@@ -16,11 +16,17 @@ export default function GroupItem({ group, quantity, unit, hours, day, start, en
             </div>
 
             <div className='flex flex-col self-center text-white mt-3'>
-                <div>
-                    <span className='ml-4 mr-1 px-2 bg-gray-800'>อาจารย์: {prof_name}</span>
+                <div className='w-72 flex overflow-x-auto'>
+                    <span className='ml-4 mr-1 px-2 bg-gray-800'>อาจารย์: </span>
+                    {prof_name && prof_name.map((prof, index) => (
+                        <span key={index} className='ml-1 mr-1 px-2 bg-gray-500'>{prof}</span>
+                    ))}
                 </div>
-                <div className='mt-4'>
-                    <span className='ml-4 mr-4 px-2 bg-gray-800'>สาขา: {branch_tag}</span>
+                <div className='w-72 flex overflow-x-auto mt-4'>
+                    <span className='ml-4 mr-1 px-2 bg-gray-800'>สาขา:</span>
+                    {branch_tag && branch_tag.map((branch, index) => (
+                        <span key={index} className='ml-1 mr-1 px-2 bg-gray-500'>{branch}</span>
+                    ))}
                 </div>
                 {isLab &&
                     <div className='mt-4'>

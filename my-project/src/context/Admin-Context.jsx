@@ -28,7 +28,7 @@ const AdminProvider = ({ children, selectedBranchTag }) => {
 
 const useFetchValue = (branch_tag) => {
     const fetchBranches = useFetchData('/api/branches');
-    const fetchProfs = useFetchData(`/admin/profs/${branch_tag}`);
+    const fetchProfs = useFetchData(`/api/profs/${branch_tag}`);
     const fetchCourses = useFetchData(`/api/courses/${branch_tag}`);
 
     return useMemo(() => ({
@@ -161,7 +161,6 @@ const importCourse = async (data) => {
         throw new Error(error.response?.data.error || 'Failed to import course data');
     }
 };
-
 const useImportCourseMutation = () => {
     return useMutation(importCourse, {
         onSuccess: () => {

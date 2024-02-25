@@ -30,7 +30,7 @@ export default function InsertCourseModal({ isVisible, onClose }) {
                 </div>
             </div>
 
-            <div className='flex flex-col w-10/12'>
+            <div className='flex flex-col w-10/12 overflow-scroll'>
                 <span className='text-3xl text-white mb-2'>Lecture</span>
                 <SectionList sections={lectureSection} onAddSection={handleAddLectureSection} />
 

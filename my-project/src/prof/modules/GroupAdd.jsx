@@ -14,7 +14,7 @@ export default function GroupAdd({ onAddSection, isLab }) {
         start: '',
         end: '',
         prof_name: [],
-        branch_tags: [],
+        branch_tag: [],
         lab_room: ''
     });
 
@@ -46,7 +46,7 @@ export default function GroupAdd({ onAddSection, isLab }) {
                         <button className='bg-red-500 hover:bg-red-700 rounded px-2 py-1' type='button' onClick={handleShowForm}>Cancel</button>
                     </div>
 
-                    <div className='flex self-center text-xs text-white'>
+                    <div className='flex self-center text-xs text-white mt-4'>
                         <InputSpan spanText='หมู่' spanClass='ml-4 mr-2' inputClass='w-10 h-5' name='group' value={formData.group} onChange={handleInputChange} />
                         <InputSpan spanText='จำนวน' spanClass='mr-2' inputClass='w-10 h-5' name='quantity' value={formData.quantity} onChange={handleInputChange} />
                         <InputSpan spanText='หน่วย' spanClass='mr-2' inputClass='w-5 h-5' name='unit' value={formData.unit} onChange={handleInputChange} />
@@ -62,7 +62,7 @@ export default function GroupAdd({ onAddSection, isLab }) {
                     <div className='flex flex-col self-center text-xs text-white mt-3'>
                         <MultipleInput spanText='อาจารย์' spanClass={'ml-2 mr-4'} formData={formData} setFormData={setFormData} inputType='prof_name' />
                         <br className='my-2' />
-                        <MultipleInput spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_tags' />
+                        <MultipleInput spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_tag' />
 
                         {isLab &&
                             <div className='mt-4'>
@@ -76,6 +76,7 @@ export default function GroupAdd({ onAddSection, isLab }) {
     );
 }
 
+//Components
 const InputSpan = ({ spanText, spanClass, inputClass, name, value, onChange }) => {
     return (
         <>
@@ -129,5 +130,3 @@ const MultipleInput = ({ spanText, spanClass, formData, setFormData, inputType }
         </div>
     );
 };
-
-

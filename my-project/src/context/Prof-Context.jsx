@@ -51,3 +51,32 @@ export const CourseProvider = ({ branchtag, children }) => {
     );
 };
 export const useCoursesContext = () => useContext(CourseContext);
+
+// Professors with branch_tag context
+const ProfsContext = createContext();
+export const ProfsProvider = ({ branchTag, children }) => {
+    const { data: profs, isLoading, isError } = useQuery(
+        ['profsData', branchTag], // Providing branchTag as a query key
+        async () => {
+            try {
+                const response = await axios.get(`/api/profs/${branchTag}`);
+                return response.data;
+            } catch (error) {
+                throw new Error(`Failed to fetch professors: ${error.message}`);
+            }
+        }
+    );
+
+    const contextValue = useMemo(() => ({
+        profs,
+        isLoading,
+        isError
+    }), [profs, isLoading, isError]);
+
+    return (
+        <ProfsContext.Provider value={contextValue}>
+            {children}
+        </ProfsContext.Provider>
+    );
+};
+export const useProfsContext = () => useContext(ProfsContext);
