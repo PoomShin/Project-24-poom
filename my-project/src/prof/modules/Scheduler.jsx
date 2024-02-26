@@ -45,7 +45,7 @@ const DayRows = () => {
         <>
             {daysOfWeek.map((day, index) => (
                 <div key={index} className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700'>
-                    <DayBlock DayText={day} colorStyle={`bg-${getColorForDay(index)}-400`} />
+                    <DayBlock DayText={day} colorStyle={getColorForDay(day)} />
                 </div>
             ))}
         </>
@@ -57,11 +57,19 @@ const DayBlock = ({ DayText, colorStyle }) => {
         <div className={`first-line:p-1 md:p-3 col-span-2 border-r-2 dark:border-gray-700 ${colorStyle}`}>
             <span className='font-bold dark:text-gray-900'>{DayText}</span>
         </div>
-    )
-}
+    );
+};
 
-const getColorForDay = (index) => {
-    const colors = ['yellow', 'pink', 'green', 'orange', 'blue', 'purple', 'red'];
-    return colors[index % colors.length];
+const getColorForDay = (dayOfWeek) => {
+    const colorMap = {
+        'Mon': 'bg-yellow-400',
+        'Tue': 'bg-pink-400',
+        'Wed': 'bg-green-400',
+        'Thu': 'bg-orange-400',
+        'Fri': 'bg-blue-400',
+        'Sat': 'bg-purple-400',
+        'Sun': 'bg-red-400',
+    };
+    return colorMap[dayOfWeek];
 }
 
