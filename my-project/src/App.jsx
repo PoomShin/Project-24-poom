@@ -11,7 +11,7 @@ export default function App() {
     <UserProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />} 
+        {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
       </QueryClientProvider>
     </UserProvider>
   );

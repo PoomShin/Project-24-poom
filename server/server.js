@@ -15,7 +15,7 @@ app.use((req, res, next) => {
     next();
 });
 
-//admin api
+//Admin API
 app.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -25,9 +25,9 @@ app.post('/admin/login', async (req, res) => {
 
         if (user) {
             const { name, role } = user;
-            return res.json({ success: true, message: 'Login successful', name, role });
+            return res.json({ message: 'Login successful', name, role });
         } else
-            return res.status(404).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ message: 'Incorrect username or password' });
 
     } catch (error) {
         return res.status(500).json({ success: false, error: 'Internal server error' });
@@ -54,9 +54,9 @@ app.post('/admin/addBranch', async (req, res) => {
 
         const { rows: [newBranch] } = result;
 
-        res.json({ success: true, message: 'Branch added successfully', newBranch });
+        res.json({ message: 'Branch added successfully', newBranch });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: error.message });
     }
 });
 app.delete('/admin/delBranch/:branch_tag', async (req, res) => {
@@ -69,13 +69,13 @@ app.delete('/admin/delBranch/:branch_tag', async (req, res) => {
         );
 
         if (result.rowCount === 0) {
-            return res.status(404).json({ success: false, error: 'Branch not found' });
+            return res.status(404).json({ error: 'Branch not found' });
         }
 
-        res.json({ success: true, message: 'Branch deleted successfully' });
+        res.json({ message: 'Branch deleted successfully' });
     } catch (error) {
         console.error('Error deleting branch:', error);
-        res.status(500).json({ success: false, error: 'Failed to delete branch. Please try again later.' });
+        res.status(500).json({ error: 'Failed to delete branch. Please try again later.' });
     }
 });
 
@@ -99,7 +99,7 @@ app.post('/admin/addProf', async (req, res) => {
         );
 
         if (existingProf.rows.length > 0) {
-            return res.status(400).json({ success: false, error: 'Professor with the same name already exists' });
+            return res.status(400).json({ error: 'Professor with the same name or email already exists' });
         }
 
         const result = await pool.query(
@@ -107,11 +107,9 @@ app.post('/admin/addProf', async (req, res) => {
             [name, email, role, branch_tag]
         );
 
-        const newProf = result.rows[0];
-
-        res.json({ success: true, message: 'Professor added successfully', newProf });
+        res.json({ message: 'Professor added successfully' });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: error.message });
     }
 });
 app.put('/admin/updateProf/:id', async (req, res) => {
@@ -126,13 +124,10 @@ app.put('/admin/updateProf/:id', async (req, res) => {
 
         const updatedProf = result.rows[0];
 
-        if (updatedProf) {
-            res.json({ success: true, message: 'Professor updated successfully', updatedProf });
-        } else {
-            res.status(404).json({ success: false, message: 'Professor not found' });
-        }
+        if (updatedProf) res.json({ message: 'Professor updated successfully' });
+
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: error.message });
     }
 });
 app.delete('/admin/deleteProf/:id', async (req, res) => {
@@ -142,11 +137,11 @@ app.delete('/admin/deleteProf/:id', async (req, res) => {
         const result = await pool.query('DELETE FROM profs WHERE id = $1 RETURNING *', [id]);
         const deletedProf = result.rows[0];
 
-        if (deletedProf) res.json({ success: true, message: 'Professor deleted successfully', deletedProf });
-        else res.status(404).json({ success: false, message: 'Professor not found' });
+        if (deletedProf) res.json({ message: 'Professor deleted successfully' });
+        else res.status(404).json({ error: 'Professor not found' });
 
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -167,7 +162,7 @@ app.post('/admin/importCourse', async (req, res) => {
     }
 });
 
-//profs api
+//Profs API
 app.post('/profs/login', async (req, res) => {
     const { email } = req.body;
 
@@ -177,13 +172,13 @@ app.post('/profs/login', async (req, res) => {
 
         if (professor) {
             const { id, name, role, branch_tag } = professor;
-            return res.json({ success: true, message: 'Professor login successful', id, name, email, role, branch_tag });
+            return res.json({ message: 'Professor login successful', id, name, email, role, branch_tag });
         } else {
-            return res.status(404).json({ success: false, message: 'Professor not found' });
+            return res.status(404).json({ message: 'Professor not found' });
         }
     } catch (error) {
         console.error('Error in professor login:', error);
-        return res.status(500).json({ success: false, error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -198,7 +193,7 @@ app.get('/api/courses/:branch_tag', async (req, res) => {
     }
 });
 
-app.post('/api/groups', async (req, res) => {
+app.post('/api/addGroups', async (req, res) => {
     const { mergedSections, course_id } = req.body;
 
     try {

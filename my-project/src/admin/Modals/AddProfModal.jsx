@@ -11,11 +11,17 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
     });
 
     const addProfMutation = useAddProfMutation();
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        addProfMutation.mutate(formData);
-        onClose();
+        try {
+            const result = await addProfMutation.mutateAsync(formData);
+            alert(result.message);
+        } catch (error) {
+            console.error(error.message);
+            alert(error.message);
+        } finally {
+            onClose();
+        }
     };
 
     const handleChange = (e) => {

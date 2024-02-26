@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
-import { useQueryClient, useQuery, useMutation } from 'react-query'; // Import useQueryClient instead of queryClient
+import { useQueryClient, useQuery, useMutation } from 'react-query';
 import axios from 'axios';
 
 const AdminContext = createContext();
@@ -42,117 +42,113 @@ const useFetchValue = (branch_tag) => {
 };
 
 //Separate API Context
-const delBranch = async (branch_tag) => {
-    try {
-        const response = await axios.delete(`/admin/delBranch/${branch_tag}`);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data.error || 'Failed to delete branch. Please try again later.');
-    }
-};
 const useDelBranchMutation = () => {
     const queryClient = useQueryClient();
-    return useMutation((branchTag) => delBranch(branchTag), {
+
+    const delBranch = async (branch_tag) => {
+        try {
+            const response = await axios.delete(`/admin/delBranch/${branch_tag}`);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to delete branch. Please try again later.');
+        }
+    };
+
+    return useMutation(delBranch, {
         onSuccess: () => {
             queryClient.invalidateQueries('branches');
         },
     });
 };
 
-const addBranch = async (branchData) => {
-    try {
-        const response = await axios.post('/admin/addBranch', branchData);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data.error || 'Failed to add branch. Please try again later.');
-    }
-};
 const useAddBranchMutation = () => {
     const queryClient = useQueryClient();
 
-    return useMutation((branchData) => addBranch(branchData), {
+    const addBranch = async (branchData) => {
+        try {
+            const response = await axios.post('/admin/addBranch', branchData);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to add branch. Please try again later.');
+        }
+    };
+
+    return useMutation(addBranch, {
         onSuccess: () => {
             queryClient.invalidateQueries('branches');
         },
     });
 };
 
-const addProf = async (formData) => {
-    try {
-        const response = await axios.post('/admin/addProf', formData);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data.error || 'Unknown error');
-    }
-};
 const useAddProfMutation = () => {
     const queryClient = useQueryClient();
 
+    const addProf = async (formData) => {
+        try {
+            const response = await axios.post('/admin/addProf', formData);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Unknown error');
+        }
+    };
+
     return useMutation(addProf, {
-        onSuccess: (data) => {
-            if (data.success) {
-                const { newProf } = data;
-                alert(`Professor added successfully:\nName: ${newProf.name}\nEmail: ${newProf.email}\nRole: ${newProf.role}`);
-            } else {
-                alert(data.error || 'Unknown error');
-            }
-            queryClient.invalidateQueries('profs');
-        },
-        onError: (error) => {
-            console.error(error.message);
-            if (error.message === 'Professor with the same name already exists') {
-                alert('A professor with the same name already exists');
-            } else {
-                alert('An error occurred during submission');
-            }
+        onSuccess: () => {
+            queryClient.invalidateQueries('addProf');
         },
     });
 };
 
-const updateProf = async ({ id, name, email, role }) => {
-    try {
-        const response = await axios.put(`/admin/updateProf/${id}`, { name, email, role });
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data.error || 'Unknown error');
-    }
-};
-const useUpdateProfMutation = () => {
+const useUpdateProfMutation = (onSuccessCallback, onErrorCallback) => {
+    const queryClient = useQueryClient();
+
+    const updateProf = async ({ id, name, email, role }) => {
+        try {
+            const response = await axios.put(`/admin/updateProf/${id}`, { name, email, role });
+            return response.data;
+        } catch (error) {
+            return { error: error.response?.data.error || 'Unknown error' };
+        }
+    };
+
     return useMutation(updateProf, {
         onSuccess: (data) => {
-            if (data.success) {
-                alert(data.message);
-            } else {
-                alert(data.error || 'Unknown error');
+            queryClient.invalidateQueries('updateProf');
+            if (onSuccessCallback) {
+                onSuccessCallback(data);
             }
         },
         onError: (error) => {
-            console.error(error.message);
-            alert('An error occurred during update');
+            if (onErrorCallback) {
+                onErrorCallback(error);
+            }
         },
     });
 };
 
-const deleteProf = async (id) => {
-    try {
-        const response = await axios.delete(`/admin/deleteProf/${id}`);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data.error || 'Unknown error');
-    }
-};
-const useDeleteProfMutation = () => {
+const useDeleteProfMutation = (onSuccessCallback, onErrorCallback) => {
+    const queryClient = useQueryClient();
+
+    const deleteProf = async (id) => {
+        try {
+            const response = await axios.delete(`/admin/deleteProf/${id}`);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Unknown error');
+        }
+    };
+
     return useMutation(deleteProf, {
         onSuccess: (data) => {
-            if (data.success) {
-                alert(data.message);
-            } else {
-                alert(data.error || 'Unknown error');
+            queryClient.invalidateQueries('delProf');
+            if (onSuccessCallback) {
+                onSuccessCallback(data);
             }
         },
         onError: (error) => {
-            console.error(error.message);
-            alert('An error occurred during delete');
+            if (onErrorCallback) {
+                onErrorCallback(error);
+            }
         },
     });
 };

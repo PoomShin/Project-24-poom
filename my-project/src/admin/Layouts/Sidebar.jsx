@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import branchIcon from '../assets/branch.png'
-import courseIcon from '../assets/course.png'
-import logoutIcon from '../assets/logoutIcon.png'
+import branchIcon from '../../assets/branch.png'
+import courseIcon from '../../assets/course.png'
+import logoutIcon from '../../assets/logoutIcon.png'
 
 const menuItems = [
     { key: 'Branch', label: 'Branch', icon: branchIcon },

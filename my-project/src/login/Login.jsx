@@ -11,42 +11,44 @@ export default function Login() {
     const [formData, setFormData] = useState({ username: '', password: '', email: '' });
     const navigate = useNavigate();
 
-    const handleLogin = useLoginMutation('/admin/login', ({ success, message, name, role }) => {
-        if (success) {
-            localStorage.setItem('userData', JSON.stringify({ name, role }));
-            navigate('/admin');
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
-        } else alert(message);
-    });
-    const handleProfLogin = useLoginMutation('/profs/login', ({ success, message, id, name, email, role, branch_tag }) => {
-        if (success) {
-            const existingUserData = JSON.parse(localStorage.getItem('userData')) || {};
-            const updatedUserData = {
-                id,
-                name,
-                email,
-                role,
-                branch_tag,
-                ...existingUserData
-            };
-            localStorage.setItem('userData', JSON.stringify(updatedUserData));
-            navigate(`/prof/${role}/${branch_tag}`);
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
-        } else alert(message);
+    const handleLogin = useLoginMutation('/admin/login', ({ name, role, message }) => {
+        localStorage.setItem('userData', JSON.stringify({ name, role }));
+        navigate('/admin');
+        alert(message);
+        setTimeout(() => {
+            window.location.reload();
+        }, 100);
+    }
+    );
+
+    const handleProfLogin = useLoginMutation('/profs/login', ({ message, id, name, email, role, branch_tag }) => {
+        const existingUserData = JSON.parse(localStorage.getItem('userData')) || {};
+        const updatedUserData = {
+            id,
+            name,
+            email,
+            role,
+            branch_tag,
+            ...existingUserData
+        };
+        localStorage.setItem('userData', JSON.stringify(updatedUserData));
+        alert(message)
+        navigate(`/prof/${role}/${branch_tag}`);
+        setTimeout(() => {
+            window.location.reload();
+        }, 100);
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
     const handleAdminLogin = (e) => {
         e.preventDefault();
         handleLogin.mutate(formData);
     };
+
     const handleGoogleLogin = () => {
         handleProfLogin.mutate(formData);
     }
@@ -60,7 +62,7 @@ export default function Login() {
             </div>
         </div>
     );
-};
+}
 
 const useLoginMutation = (loginUrl, onSuccessCallback) => {
     return useMutation(
@@ -71,8 +73,9 @@ const useLoginMutation = (loginUrl, onSuccessCallback) => {
         {
             onSuccess: onSuccessCallback,
             onError: (error) => {
-                console.log(error.message);
-                alert('Error logging in!');
+                console.log('Error:', error);
+                if (error.response.data.message) alert(error.response.data.message);
+                else alert('Error logging in!');
             },
         }
     );

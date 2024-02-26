@@ -1,13 +1,13 @@
 import { useState } from "react";
-import DataTable from "react-data-table-component";
 import { useUpdateProfMutation, useDeleteProfMutation } from "../../context/Admin-Context";
+import DataTable from "react-data-table-component";
 
 export default function ProfItems({ profs, onShowBranches }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [editToggle, setEditToggle] = useState(false);
 
-  const { mutate: updateProf } = useUpdateProfMutation();
-  const { mutate: deleteProf } = useDeleteProfMutation();
+  const updateProfMutation = useUpdateProfMutation();
+  const deleteProfMutation = useDeleteProfMutation();
 
   const filteredData = profs.filter((prof) => // Filter the data based on the search term
     prof.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -17,23 +17,37 @@ export default function ProfItems({ profs, onShowBranches }) {
     setSearchTerm(e.target.value);
   };
 
-  const deleteUser = (id) => {
+  const deleteUser = async (id) => {
     let isConfirm = window.confirm(`Delete ${id} ?`);
-    if (isConfirm) deleteProf(id);
+    if (isConfirm) {
+      try {
+        await deleteProfMutation.mutateAsync(id);
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred during delete');
+      }
+    }
   };
 
   const showEdit = () => {
     setEditToggle(prevState => !prevState);
   };
 
-  const submitEdit = (id) => {
+  const submitEdit = async (id) => {
     showEdit();
 
     let roleSelect = document.getElementById('role-select-' + id);
     let changeRoleValue = roleSelect.value;
     let name = document.getElementById(`input-name-${id}`).value;
     let email = document.getElementById(`input-email-${id}`).value;
-    updateProf({ id, name, email, role: changeRoleValue });
+
+    try {
+      const result = await updateProfMutation.mutateAsync({ id, name, email, role: changeRoleValue });
+      alert(result.message)
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred during update');
+    }
   };
 
   const columns = [

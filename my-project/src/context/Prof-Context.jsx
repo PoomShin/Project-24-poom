@@ -37,7 +37,6 @@ export const BranchProvider = ({ children }) => {
         </BranchContext.Provider>
     );
 };
-export const useBranchesContext = () => useContext(BranchContext);
 
 //courses table context
 const CourseContext = createContext();
@@ -62,7 +61,6 @@ export const CourseProvider = ({ branch_tag, children }) => {
         </CourseContext.Provider>
     );
 };
-export const useCoursesContext = () => useContext(CourseContext);
 
 // Profs table with branch_tag parameter
 const ProfsContext = createContext();
@@ -91,18 +89,16 @@ export const ProfsProvider = ({ branch_tag, children }) => {
         </ProfsContext.Provider>
     );
 };
-export const useProfsContext = () => useContext(ProfsContext);
 
 //API Context
 const addGroup = async (groupData) => {
     try {
-        const response = await axios.post('/api/groups', groupData);
+        const response = await axios.post('/api/addGroups', groupData);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data.error || 'Failed to add group. Please try again later.');
     }
 };
-
 const useAddGroupMutation = () => {
     const queryClient = useQueryClient();
 
@@ -113,4 +109,7 @@ const useAddGroupMutation = () => {
     });
 };
 
+export const useBranchesContext = () => useContext(BranchContext);
+export const useCoursesContext = () => useContext(CourseContext);
+export const useProfsContext = () => useContext(ProfsContext);
 export { useAddGroupMutation }

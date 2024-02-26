@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import AddGroup from '../components/AddGroup';
-import GroupItem from '../components/GroupItem';
 import { useCoursesContext, useAddGroupMutation } from '../../context/Prof-Context';
 
 export default function InsertCourseModal({ isVisible, onClose }) {
@@ -10,7 +8,6 @@ export default function InsertCourseModal({ isVisible, onClose }) {
 
     const [lectureSection, setLectureSection] = useState([]);
     const [labSection, setLabSection] = useState([]);
-
     const [selectedCourse, setSelectedCourse] = useState('');
     const [courseInfo, setCourseInfo] = useState({
         id: null,
@@ -19,6 +16,45 @@ export default function InsertCourseModal({ isVisible, onClose }) {
         credit: '',
         course_type: ''
     });
+
+    const handleCourseChange = e => {
+        setSelectedCourse(e.target.value);
+    };
+
+    const handleAddLectureSection = curSection => {
+        setLectureSection([...lectureSection, curSection]);
+    };
+
+    const handleAddLabSection = curSection => {
+        setLabSection([...labSection, curSection]);
+    };
+
+    const handleSubmit = async () => {
+        try {
+            const mergedSections = [...lectureSection, ...labSection];
+            const groupData = {
+                mergedSections,
+                course_id: courseInfo.id
+            };
+            await addGroupMutation.mutateAsync(groupData);
+            //reset data
+            setLectureSection([]);
+            setLabSection([]);
+            setSelectedCourse('');
+            setCourseInfo({
+                id: null,
+                th_name: '',
+                eng_name: '',
+                credit: '',
+                course_type: ''
+            });
+            alert('Group added successfully');
+            onClose();
+        } catch (error) {
+            console.error('Error adding group:', error);
+            alert('Error adding groups')
+        }
+    };
 
     useEffect(() => {
         if (selectedCourse) {
@@ -43,53 +79,14 @@ export default function InsertCourseModal({ isVisible, onClose }) {
         }
     }, [selectedCourse, courses]);
 
-    const handleCourseChange = e => {
-        setSelectedCourse(e.target.value);
-    };
-
-    const handleAddLectureSection = curSection => {
-        setLectureSection([...lectureSection, curSection]);
-    };
-
-    const handleAddLabSection = curSection => {
-        setLabSection([...labSection, curSection]);
-    };
-
-    const handleSubmit = async () => {
-        try {
-            const mergedSections = [...lectureSection, ...labSection];
-            const groupData = {
-                mergedSections,
-                course_id: courseInfo.id
-            };
-            console.log(groupData)
-            await addGroupMutation.mutateAsync(groupData);
-            console.log('Group added successfully');
-            onClose();
-        } catch (error) {
-            console.error('Error adding group:', error);
-            // Handle error if needed
-        }
-    };
-
     return isVisible ? (
         <PortalContainer>
             <div className='absolute top-0 left-1/2 transform -translate-x-1/2 font-semibold p-4'>
                 <div className='flex'>
-
-                    <select
-                        value={selectedCourse}
-                        onChange={handleCourseChange}
-                        className="appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500"
-                    >
-                        <option value="">Select a course</option>
-                        {courses.map((course, index) => (
-                            <option key={index} value={course.combined_code_curriculum}>
-                                {course.combined_code_curriculum}
-                            </option>
-                        ))}
-                    </select>
-
+                    <InputSection style={'appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500'}
+                        value={selectedCourse} onChange={handleCourseChange}
+                        preValue={'Select a course'} options={courses} optionKey={'combined_code_curriculum'}
+                    />
                     <InputField placeholder='thname' width={72} value={courseInfo.th_name} readOnly />
                     <InputField placeholder='engname' width={72} value={courseInfo.eng_name} readOnly />
                 </div>
@@ -97,29 +94,32 @@ export default function InsertCourseModal({ isVisible, onClose }) {
                     <InputField placeholder='credit' width={20} value={courseInfo.credit} readOnly />
                     <InputField placeholder='course type' width={24} value={courseInfo.course_type} readOnly />
                 </div>
-
             </div>
 
-            {/* add groups*/}
-            <div className='flex flex-col w-10/12 overflow-scroll'>
+            <div className='overflow-scroll flex flex-col w-10/12'>
                 <span className='text-3xl text-white mb-2'>Lecture</span>
                 <SectionList sections={lectureSection} onAddSection={handleAddLectureSection} />
 
                 <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
                 <SectionList sections={labSection} onAddSection={handleAddLabSection} isLab />
             </div>
-            {/* button */}
+
             <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
-                <button className='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4' type='button' onClick={handleSubmit}>
-                    Submit
-                </button>
-                <button className='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4' type='button' onClick={onClose}>
-                    Close
-                </button>
+                <ButtonCom style='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
+                    text='Submit' type='button' onClick={handleSubmit}
+                />
+                <ButtonCom style='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
+                    text='Close' type='button' onClick={onClose}
+                />
             </div>
         </PortalContainer>
     ) : null;
 }
+
+import AddGroup from '../components/AddGroup';
+import GroupItem from '../components/GroupItem';
+import InputSection from '../components/InputSelect';
+import ButtonCom from '../components/ButtonCom';
 
 const PortalContainer = ({ children }) => {
     return createPortal(

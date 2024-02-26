@@ -14,7 +14,8 @@ export default function AddBranchModal({ isVisible, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addBranchMutation.mutateAsync(formData);
+      const result = await addBranchMutation.mutateAsync(formData);
+      alert(result.message);
       onClose();
     } catch (error) {
       console.log(error.message)

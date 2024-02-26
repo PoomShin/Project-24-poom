@@ -5,17 +5,14 @@ import removeIcon from '../../assets/remove.png';
 export default function BranchItems({ branches, onSelectBranch }) {
   const delBranchMutation = useDelBranchMutation();
 
-  const removeBranch = async (branch) => {
+  const delBranch = async (branch) => {
     const { branch_tag, branch_name } = branch;
     const deleteConfirm = window.confirm(`Delete Branch ${branch_tag} ${branch_name} ?`);
-
-    if (!deleteConfirm) {
-      return;
-    }
+    if (!deleteConfirm) return;
 
     try {
-      await delBranchMutation.mutateAsync(branch_tag);
-      alert(`${branch_tag} ${branch_name} deleted`);
+      const result = await delBranchMutation.mutateAsync(branch_tag);
+      alert(result.message);
     } catch (error) {
       console.log(error.message);
       alert(`Failed to delete ${branch_tag} ${branch_name}`);
@@ -32,7 +29,7 @@ export default function BranchItems({ branches, onSelectBranch }) {
         <BranchItem key={branch.branch_tag}
           branch={branch}
           onSelectBranch={onSelectBranch}
-          onRemoveBranch={removeBranch}
+          onRemoveBranch={delBranch}
         />
       ))}
     </div>

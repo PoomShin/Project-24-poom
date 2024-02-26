@@ -1,17 +1,18 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useAdminContext } from '../context/Admin-Context';
+import { useAdminContext } from '../../context/Admin-Context';
 //components
-import TabBar from './components/TabBar';
-import BranchItems from './Items/BranchItems';
-import ProfItems from './Items/ProfItems';
-import CourseItems from './Items/CourseItems';
-import AddBranchModal from './Modals/AddBranchModal';
-import AddProfModal from './Modals/AddProfModal';
-import AddCourseModal from './Modals/AddCourseModal';
+import TabBar from '../components/TabBar';
+import BranchItems from '../Modules/BranchItems';
+import ProfItems from '../Modules/ProfItems';
+import CourseItems from '../Modules/CourseItems';
+//API
+import AddBranchModal from '../Modals/AddBranchModal';
+import AddProfModal from '../Modals/AddProfModal';
+import AddCourseModal from '../Modals/AddCourseModal';
 //assets
-import branchIcon from '../assets/branch.png';
-import curriculumIcon from '../assets/course.png';
-import profIcon from '../assets/user.png';
+import branchIcon from '../../assets/branch.png';
+import curriculumIcon from '../../assets/course.png';
+import profIcon from '../../assets/user.png';
 
 const iconMap = {
     'Branch': branchIcon,
