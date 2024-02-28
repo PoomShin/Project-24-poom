@@ -56,7 +56,6 @@ export default function AddCourseSideBar({
   );
 }
 function closeManual() {
-    let memu = document.getElementById("manualImport");
-    memu.classList.toggle("invisible");
-  }
-  
+  let memu = document.getElementById("manualImport");
+  memu.classList.toggle("invisible");
+}
