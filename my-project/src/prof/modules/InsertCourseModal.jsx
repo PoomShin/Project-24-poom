@@ -60,6 +60,7 @@ export default function InsertCourseModal({ isVisible, onClose }) {
                 mergedSections,
                 course_id: courseInfo.id
             };
+            console.log(mergedSections)
             await addGroupMutation.mutateAsync(groupData);
             //reset data
             setLectureSection([]);
