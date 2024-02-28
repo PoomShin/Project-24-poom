@@ -30,7 +30,9 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
 
     return isVisible ? (
         <PortalContainer>
-            <form method='post' onSubmit={handleSubmit} >
+
+            <form method='post' onSubmit={handleSubmit} className=' bg-gray-300 p-4 rounded-xl shadow-2xl ' >
+                <h1 className='text-xl text-center text-black'>Add Prof</h1>
                 <div className='my-3'>
                     <input className='mt-1 p-1 w-full border-2 border-solid rounded border-black'
                         type='text'
@@ -61,7 +63,7 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
                     />
                 </div>
 
-                <button className='my-2 py-1 px-8 rounded bg-green-500 text-white hover:bg-green-600'
+                <button className='my-2 py-1 px-8 rounded bg-green-500 text-white hover:bg-green-600 hover:text-gray-600 '
                     type='submit'
                 >
                     <span className='text-lg font-bold'>
@@ -69,7 +71,7 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
                     </span>
                 </button>
 
-                <button className='my-2 py-1 px-8 rounded bg-red-500 text-white hover:bg-red-600'
+                <button className='my-2 py-1 px-8 rounded bg-red-500 text-white hover:bg-red-600 hover:text-gray-600'
                     type='button'
                     onClick={onClose}
                 >
@@ -83,8 +85,7 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
 const PortalContainer = ({ children }) => {
     return (
         createPortal(
-            <div className='fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-gray-800 bg-opacity-50 z-50'>
-                <h1 className='text-xl text-center text-white'>Add Prof</h1>
+            <div className='fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-gray-800 bg-opacity-60 z-50'>
                 {children}
             </div>,
             document.getElementById('root-modal')

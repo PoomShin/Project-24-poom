@@ -26,11 +26,11 @@ const TimeRow = () => {
 
     return (
         <div className='grid grid-cols-26'>
-            <div className='col-span-2 border dark:text-white dark:border-gray-700 py-1 pl-1'>
+            <div className='col-span-2 border text-white dark:border-gray-700 py-1 pl-1'>
                 Day/Time
             </div>
             {timeSlots.map((timeSlot, index) => (
-                <div key={index} className='col-span-2 border dark:text-white dark:border-gray-700 py-1 pl-1'>
+                <div key={index} className='col-span-2 border text-white dark:border-gray-700 py-1 pl-1'>
                     {timeSlot}
                 </div>
             ))}
