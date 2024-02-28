@@ -10,7 +10,7 @@ export default function Admin() {
   const { name } = userContextValues;
 
   const [branchTag, setBranchTag] = useState(null);
-  const [page, setPage] = useState(localStorage.getItem('currentPage') || 'Branch');
+  const [page, setPage] = useState(localStorage.getItem(true) || 'Branch');
 
   const memoizedNavbar = useMemo(() => <Navbar name={name} />, [name]);
 
