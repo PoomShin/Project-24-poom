@@ -156,9 +156,9 @@ app.post('/admin/importCourse', async (req, res) => {
             );
         }
 
-        res.json({ success: true, message: 'Course data imported successfully' });
+        res.json({ message: 'Course data imported successfully' });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: error.message });
     }
 });
 

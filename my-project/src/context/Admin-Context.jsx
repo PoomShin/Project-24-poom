@@ -153,22 +153,26 @@ const useDeleteProfMutation = (onSuccessCallback, onErrorCallback) => {
     });
 };
 
-const importCourse = async (data) => {
-    try {
-        const response = await axios.post('/admin/importCourse', { data });
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data.error || 'Failed to import course data');
-    }
-};
-const useImportCourseMutation = () => {
+const useImportCourseMutation = (onSuccessCallback, onErrorCallback) => {
+    const importCourse = async (data) => {
+        try {
+            const response = await axios.post('/admin/importCourse', { data });
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to import course data');
+        }
+    };
+
     return useMutation(importCourse, {
-        onSuccess: () => {
-            alert('Import to database success');
+        onSuccess: (data) => {
+            if (onSuccessCallback) {
+                onSuccessCallback(data);
+            }
         },
         onError: (error) => {
-            console.error(error.message);
-            alert('An error occurred during course data import');
+            if (onErrorCallback) {
+                onErrorCallback(error);
+            }
         },
     });
 };

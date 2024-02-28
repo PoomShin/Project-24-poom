@@ -23,23 +23,28 @@ const generateOptions = () => {
   return options;
 };
 
-export default function AddCourseModal({
-  courseTag,
-  branchTag,
-  isVisible,
-  onClose,
-}) {
+export default function AddCourseModal({ courseTag, branchTag, isVisible, onClose }) {
+  const importCourseMutation = useImportCourseMutation();
+
   const [selectedCurriculum, setSelectedCurriculum] = useState("65");
   const [importedData, setImportedData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const options = generateOptions();
 
-  const mutation = useImportCourseMutation();
-  const handleImportDatabase = () => mutation.mutate(filteredData);
-
-  const handleCurriculumChange = (e) => {
-    setSelectedCurriculum(e.target.value);
-  };
+  const handleImportDatabase = () => {
+    importCourseMutation.mutate(
+      filteredData,
+      {
+        onSuccess: (res) => {
+          alert(res.message)
+        },
+        onError: (error) => {
+          console.error('Import failed:', error);
+          alert(error)
+        }
+      }
+    );
+  }; //Backend API
 
   const handleImport = (event) => {
     const file = event.target.files[0];
@@ -67,8 +72,11 @@ export default function AddCourseModal({
     const filtered = importedData.filter((row) =>
       row.course_code.startsWith(courseTag)
     );
-    setFilteredData(filtered);
-
+    console.log(filtered)
+    if (filtered.length === 0) {
+      return;
+    } setFilteredData(filtered);
+    
     const remainingData = importedData.filter(
       (row) => !row.course_code.startsWith(courseTag)
     );
@@ -80,6 +88,10 @@ export default function AddCourseModal({
     setImportedData((prevImportedData) =>
       prevImportedData.filter((item) => item === rowData)
     );
+  };
+
+  const handleCurriculumChange = (e) => {
+    setSelectedCurriculum(e.target.value);
   };
 
   return (
@@ -128,7 +140,7 @@ export default function AddCourseModal({
                   credits={rowData.credit}
                   courseType={rowData.course_type}
                   rowData={rowData}
-                  onTransfer={handleTransfer}
+                  onTransfer={null}
                   options={options}
                 />
               ))}
@@ -136,9 +148,9 @@ export default function AddCourseModal({
           </Table>
 
           <TableImportButton handleImportDatabase={handleImportDatabase} />
-          {/* ----------Manualimport--------------- */}
-          <Manualimport />
         </div>
+        {/* ----------Manualimport--------------- */}
+        <Manualimport />
       </PortalContainer>
     )
   );
