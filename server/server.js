@@ -15,6 +15,37 @@ app.use((req, res, next) => {
     next();
 });
 
+//General API
+app.get('/api/branches', async (req, res) => {
+    try {
+        const branchRecords = await pool.query('SELECT * FROM branches');
+        res.json(branchRecords.rows);
+    } catch (error) {
+        console.error('Error fetching branches:', error);
+        res.status(500).json({ error: 'Failed to fetch branches. Please try again later.' });
+    }
+});
+app.get('/api/profs/:branch_tag', async (req, res) => {
+    const { branch_tag } = req.params;
+
+    try {
+        const profs = await pool.query('SELECT * FROM profs WHERE branch_tag = $1', [branch_tag]);
+        res.json(profs.rows);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+app.get('/api/courses/:branch_tag', async (req, res) => {
+    const { branch_tag } = req.params;
+
+    try {
+        const courses = await pool.query('SELECT * FROM courses WHERE branch_tag = $1', [branch_tag]);
+        res.json(courses.rows);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch courses' });
+    }
+});
+
 //Admin API
 app.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
@@ -31,16 +62,6 @@ app.post('/admin/login', async (req, res) => {
 
     } catch (error) {
         return res.status(500).json({ success: false, error: 'Internal server error' });
-    }
-});
-
-app.get('/api/branches', async (req, res) => {
-    try {
-        const branchRecords = await pool.query('SELECT * FROM branches');
-        res.json(branchRecords.rows);
-    } catch (error) {
-        console.error('Error fetching branches:', error);
-        res.status(500).json({ error: 'Failed to fetch branches. Please try again later.' });
     }
 });
 app.post('/admin/addBranch', async (req, res) => {
@@ -76,17 +97,6 @@ app.delete('/admin/delBranch/:branch_tag', async (req, res) => {
     } catch (error) {
         console.error('Error deleting branch:', error);
         res.status(500).json({ error: 'Failed to delete branch. Please try again later.' });
-    }
-});
-
-app.get('/api/profs/:branch_tag', async (req, res) => {
-    const { branch_tag } = req.params;
-
-    try {
-        const profs = await pool.query('SELECT * FROM profs WHERE branch_tag = $1', [branch_tag]);
-        res.json(profs.rows);
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
     }
 });
 app.post('/admin/addProf', async (req, res) => {
@@ -144,7 +154,6 @@ app.delete('/admin/deleteProf/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
 app.post('/admin/importCourse', async (req, res) => {
     const { data } = req.body;
 
@@ -181,28 +190,16 @@ app.post('/profs/login', async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 });
-
-app.get('/api/courses/:branch_tag', async (req, res) => {
-    const { branch_tag } = req.params;
-
-    try {
-        const courses = await pool.query('SELECT * FROM courses WHERE branch_tag = $1', [branch_tag]);
-        res.json(courses.rows);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch courses' });
-    }
-});
-
-app.post('/api/addGroups', async (req, res) => {
-    const { mergedSections, course_id } = req.body;
+app.post('/profs/addGroups', async (req, res) => {
+    const { mergedSections, course_id, group_status } = req.body;
 
     try {
         for (const groupData of mergedSections) {
             const { group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, prof_name, branch_year } = groupData;
 
             const groupResult = await pool.query(
-                'INSERT INTO groups (course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-                [course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room]
+                'INSERT INTO groups (course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, group_status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
+                [course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, group_status]
             );
 
             const groupId = groupResult.rows[0].id;

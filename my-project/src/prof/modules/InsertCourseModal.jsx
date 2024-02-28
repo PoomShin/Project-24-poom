@@ -58,7 +58,8 @@ export default function InsertCourseModal({ isVisible, onClose }) {
             const mergedSections = [...lectureSection, ...labSection];
             const groupData = {
                 mergedSections,
-                course_id: courseInfo.id
+                course_id: courseInfo.id,
+                group_status: 'waiting'
             };
             console.log(mergedSections)
             await addGroupMutation.mutateAsync(groupData);

@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 const generateTimeSlots = () => {
     const timeSlots = [];
     for (let hour = 8; hour < 20; hour++) {
@@ -37,18 +39,24 @@ const TimeRows = () => {
 }
 
 const TimeBlock = ({ startHour, endHour }) => {
-    let startHourStyle = `col-start-${(startHour - 8) * 2 + 3}`;
-    let endHourStyle = `col-end-${(endHour - 8) * 2 + 3}`;
-    console.log(startHourStyle, endHourStyle)
+    const [style, setStyle] = useState('');
+
+    useEffect(() => {
+        if (endHour - startHour > 1) {
+            const startHourStyle = `col-start-${(startHour - 8) * 2 + 3}`;
+            const endHourStyle = `col-end-${(endHour - 8) * 2 + 3}`;
+            setStyle(`${startHourStyle} ${endHourStyle}`);
+        }
+    }, [startHour, endHour]);
 
     return (
-        <div className={` col-start-5 col-end-11 flex-col justify-between border rounded p-2 md:px-3 md:py-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 bg-green-200`}>
+        <div className={`${style} flex flex-col justify-between border rounded p-2 md:px-3 md:py-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 bg-green-200`}>
             <p className='flex flex-wrap justify-between mb-2 text-xs md:text-sm'>
                 <span>03603341-60</span>
                 <span>SEC:830</span>
             </p>
             <div className='flex justify-between text-xs text-gray-700'>
-                <div >
+                <div>
                     กาญจนา เอี่ยมสะอาด
                 </div>
                 <div className='text-right'>
@@ -57,7 +65,7 @@ const TimeBlock = ({ startHour, endHour }) => {
             </div>
         </div>
     );
-}
+};
 
 const DayRows = () => {
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -65,7 +73,7 @@ const DayRows = () => {
     return (
         <>
             {daysOfWeek.map((day, index) => (
-                <div key={index} className='min-h-4 md:min-h-12 grid grid-cols-26 border dark:border-gray-700 col-span-3'>
+                <div key={index} className='min-h-4 grid grid-cols-26 border border-gray-700'>
                     <DayBlock DayText={day} colorStyle={getColorForDay(day)} />
                     <TimeBlock startHour={9} endHour={12} />
                 </div>

@@ -91,16 +91,17 @@ export const ProfsProvider = ({ branch_tag, children }) => {
 };
 
 //API Context
-const addGroup = async (groupData) => {
-    try {
-        const response = await axios.post('/api/addGroups', groupData);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data.error || 'Failed to add group. Please try again later.');
-    }
-};
 const useAddGroupMutation = () => {
     const queryClient = useQueryClient();
+
+    const addGroup = async (groupData) => {
+        try {
+            const response = await axios.post('/profs/addGroups', groupData);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to add group. Please try again later.');
+        }
+    };
 
     return useMutation((groupData) => addGroup(groupData), {
         onSuccess: () => {
