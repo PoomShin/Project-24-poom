@@ -1,6 +1,22 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useCoursesContext, useAddGroupMutation } from '../../context/Prof-Context';
+import InputSection from '../components/InputSelect';
+import ButtonCom from '../components/ButtonCom';
+import GroupItem from '../components/GroupItem';
+import AddGroup from '../components/AddGroup';
+
+const parseCredits = credits => {
+    const matches = credits.match(/(\d+)\((\d+)-(\d+)-(\d+)\)|(\d+)/);
+    if (matches) {
+        const [, , lectureHours, labHours, selfStudyHours, singleCredit] = matches;
+        if (singleCredit) {
+            return { lectureHours: parseInt(singleCredit), labHours: 0, selfStudyHours: 0 };
+        }
+        return { lectureHours: parseInt(lectureHours), labHours: parseInt(labHours), selfStudyHours: parseInt(selfStudyHours) };
+    }
+    return { lectureHours: 0, labHours: 0, selfStudyHours: 0 };
+};
 
 export default function InsertCourseModal({ isVisible, onClose }) {
     const { courses } = useCoursesContext();
@@ -16,6 +32,14 @@ export default function InsertCourseModal({ isVisible, onClose }) {
         credit: '',
         course_type: ''
     });
+
+    const [creditHours, setCreditHours] = useState({ lectureHours: 0, labHours: 0, selfStudyHours: 0 });
+
+    useEffect(() => {
+        const { credit } = courseInfo;
+        setCreditHours(parseCredits(credit));
+    }, [courseInfo]);
+
 
     const handleCourseChange = e => {
         setSelectedCourse(e.target.value);
@@ -83,9 +107,10 @@ export default function InsertCourseModal({ isVisible, onClose }) {
         <PortalContainer>
             <div className='absolute top-0 left-1/2 transform -translate-x-1/2 font-semibold p-4'>
                 <div className='flex'>
-                    <InputSection style={'appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500'}
+                    <InputSection
+                        style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500'
                         value={selectedCourse} onChange={handleCourseChange}
-                        preValue={'Select a course'} options={courses} optionKey={'combined_code_curriculum'}
+                        preValue='Select a course' options={courses} optionKey='combined_code_curriculum'
                     />
                     <InputField placeholder='thname' width={72} value={courseInfo.th_name} readOnly />
                     <InputField placeholder='engname' width={72} value={courseInfo.eng_name} readOnly />
@@ -97,38 +122,33 @@ export default function InsertCourseModal({ isVisible, onClose }) {
             </div>
 
             <div className='overflow-scroll flex flex-col w-10/12'>
-                <span className='text-3xl text-white mb-2'>Lecture</span>
-                <SectionList sections={lectureSection} onAddSection={handleAddLectureSection} />
-
-                <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
-                <SectionList sections={labSection} onAddSection={handleAddLabSection} isLab />
+                {creditHours.lectureHours > 0 &&
+                    <>
+                        <span className='text-3xl text-white mb-2'>Lecture</span>
+                        <SectionList sections={lectureSection} onAddSection={handleAddLectureSection} />
+                    </>
+                }
+                {creditHours.labHours > 0 &&
+                    <>
+                        <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
+                        <SectionList sections={labSection} onAddSection={handleAddLabSection} isLab />
+                    </>
+                }
             </div>
 
             <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
-                <ButtonCom style='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
+                <ButtonCom
+                    style='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
                     text='Submit' type='button' onClick={handleSubmit}
                 />
-                <ButtonCom style='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
+                <ButtonCom
+                    style='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
                     text='Close' type='button' onClick={onClose}
                 />
             </div>
         </PortalContainer>
     ) : null;
 }
-
-import AddGroup from '../components/AddGroup';
-import GroupItem from '../components/GroupItem';
-import InputSection from '../components/InputSelect';
-import ButtonCom from '../components/ButtonCom';
-
-const PortalContainer = ({ children }) => {
-    return createPortal(
-        <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50'>
-            {children}
-        </div>,
-        document.getElementById('root-modal')
-    );
-};
 
 const InputField = ({ width, ...props }) => {
     return <input className={`w-${width} rounded-lg bg-blue-100 mx-2 p-1`} {...props} />;
@@ -144,3 +164,12 @@ const SectionList = ({ sections, onAddSection, isLab }) => {
         </div>
     );
 }
+
+const PortalContainer = ({ children }) => {
+    return createPortal(
+        <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50'>
+            {children}
+        </div>,
+        document.getElementById('root-modal')
+    );
+};

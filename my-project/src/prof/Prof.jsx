@@ -11,14 +11,14 @@ export default function Prof() {
     const [currentPage, setCurrentPage] = useState('Home');
     const { name, role, branch_tag, imageUrl } = userContextValues;
 
-    const memoizedNavbar = useMemo(() => <NavbarProf name={name} role={role} img={imageUrl} />, [name, role, imageUrl]);
+    const NavBarProfMemo = useMemo(() => <NavbarProf name={name} role={role} img={imageUrl} />, [name, role, imageUrl]);
 
     return (
         <BranchProvider>
             <CourseProvider branch_tag={branch_tag}>
                 <ProfsProvider branch_tag={branch_tag}>
-                    <div className="grid grid-cols-12 w-full h-full">
-                        {memoizedNavbar}
+                    <div className='grid grid-cols-12 w-full h-full'>
+                        {NavBarProfMemo}
                         <SideBarLeft currentPage={currentPage} setCurrentPage={setCurrentPage} />
                         <ContentProf currentPage={currentPage} userData={userContextValues} />
                         <SideBarRight />
