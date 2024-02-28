@@ -33,8 +33,8 @@ export default function AddBranchModal({ isVisible, onClose }) {
 
   return isVisible
     ? createPortal(
-      <div className='fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50 z-[10]'>
-        <form className='bg-teal-900 p-4'
+      <div className='fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-60 z-[10]'>
+        <form className=' bg-emerald-800 p-4 rounded-xl'
           onSubmit={handleSubmit}
           method='post'
         >
@@ -74,7 +74,7 @@ export default function AddBranchModal({ isVisible, onClose }) {
             />
           </div>
 
-          <button className='my-2 py-1 px-8 rounded text-white bg-green-500 hover:bg-green-600'
+          <button className='my-2 py-1 px-8 rounded text-white bg-green-500 hover:bg-green-600 hover:text-gray-600'
             type='submit'
             disabled={addBranchMutation.isLoading}
           >
@@ -83,7 +83,7 @@ export default function AddBranchModal({ isVisible, onClose }) {
             </span>
           </button>
 
-          <button className='my-2 py-1 px-8 text-white bg-red-500 rounded hover:bg-red-600'
+          <button className='my-2 py-1 px-8 text-white bg-red-500 rounded hover:bg-red-600 hover:text-gray-600'
             type='button'
             onClick={onClose}
           >
