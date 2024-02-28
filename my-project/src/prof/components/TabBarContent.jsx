@@ -7,6 +7,23 @@ export default function TabBarContent({ currentPage, currentBranch, handleBranch
                     <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
                 </>
             )}
+
+            {currentPage === 'Prof' && (
+                <>
+                    <SelectBranch  currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
+                    <div className='relative col-start-4 flex'>
+                        <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange}/>
+                    </div>   
+                    <SelectPro/>
+                </>
+            )}
+
+            {currentPage === 'Lab' && (
+                <>
+                    <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
+                    <SelectLab/>
+                </>
+            )}
         </>
     );
 }
@@ -39,6 +56,28 @@ const SelectBranchWithYear = ({ currentYear, currentBranch, handleYearChange }) 
                     {`${currentBranch}/${i + 1}`}
                 </option>
             ))}
+        </select>
+    </div>
+);
+
+const SelectLab = () => (
+    <div className='relative col-start-5 flex'>
+        <select
+            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+        >
+            <option value=''>Select Lab</option>
+            <option value=''>LabCom23</option>
+        </select>
+    </div>
+);
+
+const SelectPro = () => (
+    <div className='relative col-start-5 flex px-[15%]'>
+        <select
+            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+        >
+            <option value=''>Select Prof</option>
+            <option value=''>วัชรพัฐ เมตตานันท</option>
         </select>
     </div>
 );
