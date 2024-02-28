@@ -39,9 +39,10 @@ const TimeRows = () => {
 const TimeBlock = ({ startHour, endHour }) => {
     let startHourStyle = `col-start-${(startHour - 8) * 2 + 3}`;
     let endHourStyle = `col-end-${(endHour - 8) * 2 + 3}`;
+    console.log(startHourStyle, endHourStyle)
 
     return (
-        <div className={`${startHourStyle} ${endHourStyle} flex-col justify-between border rounded p-2 md:px-3 md:py-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 bg-green-200`}>
+        <div className={` col-start-5 col-end-11 flex-col justify-between border rounded p-2 md:px-3 md:py-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 bg-green-200`}>
             <p className='flex flex-wrap justify-between mb-2 text-xs md:text-sm'>
                 <span>03603341-60</span>
                 <span>SEC:830</span>

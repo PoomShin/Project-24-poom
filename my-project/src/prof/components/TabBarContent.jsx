@@ -10,18 +10,18 @@ export default function TabBarContent({ currentPage, currentBranch, handleBranch
 
             {currentPage === 'Prof' && (
                 <>
-                    <SelectBranch  currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
+                    <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
                     <div className='relative col-start-4 flex'>
-                        <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange}/>
-                    </div>   
-                    <SelectPro/>
+                        <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
+                    </div>
+                    <SelectPro />
                 </>
             )}
 
             {currentPage === 'Lab' && (
                 <>
                     <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
-                    <SelectLab/>
+                    <SelectLab />
                 </>
             )}
         </>
