@@ -1,29 +1,32 @@
-export default function HeaderContent({ currentPage, currentBranch, handleBranchChange, currentYear, handleYearChange, branches }) {
+import { useBranchesContext, useProfsContext } from "../../context/Prof-Context";
+
+export default function HeaderContent({
+    currentPage,
+    currentBranch, handleBranchChange,
+    currentYear, handleYearChange,
+    currentProf, handleProfChange,
+}) {
+    const { branches } = useBranchesContext();
+    const { profs } = useProfsContext();
+    //console.log(profs)
     return (
         <>
-            <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
+            <SelectBranch branches={branches} currentBranch={currentBranch} handleBranchChange={handleBranchChange} />
 
             {(currentPage === 'Home' || currentPage === 'Prof') && (
                 <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
             )}
-
-            {currentPage === 'Prof' && (
-                <SelectPro />
-            )}
-
-            {currentPage === 'Lab' && (
-                <SelectLab />
-            )}
+            {currentPage === 'Prof' && <SelectPro profs={profs} curProf={currentProf} handleProfChange={handleProfChange} />}
+            {currentPage === 'Lab' && <SelectLab />}
         </>
     );
 }
 
-const SelectBranch = ({ currentBranch, handleBranchChange, branches }) => (
+const SelectBranch = ({ branches, currentBranch, handleBranchChange }) => (
     <div className='relative col-start-3 flex'>
-        <select
-            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+        <select className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
             value={currentBranch}
-            onChange={(e) => handleBranchChange(e.target.value)}
+            onChange={e => handleBranchChange(e.target.value)}
         >
             {branches && branches.map((branch) => (
                 <option key={branch.branch_tag} value={branch.branch_tag}>
@@ -36,10 +39,9 @@ const SelectBranch = ({ currentBranch, handleBranchChange, branches }) => (
 
 const SelectBranchWithYear = ({ currentYear, currentBranch, handleYearChange }) => (
     <div className='relative col-start-5 flex'>
-        <select
-            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+        <select className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
             value={currentYear}
-            onChange={(e) => handleYearChange(e.target.value)}
+            onChange={e => handleYearChange(e.target.value)}
         >
             <option value=''>Select Year</option>
             {Array.from({ length: 4 }, (_, i) => (
@@ -51,21 +53,26 @@ const SelectBranchWithYear = ({ currentYear, currentBranch, handleYearChange }) 
     </div>
 );
 
-const SelectPro = () => (
+const SelectPro = ({ profs, curProf, handleProfChange }) => (
     <div className='relative col-start-7 flex px-[15%]'>
-        <select
-            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+        <select className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+            value={curProf}
+            onChange={e => handleProfChange(e.target.value)}
         >
             <option value=''>Select Prof</option>
-            <option value=''>วัชรพัฐ เมตตานันท</option>
+            {profs && profs.map((prof) => (
+                <option key={prof.id} value={prof.name}>
+                    {prof.name}
+                </option>
+            ))}
         </select>
     </div>
 );
 
-const SelectLab = () => (
+const SelectLab = ({ curLab, handleLabChange }) => (
     <div className='relative col-start-5 flex'>
-        <select
-            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+        <select className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+
         >
             <option value=''>Select Lab</option>
             <option value=''>LabCom23</option>

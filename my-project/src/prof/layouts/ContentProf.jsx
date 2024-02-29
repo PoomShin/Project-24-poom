@@ -1,20 +1,23 @@
 import { useState, useCallback } from 'react';
-import { useBranchesContext } from '../../context/Prof-Context';
 
 export default function ContentProf({ currentPage, userData }) {
-    const { branches } = useBranchesContext();
     const { id, name, email, role, branch_tag } = userData;
 
     const [branch, setBranch] = useState(branch_tag);
     const [branchYear, setBranchYear] = useState('');
+    const [prof, setProf] = useState(name);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleYearChange = selectedBranchYear => {
         setBranchYear(selectedBranchYear)
     }
-    const handleBranchChange = selectBranch => {
-        setBranch(selectBranch)
+    const handleBranchChange = selectedBranch => {
+        setBranch(selectedBranch)
     }
+    const handleProfChange = selectedProf => {
+        setProf(selectedProf)
+    }
+
     const toggleModal = useCallback(() => {
         setIsModalOpen(prevState => !prevState);
     }, []);
@@ -23,15 +26,17 @@ export default function ContentProf({ currentPage, userData }) {
         <div className='col-span-8 bg-gray-200'>
             <ContentProfHeader currentPage={currentPage}>
                 <HeaderContent currentPage={currentPage}
-                    branches={branches} currentBranch={branch} handleBranchChange={handleBranchChange}
+                    currentBranch={branch} handleBranchChange={handleBranchChange}
                     currentYear={branchYear} handleYearChange={handleYearChange}
+                    currentProf={prof} handleProfChange={handleProfChange}
                 />
             </ContentProfHeader>
+
+            <Scheduler />
 
             {currentPage === 'Home' && (
                 <>
                     <InsertCourseModal ownerBranchTag={branch_tag} isVisible={isModalOpen} onClose={toggleModal} />
-                    <Scheduler />
                     <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-4'
                         text='Add Course' type='button' onClick={toggleModal}
                     />

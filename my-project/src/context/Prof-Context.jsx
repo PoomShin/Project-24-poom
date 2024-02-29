@@ -40,7 +40,7 @@ export const BranchProvider = ({ children }) => {
 
 //courses table context
 const CourseContext = createContext();
-export const CourseProvider = ({ branch_tag, children }) => {
+export const CourseProvider = ({ name, branch_tag, children }) => {
     const { data: courses, isLoading: coursesLoading, isError: coursesError } = useQuery(
         'courseData',
         async () => {
@@ -49,11 +49,21 @@ export const CourseProvider = ({ branch_tag, children }) => {
         }
     );
 
+    const { data: profCourses, isLoading: profCoursesLoading, isError: profCoursesError } = useQuery(
+        'profCoursesData',
+        async () => {
+            const response = await axios.get(`/profs/myCourse/${name}`);
+            return response.data;
+        }
+    );
     const contextValue = useMemo(() => ({
         courses,
         coursesLoading,
-        coursesError
-    }), [courses, coursesLoading, coursesError]);
+        coursesError,
+        profCourses,
+        profCoursesLoading,
+        profCoursesError
+    }), [courses, coursesLoading, coursesError, profCourses, profCoursesLoading, profCoursesError]);
 
     return (
         <CourseContext.Provider value={contextValue}>

@@ -222,6 +222,52 @@ app.post('/profs/addGroups', async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal server error' });
     }
 });
+app.get('/profs/myCourse/:name', async (req, res) => {
+    try {
+        const { name } = req.params;
+
+        // Fetch unique courses for the professor
+        const courseQuery = `
+            SELECT DISTINCT c.id, c.combined_code_curriculum, c.course_type
+            FROM courses c
+            JOIN groups g ON c.id = g.course_id
+            JOIN group_profs gp ON g.id = gp.group_id
+            WHERE gp.prof_name = $1
+        `;
+
+        const { rows: courseRows } = await pool.query(courseQuery, [name]);
+
+        // Extract course IDs
+        const courseIds = courseRows.map(row => row.id);
+
+        // Fetch all groups and branch_years for each course
+        const courseDataPromises = courseIds.map(async courseId => {
+            const groupQuery = `
+                SELECT g.*, ARRAY_AGG(gy.branch_year) AS branch_years
+                FROM groups g
+                JOIN group_branch_year gy ON g.id = gy.group_id
+                WHERE g.course_id = $1
+                GROUP BY g.id
+            `;
+            const { rows: groupRows } = await pool.query(groupQuery, [courseId]);
+            return groupRows;
+        });
+
+        // Wait for all course data queries to finish
+        const courseData = await Promise.all(courseDataPromises);
+
+        // Combine the course data with branch_years
+        const result = courseRows.map((courseRow, index) => ({
+            ...courseRow,
+            groups: courseData[index]
+        }));
+
+        res.json(result);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+});
 
 // Generic error handling middleware
 app.use((err, req, res, next) => {
