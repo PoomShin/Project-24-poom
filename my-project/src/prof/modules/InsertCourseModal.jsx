@@ -18,7 +18,7 @@ const parseCredits = credits => {
     return { lectureHours: 0, labHours: 0, selfStudyHours: 0 };
 };
 
-export default function InsertCourseModal({ isVisible, onClose }) {
+export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }) {
     const { courses } = useCoursesContext();
     const addGroupMutation = useAddGroupMutation();
 
@@ -59,7 +59,8 @@ export default function InsertCourseModal({ isVisible, onClose }) {
             const groupData = {
                 mergedSections,
                 course_id: courseInfo.id,
-                group_status: 'waiting'
+                group_status: 'waiting',
+                owner_branch_tag: ownerBranchTag
             };
             console.log(mergedSections)
             await addGroupMutation.mutateAsync(groupData);

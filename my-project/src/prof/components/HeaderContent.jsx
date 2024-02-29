@@ -1,32 +1,23 @@
-export default function TabBarContent({ currentPage, currentBranch, handleBranchChange, branches, currentYear, handleYearChange }) {
+export default function HeaderContent({ currentPage, currentBranch, handleBranchChange, currentYear, handleYearChange, branches }) {
     return (
         <>
-            {currentPage === 'Home' && (
-                <>
-                    <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
-                    <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
-                </>
+            <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
+
+            {(currentPage === 'Home' || currentPage === 'Prof') && (
+                <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
             )}
 
             {currentPage === 'Prof' && (
-                <>
-                    <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
-                    <div className='relative col-start-4 flex'>
-                        <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
-                    </div>
-                    <SelectPro />
-                </>
+                <SelectPro />
             )}
 
             {currentPage === 'Lab' && (
-                <>
-                    <SelectBranch currentBranch={currentBranch} handleBranchChange={handleBranchChange} branches={branches} />
-                    <SelectLab />
-                </>
+                <SelectLab />
             )}
         </>
     );
 }
+
 const SelectBranch = ({ currentBranch, handleBranchChange, branches }) => (
     <div className='relative col-start-3 flex'>
         <select
@@ -60,6 +51,17 @@ const SelectBranchWithYear = ({ currentYear, currentBranch, handleYearChange }) 
     </div>
 );
 
+const SelectPro = () => (
+    <div className='relative col-start-7 flex px-[15%]'>
+        <select
+            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+        >
+            <option value=''>Select Prof</option>
+            <option value=''>วัชรพัฐ เมตตานันท</option>
+        </select>
+    </div>
+);
+
 const SelectLab = () => (
     <div className='relative col-start-5 flex'>
         <select
@@ -67,17 +69,6 @@ const SelectLab = () => (
         >
             <option value=''>Select Lab</option>
             <option value=''>LabCom23</option>
-        </select>
-    </div>
-);
-
-const SelectPro = () => (
-    <div className='relative col-start-5 flex px-[15%]'>
-        <select
-            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
-        >
-            <option value=''>Select Prof</option>
-            <option value=''>วัชรพัฐ เมตตานันท</option>
         </select>
     </div>
 );

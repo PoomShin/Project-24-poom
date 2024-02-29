@@ -191,7 +191,7 @@ app.post('/profs/login', async (req, res) => {
     }
 });
 app.post('/profs/addGroups', async (req, res) => {
-    const { mergedSections, course_id, group_status } = req.body;
+    const { mergedSections, course_id, group_status, owner_branch_tag } = req.body;
 
     try {
         for (const groupData of mergedSections) {
@@ -212,7 +212,7 @@ app.post('/profs/addGroups', async (req, res) => {
             // Add data to group_branches table
             for (const branch of branch_year) {
                 const branch_tag = branch.substring(0, 3);
-                await pool.query('INSERT INTO group_branch_year (group_id, branch_year, branch_tag) VALUES ($1, $2, $3)', [groupId, branch, branch_tag]);
+                await pool.query('INSERT INTO group_branch_year (group_id, branch_year, owner_branch_tag) VALUES ($1, $2, $3)', [groupId, branch, owner_branch_tag]);
             }
         }
 

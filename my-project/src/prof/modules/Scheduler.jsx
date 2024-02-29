@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 const generateTimeSlots = () => {
     const timeSlots = [];
     for (let hour = 8; hour < 20; hour++) {
