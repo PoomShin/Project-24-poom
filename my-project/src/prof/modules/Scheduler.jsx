@@ -14,7 +14,7 @@ const generateTimeSlots = () => {
 
 export default function Scheduler() {
     return (
-        <div className='overflow-x-auto border rounded-lg bg-gray-800 mx-1'>
+        <div className='border rounded-lg bg-gray-800 mx-1'>
             <TimeRows />
             <DayRows />
         </div>
@@ -38,19 +38,10 @@ const TimeRows = () => {
     )
 }
 
-const TimeBlock = ({ startHour, endHour }) => {
-    const [style, setStyle] = useState('');
-
-    useEffect(() => {
-        if (endHour - startHour > 1) {
-            const startHourStyle = `col-start-${(startHour - 8) * 2 + 3}`;
-            const endHourStyle = `col-end-${(endHour - 8) * 2 + 3}`;
-            setStyle(`${startHourStyle} ${endHourStyle}`);
-        }
-    }, [startHour, endHour]);
-
+const TimeBlock = ({ styleStart, styleEnd }) => {
+    console.log(styleStart)
     return (
-        <div className={`${style} flex flex-col justify-between border rounded p-2 md:px-3 md:py-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 bg-green-200`}>
+        <div className={`${styleStart} ${styleEnd} flex flex-col justify-between border rounded p-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 bg-green-200`}>
             <p className='flex flex-wrap justify-between mb-2 text-xs md:text-sm'>
                 <span>03603341-60</span>
                 <span>SEC:830</span>
@@ -70,12 +61,80 @@ const TimeBlock = ({ startHour, endHour }) => {
 const DayRows = () => {
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+    const getColStartClass = (time) => {
+        const [hour, minute] = time.split(':').map(str => parseInt(str));
+
+        // Convert the time to fractional hours
+        const fractionalHour = hour + (minute / 60);
+
+        // Define the mapping of hours to grid column start values
+        const hourToColumnStart = {
+            8: 'col-start-3',
+            9: 'col-start-5',
+            10: 'col-start-7',
+            11: 'col-start-9',
+            12: 'col-start-11',
+            13: 'col-start-13',
+            14: 'col-start-15',
+            15: 'col-start-17',
+            16: 'col-start-19',
+            17: 'col-start-21',
+            18: 'col-start-23',
+            19: 'col-start-25',
+            20: 'col-start-27'
+        };
+
+        // Adjust column start for half-hour intervals
+        if (minute >= 30) {
+            const baseHour = Math.floor(fractionalHour);
+            const baseColumn = parseInt(hourToColumnStart[baseHour].split('-')[2]);
+            return `col-start-${baseColumn + 1}`;
+        }
+
+        // Return the corresponding grid-start class for the hour
+        return hourToColumnStart[Math.floor(fractionalHour)] || ''; // Return empty string if hour is not mapped
+    };
+
+    const getColEndClass = (time) => {
+        const [hour, minute] = time.split(':').map(str => parseInt(str));
+
+        // Convert the time to fractional hours
+        const fractionalHour = hour + (minute / 60);
+
+        // Define the mapping of hours to grid column end values
+        const hourToColumnEnd = {
+            8: 'col-end-3',
+            9: 'col-end-5',
+            10: 'col-end-7',
+            11: 'col-end-9',
+            12: 'col-end-11',
+            13: 'col-end-13',
+            14: 'col-end-15',
+            15: 'col-end-17',
+            16: 'col-end-19',
+            17: 'col-end-21',
+            18: 'col-end-23',
+            19: 'col-end-25',
+            20: 'col-end-27'
+        };
+
+        // Adjust column end for half-hour intervals
+        if (minute >= 30) {
+            const baseHour = Math.floor(fractionalHour);
+            const baseColumn = parseInt(hourToColumnEnd[baseHour].split('-')[2]);
+            return `col-end-${baseColumn + 1}`;
+        }
+
+        // Return the corresponding grid-end class for the hour
+        return hourToColumnEnd[Math.floor(fractionalHour)] || ''; // Return empty string if hour is not mapped
+    };
+
     return (
         <>
             {daysOfWeek.map((day, index) => (
-                <div key={index} className='min-h-4 grid grid-cols-26 border border-gray-700'>
+                <div key={index} className='grid grid-cols-26 border border-gray-700'>
                     <DayBlock DayText={day} colorStyle={getColorForDay(day)} />
-                    <TimeBlock startHour={9} endHour={12} />
+                    {day === 'Mon' && <TimeBlock styleStart={getColStartClass('13:00')} styleEnd={getColEndClass('16:00')} />}
                 </div>
             ))}
         </>
@@ -84,7 +143,7 @@ const DayRows = () => {
 
 const DayBlock = ({ DayText, colorStyle }) => {
     return (
-        <div className={`first-line:p-1 md:p-3 col-span-2 border-r-2 dark:border-gray-700 ${colorStyle}`}>
+        <div className={`grid first-line:p-1 md:p-3 col-start-1 col-end-3 border-r-2 dark:border-gray-700 ${colorStyle}`}>
             <span className='font-bold dark:text-gray-900'>{DayText}</span>
         </div>
     );
@@ -102,4 +161,3 @@ const getColorForDay = (dayOfWeek) => {
     };
     return colorMap[dayOfWeek];
 }
-

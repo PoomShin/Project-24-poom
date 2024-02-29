@@ -36,13 +36,13 @@ export default function ContentProf({ currentPage, userData }) {
             </div>
 
             {currentPage === 'Home' && (
-                <>
-                    <Scheduler />
+                <div>
                     <InsertCourseModal isVisible={isModalOpen} onClose={toggleModal} />
+                    <Scheduler />
                     <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-4'
                         text='Add Course' type='button' onClick={toggleModal}
                     />
-                </>
+                </div>
             )}
         </div>
     );
