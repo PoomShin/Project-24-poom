@@ -1,3 +1,5 @@
+import { useGroupsByBranchYear } from "../../context/Prof-Context";
+
 const generateTimeSlots = () => {
     const timeSlots = [];
     for (let hour = 8; hour < 20; hour++) {
@@ -10,11 +12,12 @@ const generateTimeSlots = () => {
     return timeSlots;
 };
 
-export default function Scheduler() {
+export default function Scheduler({ branchYear }) {
+    const { data, isLoading, isError } = useGroupsByBranchYear(branchYear);
     return (
         <div className='border rounded-lg bg-gray-800 mx-1'>
             <TimeRows />
-            <DayRows />
+            <DayRows groups={data} />
         </div>
     );
 };
@@ -36,27 +39,26 @@ const TimeRows = () => {
     )
 }
 
-const TimeBlock = ({ styleStart, styleEnd }) => {
-    console.log(styleStart)
+const TimeBlock = ({ styleStart, styleEnd, codeCurriculum, groupNum, name, lab }) => {
     return (
         <div className={`${styleStart} ${styleEnd} flex flex-col justify-between border rounded p-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 bg-green-200`}>
             <p className='flex flex-wrap justify-between mb-2 text-xs md:text-sm'>
-                <span>03603341-60</span>
-                <span>SEC:830</span>
+                <span>{codeCurriculum}</span>
+                <span>SEC: {groupNum}</span>
             </p>
             <div className='flex justify-between text-xs text-gray-700'>
                 <div>
-                    กาญจนา เอี่ยมสะอาด
+                    {name}
                 </div>
                 <div className='text-right'>
-                    LabDat23
+                    {lab}
                 </div>
             </div>
         </div>
     );
 };
 
-const DayRows = () => {
+const DayRows = ({ groups }) => {
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     const getColStartClass = (time) => {
@@ -126,13 +128,18 @@ const DayRows = () => {
         // Return the corresponding grid-end class for the hour
         return hourToColumnEnd[Math.floor(fractionalHour)] || ''; // Return empty string if hour is not mapped
     };
-
     return (
         <>
             {daysOfWeek.map((day, index) => (
                 <div key={index} className='grid grid-cols-26 border border-gray-700'>
                     <DayBlock DayText={day} colorStyle={getColorForDay(day)} />
-                    {day === 'Mon' && <TimeBlock styleStart={getColStartClass('13:00')} styleEnd={getColEndClass('16:00')} />}
+                    {groups && groups.map(group => (
+                        group.day_of_week === day &&
+                        <TimeBlock key={group.id}
+                            styleStart={getColStartClass(group.start_time)} styleEnd={getColEndClass(group.end_time)}
+                            codeCurriculum={group.combined_code_curriculum} groupNum={group.group_num} name={group.prof_name} lab={group.lab_room}
+                        />
+                    ))}
                 </div>
             ))}
         </>

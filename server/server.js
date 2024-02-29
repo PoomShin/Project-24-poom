@@ -268,6 +268,75 @@ app.get('/profs/myCourse/:name', async (req, res) => {
         res.status(500).json({ success: false, error: 'An error occurred' });
     }
 });
+app.get('/profs/allCourse', async (req, res) => {
+    try {
+        // Fetch unique courses for all professors
+        const courseQuery = `
+            SELECT DISTINCT c.id, c.combined_code_curriculum, c.course_type
+            FROM courses c
+            JOIN groups g ON c.id = g.course_id
+            JOIN group_profs gp ON g.id = gp.group_id
+        `;
+
+        const { rows: courseRows } = await pool.query(courseQuery);
+
+        // Extract course IDs
+        const courseIds = courseRows.map(row => row.id);
+
+        // Fetch all groups and branch_years for each course
+        const courseDataPromises = courseIds.map(async courseId => {
+            const groupQuery = `
+                SELECT g.*, ARRAY_AGG(gy.branch_year) AS branch_years
+                FROM groups g
+                JOIN group_branch_year gy ON g.id = gy.group_id
+                WHERE g.course_id = $1
+                GROUP BY g.id
+            `;
+            const { rows: groupRows } = await pool.query(groupQuery, [courseId]);
+            return groupRows;
+        });
+
+        // Wait for all course data queries to finish
+        const courseData = await Promise.all(courseDataPromises);
+
+        // Combine the course data with branch_years
+        const result = courseRows.map((courseRow, index) => ({
+            ...courseRow,
+            groups: courseData[index]
+        }));
+
+        res.json(result);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+});
+app.get('/profs/groups/:branchYear', async (req, res) => {
+    try {
+        const { branchYear } = req.params;
+        const decodedBranchYear = decodeURIComponent(branchYear);
+
+        const query = `
+        SELECT c.id AS course_id, c.combined_code_curriculum, g.*, gy.branch_year, gp.prof_name
+        FROM courses c
+        JOIN groups g ON c.id = g.course_id
+        JOIN group_branch_year gy ON g.id = gy.group_id
+        JOIN group_profs gp ON g.id = gp.group_id
+        WHERE gy.branch_year = $1
+      `;
+
+        const { rows } = await pool.query(query, [decodedBranchYear]);
+
+        if (rows.length === 0) {
+            res.status(404).json({ success: false, error: 'No data found' });
+        } else {
+            res.json(rows);
+        }
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+});
 
 // Generic error handling middleware
 app.use((err, req, res, next) => {

@@ -56,14 +56,26 @@ export const CourseProvider = ({ name, branch_tag, children }) => {
             return response.data;
         }
     );
+
+    const { data: allCourses, isLoading: allCoursesLoading, isError: allCoursesError } = useQuery(
+        'allCoursesData',
+        async () => {
+            const response = await axios.get('/profs/allCourse/');
+            return response.data;
+        }
+    );
+
     const contextValue = useMemo(() => ({
         courses,
         coursesLoading,
         coursesError,
         profCourses,
         profCoursesLoading,
-        profCoursesError
-    }), [courses, coursesLoading, coursesError, profCourses, profCoursesLoading, profCoursesError]);
+        profCoursesError,
+        allCourses,
+        allCoursesLoading,
+        allCoursesError
+    }), [courses, coursesLoading, coursesError, profCourses, profCoursesLoading, profCoursesError, allCourses, allCoursesLoading, allCoursesError]);
 
     return (
         <CourseContext.Provider value={contextValue}>
@@ -101,6 +113,25 @@ export const ProfsProvider = ({ branch_tag, children }) => {
 };
 
 //API Context
+const useGroupsByBranchYear = (branchYear) => {
+    const fetchGroupsByBranchYear = async () => {
+        try {
+            const response = await axios.get(`/profs/groups/${encodeURIComponent(branchYear)}`);
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                throw new Error(`No groups found for the selected branch and year.`);
+            } else {
+                throw new Error(`Failed to fetch groups: ${error.message}`);
+            }
+        }
+    };
+
+    const queryKey = ['groups', branchYear]; // Include branchYear in the query key
+
+    return useQuery(queryKey, fetchGroupsByBranchYear);
+};
+
 const useAddGroupMutation = () => {
     const queryClient = useQueryClient();
 
@@ -123,4 +154,4 @@ const useAddGroupMutation = () => {
 export const useBranchesContext = () => useContext(BranchContext);
 export const useCoursesContext = () => useContext(CourseContext);
 export const useProfsContext = () => useContext(ProfsContext);
-export { useAddGroupMutation }
+export { useAddGroupMutation, useGroupsByBranchYear }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useProfsContext, useBranchesContext } from '../../context/Prof-Context';
 import plusIcon from '../../assets/plus.png';
 
-const daysOfWeek = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const generateTimeOptions = () => {
     const options = [];
     for (let hour = 8; hour <= 20; hour++) {
