@@ -92,6 +92,26 @@ export default function CourseItems({ courses, onShowBranches }) {
         </div>
       ),
     },
+    {
+      name: "Edit",
+      selector: (row) => [
+        row.id,
+        row.course_code,
+        row.curriculum,
+        row.th_name,
+        row.eng_name,
+        row.credit,
+        row.course_type,
+      ],
+      cell: (row) => (
+        <div>
+          <button className="text-black hover:text-white bg-green-400  hover:bg-green-600 px-3 py-1 rounded-md border-solid border-2 border-black">
+            Edit
+          </button>
+          <button className="ms-3 hover:text-white bg-blue-400  hover:bg-blue-600 px-3 py-1 rounded-md border-solid border-2 border-black">Submit</button>
+        </div>
+      ),
+    },
   ];
 
   return (
