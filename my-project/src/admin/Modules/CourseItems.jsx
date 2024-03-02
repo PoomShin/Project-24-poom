@@ -75,7 +75,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       cell: (row) => (
         <div>
           <button
-            className="text-red-300 bg-red-400 hover:bg-red-600 px-3 py-1 rounded-md border-solid border-2 border-black"
+            className="text-black hover:text-white bg-red-400  hover:bg-red-600 px-3 py-1 rounded-md border-solid border-2 border-black"
             onClick={() => {
               deleteCourse(
                 row.id,
