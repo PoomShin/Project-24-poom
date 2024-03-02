@@ -20,24 +20,78 @@ export default function CourseItems({ courses, onShowBranches }) {
     // ใช้ id ลบ course :)))))))))))))))))))))))))))))))))))))))))))))))))))))
   };
 
+  const edit_course = (id) => {
+    let d = document;
+
+    let code = d.getElementById(`course_code_${id}`);
+    let curriculum = d.getElementById(`curriculum_${id}`);
+    let th = d.getElementById(`th_${id}`);
+    let eng = d.getElementById(`eng_${id}`);
+    let credit = d.getElementById(`credit_${id}`);
+    let type = d.getElementById(`coruse_type_${id}`);
+    //
+    code.classList.toggle("hidden");
+    curriculum.classList.toggle("hidden");
+    th.classList.toggle("hidden");
+    eng.classList.toggle("hidden");
+    credit.classList.toggle("hidden");
+    type.classList.toggle("hidden");
+    d.getElementById(`submit-${id}`).classList.toggle("hidden")
+    alert(
+      `Edit ${code.value} ${curriculum.value} ${th.value} ${eng.value} ${credit.value} ${type.value}`
+    );
+  };
+
   const columns = [
     {
       name: "Course code",
       selector: (row) => row.course_code,
       sortable: true,
+      cell: (row) => (
+        <div>
+          {row.course_code}
+          <input
+            className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
+            type="text"
+            name=""
+            id={`course_code_${row.id}`}
+            defaultValue={row.course_code}
+          />
+        </div>
+      ),
     },
     {
       name: "Curriculum",
       selector: (row) => row.curriculum,
       sortable: true,
+      cell: (row) => (
+        <div>
+          {row.curriculum}
+          <input
+            className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
+            type="text"
+            name=""
+            id={`curriculum_${row.id}`}
+            defaultValue={row.curriculum}
+          />
+        </div>
+      ),
     },
     {
       name: "Thai Name",
       selector: (row) => row.th_name,
       sortable: true,
       cell: (row) => (
-        <div style={{ width: "100%", whiteSpace: "pre-wrap" }}>
+        <div>
           {row.th_name}
+          <input
+            className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
+            type="text"
+            name=""
+            id={`th_${row.id}`}
+            defaultValue={row.th_name}  
+            
+          />
         </div>
       ),
     },
@@ -46,8 +100,15 @@ export default function CourseItems({ courses, onShowBranches }) {
       selector: (row) => row.eng_name,
       sortable: true,
       cell: (row) => (
-        <div style={{ width: "100%", whiteSpace: "pre-wrap" }}>
+        <div>
           {row.eng_name}
+          <input
+            className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
+            type="text"
+            name=""
+            id={`eng_${row.id}`}
+            defaultValue={row.eng_name}
+          />
         </div>
       ),
     },
@@ -55,11 +116,35 @@ export default function CourseItems({ courses, onShowBranches }) {
       name: "Credit",
       selector: (row) => row.credit,
       sortable: true,
+      cell: (row) => (
+        <div>
+          {row.eng_name}
+          <input
+            className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
+            type="text"
+            name=""
+            id={`credit_${row.id}`}
+            defaultValue={row.credit}
+          />
+        </div>
+      ),
     },
     {
       name: "Course Type",
       selector: (row) => row.course_type,
       sortable: true,
+      cell: (row) => (
+        <div>
+          {row.course_type}
+          <input
+            className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
+            type="text"
+            name=""
+            id={`coruse_type_${row.id}`}
+            defaultValue={row.course_type}
+          />
+        </div>
+      ),
     },
     {
       name: "Delete",
@@ -104,11 +189,43 @@ export default function CourseItems({ courses, onShowBranches }) {
         row.course_type,
       ],
       cell: (row) => (
-        <div>
-          <button className="text-black hover:text-white bg-green-400  hover:bg-green-600 px-3 py-1 rounded-md border-solid border-2 border-black">
+        <div className="flex">
+          <button
+            onClick={() =>
+              edit_course(
+                row.id,
+                row.course_code,
+                row.curriculum,
+                row.th_name,
+                row.eng_name,
+                row.credit,
+                row.course_type
+              )
+            }
+            className="w-14 text-black hover:text-white bg-green-400  hover:bg-green-600 px-3 py-1 rounded-md border-solid border-2 border-black">
             Edit
           </button>
-          <button className="ms-3 hover:text-white bg-blue-400  hover:bg-blue-600 px-3 py-1 rounded-md border-solid border-2 border-black">Submit</button>
+        </div>
+      ),
+    },
+    {
+      name: "",
+      selector: (row) => [
+        row.id,
+        row.course_code,
+        row.curriculum,
+        row.th_name,
+        row.eng_name,
+        row.credit,
+        row.course_type,
+      ],
+      cell: (row) => (
+        <div className="flex">
+          <button
+            id={`submit-${row.id}`}
+            className="text-black hover:text-white bg-blue-400  hover:bg-blue-600 px-3 py-1 rounded-md border-solid border-2 border-black hidden">
+            Submit
+          </button>
         </div>
       ),
     },
