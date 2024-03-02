@@ -21,25 +21,76 @@ export default function CourseItems({ courses, onShowBranches }) {
   };
 
   const edit_course = (id) => {
-    let d = document;
+    input_toggle(id);
+  };
+  const submit_edit = (id) => {
+    input_toggle(id);
+    //old data
+    let old_code = document.getElementById(`text_course_code_${id}`);
+    let old_curriculum = document.getElementById(`text_curriculum_${id}`);
+    let old_th = document.getElementById(`text_th_name_${id}`);
+    let old_eng = document.getElementById(`text_eng_name_${id}`);
+    let old_credit = document.getElementById(`text_credit_${id}`);
+    let old_type = document.getElementById(`text_coruse_type_${id}`);
+    // input value new // new value to update database
+    let new_code = document.getElementById(`course_code_${id}`);
+    let new_curriculum = document.getElementById(`curriculum_${id}`);
+    let new_th = document.getElementById(`th_${id}`);
+    let new_eng = document.getElementById(`eng_${id}`);
+    let new_credit = document.getElementById(`credit_${id}`);
+    let new_type = document.getElementById(`coruse_type_${id}`);
+    //
+    let old_value = `${old_code.textContent} ${old_curriculum.textContent} ${old_th.textContent} ${old_eng.textContent} ${old_credit.textContent} ${old_type.textContent}`;
+    let input_field = `${new_code.value} ${new_curriculum.value} ${new_th.value} ${new_eng.value} ${new_credit.value} ${new_type.value}`;
 
+    let message = `Are you sure you want to make the following changes?
+
+Course Code: ${old_code.textContent} -> ${new_code.value}
+Course Curriculum: ${old_curriculum.textContent} -> ${new_curriculum.value}
+th name: ${old_th.textContent} -> ${new_th.value}
+eng name: ${old_eng.textContent} -> ${new_eng.value}
+credit name: ${old_credit.textContent} -> ${new_credit.value}
+type name: ${old_type.textContent} -> ${new_type.value}
+`;
+
+    let con = confirm(message);
+
+    if (con) {
+      //อย่าลบ
+      old_code.innerText = new_code.value;
+      old_curriculum.innerText = new_curriculum.value;
+      old_th.innerText = new_th.value;
+      old_eng.innerText = new_eng.value;
+      old_credit.innerText = new_credit.value;
+      old_type.innerText = new_type.value;
+      // เอาตัวแปร new_... ไป update โดยอิงจาก id
+      // vvvv update database vvvv     
+      alert("Data changed");
+    } else {
+      new_code.value = old_code.textContent;
+      new_curriculum.value = old_curriculum.textContent;
+      new_th.value = old_th.textContent;
+      new_eng.value = old_eng.textContent;
+      new_credit.value = old_credit.textContent;
+      new_type.value = old_type.textContent;
+    }
+  };
+
+  const input_toggle = (id) => {
+    let d = document;
     let code = d.getElementById(`course_code_${id}`);
     let curriculum = d.getElementById(`curriculum_${id}`);
     let th = d.getElementById(`th_${id}`);
     let eng = d.getElementById(`eng_${id}`);
     let credit = d.getElementById(`credit_${id}`);
     let type = d.getElementById(`coruse_type_${id}`);
-    //
     code.classList.toggle("hidden");
     curriculum.classList.toggle("hidden");
     th.classList.toggle("hidden");
     eng.classList.toggle("hidden");
     credit.classList.toggle("hidden");
     type.classList.toggle("hidden");
-    d.getElementById(`submit-${id}`).classList.toggle("hidden")
-    alert(
-      `Edit ${code.value} ${curriculum.value} ${th.value} ${eng.value} ${credit.value} ${type.value}`
-    );
+    document.getElementById(`submit-${id}`).classList.toggle("hidden");
   };
 
   const columns = [
@@ -49,7 +100,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: (row) => (
         <div>
-          {row.course_code}
+          <p id={`text_course_code_${row.id}`}>{row.course_code}</p>
           <input
             className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type="text"
@@ -66,7 +117,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: (row) => (
         <div>
-          {row.curriculum}
+          <p id={`text_curriculum_${row.id}`}>{row.curriculum}</p>
           <input
             className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type="text"
@@ -83,15 +134,14 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: (row) => (
         <div>
-          {row.th_name}
-          <input
-            className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
-            type="text"
+          <p id={`text_th_name_${row.id}`}>{row.th_name}</p>
+
+          <textarea
+            className={`input-${row.id}  border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
+            type="text-area"
             name=""
             id={`th_${row.id}`}
-            defaultValue={row.th_name}  
-            
-          />
+            defaultValue={row.th_name}></textarea>
         </div>
       ),
     },
@@ -101,14 +151,14 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: (row) => (
         <div>
-          {row.eng_name}
-          <input
+          <p id={`text_eng_name_${row.id}`}>{row.eng_name}</p>
+
+          <textarea
             className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type="text"
             name=""
             id={`eng_${row.id}`}
-            defaultValue={row.eng_name}
-          />
+            defaultValue={row.eng_name}></textarea>
         </div>
       ),
     },
@@ -118,7 +168,8 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: (row) => (
         <div>
-          {row.eng_name}
+          <p id={`text_credit_${row.id}`}> {row.credit}</p>
+
           <input
             className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type="text"
@@ -135,7 +186,8 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: (row) => (
         <div>
-          {row.course_type}
+          <p id={`text_coruse_type_${row.id}`}> {row.course_type}</p>
+
           <input
             className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type="text"
@@ -223,6 +275,7 @@ export default function CourseItems({ courses, onShowBranches }) {
         <div className="flex">
           <button
             id={`submit-${row.id}`}
+            onClick={() => submit_edit(row.id)}
             className="text-black hover:text-white bg-blue-400  hover:bg-blue-600 px-3 py-1 rounded-md border-solid border-2 border-black hidden">
             Submit
           </button>
