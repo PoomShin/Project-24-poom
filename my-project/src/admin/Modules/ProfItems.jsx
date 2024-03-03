@@ -78,9 +78,8 @@ export default function ProfItems({ profs, onShowBranches }) {
         <>
           <p id={`name-${row.id}`}>{row.name}</p>
           <input
-            className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${
-              !editToggle && "hidden"
-            }`}
+            className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && "hidden"
+              }`}
             id={`input-name-${row.id}`}
             type="text"
             defaultValue={row.name}
@@ -98,9 +97,8 @@ export default function ProfItems({ profs, onShowBranches }) {
         <>
           <p id={`email-${row.id}`}>{row.email}</p>
           <input
-            className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${
-              !editToggle && "hidden"
-            }`}
+            className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && "hidden"
+              }`}
             id={`input-email-${row.id}`}
             type="text"
             defaultValue={row.email}
