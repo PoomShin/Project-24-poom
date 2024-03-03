@@ -12,7 +12,7 @@ const generateTimeSlots = () => {
     return timeSlots;
 };
 
-export default function Scheduler({ branchYear }) {
+export default function Scheduler({ currentPage, branchYear }) {
     const { data, isLoading, isError } = useGroupsByBranchYear(branchYear);
     return (
         <div className='border rounded-lg bg-gray-800 mx-1'>

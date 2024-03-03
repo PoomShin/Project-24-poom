@@ -32,7 +32,7 @@ export default function ContentProf({ currentPage, userData }) {
                 />
             </ContentProfHeader>
 
-            <Scheduler branchYear={branchYear} />
+            <Scheduler currentPage={currentPage} branchYear={branchYear} />
 
             {currentPage === 'Home' && (
                 <>
