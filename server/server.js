@@ -317,7 +317,7 @@ app.get('/profs/groups/:branchYear', async (req, res) => {
         const decodedBranchYear = decodeURIComponent(branchYear);
 
         const query = `
-        SELECT c.id AS course_id, c.combined_code_curriculum, g.*, gy.branch_year, gp.prof_name
+        SELECT c.id AS course_id, c.combined_code_curriculum, c.course_type, g.*, gy.branch_year, gp.prof_name
         FROM courses c
         JOIN groups g ON c.id = g.course_id
         JOIN group_branch_year gy ON g.id = gy.group_id
