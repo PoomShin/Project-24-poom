@@ -32,12 +32,12 @@ export default function ContentProf({ currentPage, userData }) {
                 />
             </ContentProfHeader>
 
-            <Scheduler currentPage={currentPage} branchYear={branchYear} />
+            <Scheduler currentPage={currentPage} branchYear={branchYear} currentProf={prof} />
 
             {currentPage === 'Home' && (
                 <>
                     <InsertCourseModal ownerBranchTag={branch_tag} isVisible={isModalOpen} onClose={toggleModal} />
-                    <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-4'
+                    <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold mb-4 py-2 px-4'
                         text='Add Course' type='button' onClick={toggleModal}
                     />
                 </>

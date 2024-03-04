@@ -24,7 +24,6 @@ export default function SideBarRight() {
 }
 
 const ProfGroup = ({ group }) => {
-    console.log(group)
     const startTimeParts = group.start_time.split(':');
     const endTimeParts = group.end_time.split(':');
     const startTime = `${startTimeParts[0].padStart(2, '0')}:${startTimeParts[1]}`;

@@ -9,11 +9,12 @@ export const useAdminContext = () => {
 };
 
 const useFetchData = (url) => {
-    return useQuery(url, async () => {
+    const { data, error } = useQuery(url, async () => {
         const response = await axios.get(url);
         if (!response.data) throw new Error(`Failed to fetch data from ${url}`);
         return response.data;
     });
+    return { data, error };
 };
 
 const AdminProvider = ({ children, selectedBranchTag }) => {
@@ -42,139 +43,107 @@ const useFetchValue = (branch_tag) => {
 };
 
 //Separate API Context
-const useDelBranchMutation = () => {
+const useMutationWithQueryInvalidation = (mutationFunction, queryKey, onSuccessCallback, onErrorCallback) => {
     const queryClient = useQueryClient();
 
-    const delBranch = async (branch_tag) => {
-        try {
-            const response = await axios.delete(`/admin/delBranch/${branch_tag}`);
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data.error || 'Failed to delete branch. Please try again later.');
-        }
-    };
-
-    return useMutation(delBranch, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('branches');
+    const mutation = useMutation(mutationFunction, {
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(queryKey);
+            if (onSuccessCallback) {
+                onSuccessCallback(data);
+            }
+        },
+        onError: (error) => {
+            if (onErrorCallback) {
+                onErrorCallback(error);
+            }
         },
     });
+
+    return mutation;
+};
+
+const useDelBranchMutation = () => {
+    const mutationFunction = async (branch_tag) => {
+        const response = await axios.delete(`/admin/delBranch/${branch_tag}`);
+        return response.data;
+    };
+
+    return useMutationWithQueryInvalidation(
+        mutationFunction,
+        'branches',
+        () => { },
+        (error) => {
+            throw new Error(error.response?.data.error || 'Failed to delete branch. Please try again later.');
+        }
+    );
 };
 
 const useAddBranchMutation = () => {
-    const queryClient = useQueryClient();
-
-    const addBranch = async (branchData) => {
-        try {
-            const response = await axios.post('/admin/addBranch', branchData);
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data.error || 'Failed to add branch. Please try again later.');
-        }
+    const mutationFunction = async (branchData) => {
+        const response = await axios.post('/admin/addBranch', branchData);
+        return response.data;
     };
 
-    return useMutation(addBranch, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('branches');
-        },
-    });
+    return useMutationWithQueryInvalidation(
+        mutationFunction,
+        'branches',
+        () => { },
+        (error) => {
+            throw new Error(error.response?.data.error || 'Failed to add branch. Please try again later.');
+        }
+    );
 };
 
 const useAddProfMutation = () => {
-    const queryClient = useQueryClient();
-
-    const addProf = async (formData) => {
-        try {
-            const response = await axios.post('/admin/addProf', formData);
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data.error || 'Unknown error');
-        }
+    const mutationFunction = async (formData) => {
+        const response = await axios.post('/admin/addProf', formData);
+        return response.data;
     };
 
-    return useMutation(addProf, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('addProf');
-        },
-    });
+    return useMutationWithQueryInvalidation(
+        mutationFunction,
+        'addProf',
+        () => { },
+        (error) => {
+            throw new Error(error.response?.data.error || 'Unknown error');
+        }
+    );
 };
 
 const useUpdateProfMutation = (onSuccessCallback, onErrorCallback) => {
-    const queryClient = useQueryClient();
-
-    const updateProf = async ({ id, name, email, role }) => {
-        try {
-            const response = await axios.put(`/admin/updateProf/${id}`, { name, email, role });
-            return response.data;
-        } catch (error) {
-            return { error: error.response?.data.error || 'Unknown error' };
-        }
+    const mutationFunction = async ({ id, name, email, role }) => {
+        const response = await axios.put(`/admin/updateProf/${id}`, { name, email, role });
+        return response.data;
     };
 
-    return useMutation(updateProf, {
-        onSuccess: (data) => {
-            queryClient.invalidateQueries('updateProf');
-            if (onSuccessCallback) {
-                onSuccessCallback(data);
-            }
-        },
-        onError: (error) => {
-            if (onErrorCallback) {
-                onErrorCallback(error);
-            }
-        },
-    });
+    return useMutationWithQueryInvalidation(mutationFunction, 'updateProf', onSuccessCallback, onErrorCallback);
 };
 
 const useDeleteProfMutation = (onSuccessCallback, onErrorCallback) => {
-    const queryClient = useQueryClient();
-
-    const deleteProf = async (id) => {
-        try {
-            const response = await axios.delete(`/admin/deleteProf/${id}`);
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data.error || 'Unknown error');
-        }
+    const mutationFunction = async (id) => {
+        const response = await axios.delete(`/admin/deleteProf/${id}`);
+        return response.data;
     };
 
-    return useMutation(deleteProf, {
-        onSuccess: (data) => {
-            queryClient.invalidateQueries('delProf');
-            if (onSuccessCallback) {
-                onSuccessCallback(data);
-            }
-        },
-        onError: (error) => {
-            if (onErrorCallback) {
-                onErrorCallback(error);
-            }
-        },
-    });
+    return useMutationWithQueryInvalidation(mutationFunction, 'delProf', onSuccessCallback, onErrorCallback);
 };
 
 const useImportCourseMutation = (onSuccessCallback, onErrorCallback) => {
-    const importCourse = async (data) => {
-        try {
-            const response = await axios.post('/admin/importCourse', { data });
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data.error || 'Failed to import course data');
-        }
+    const mutationFunction = async (data) => {
+        const response = await axios.post('/admin/importCourse', { data });
+        return response.data;
     };
 
-    return useMutation(importCourse, {
-        onSuccess: (data) => {
-            if (onSuccessCallback) {
-                onSuccessCallback(data);
-            }
-        },
-        onError: (error) => {
-            if (onErrorCallback) {
-                onErrorCallback(error);
-            }
-        },
-    });
+    return useMutationWithQueryInvalidation(mutationFunction, null, onSuccessCallback, onErrorCallback);
 };
 
-export { AdminProvider, useDelBranchMutation, useAddBranchMutation, useAddProfMutation, useUpdateProfMutation, useDeleteProfMutation, useImportCourseMutation };
+export {
+    AdminProvider,
+    useDelBranchMutation,
+    useAddBranchMutation,
+    useAddProfMutation,
+    useUpdateProfMutation,
+    useDeleteProfMutation,
+    useImportCourseMutation,
+};

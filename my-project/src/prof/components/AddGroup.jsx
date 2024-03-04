@@ -5,10 +5,10 @@ import plusIcon from '../../assets/plus.png';
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const generateTimeOptions = () => {
     const options = [];
-    for (let hour = 8; hour <= 20; hour++) {
+    for (let hour = 8; hour <= 24; hour++) {
         const formattedHour = hour < 10 ? `0${hour}` : hour;
         for (let minute = 0; minute < 60; minute += 30) {
-            if (hour === 20 && minute > 0) {
+            if (hour === 24 && minute > 0) {
                 break; // Break the loop if the hour exceeds 20:00
             }
             const formattedMinute = minute === 0 ? '00' : minute;
@@ -20,7 +20,7 @@ const generateTimeOptions = () => {
 const timeOptions = generateTimeOptions();
 
 export default function AddGroup({ onAddSection, isLab }) {
-    const { profs } = useProfsContext();
+    const { profsBranchTag } = useProfsContext();
     const { branch_year } = useBranchesContext();
     const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -77,7 +77,7 @@ export default function AddGroup({ onAddSection, isLab }) {
                     </div>
 
                     <div className='flex flex-col self-center text-xs text-white mt-3'>
-                        <MultipleInput spanText='อาจารย์' spanClass={'ml-2 mr-4'} formData={formData} setFormData={setFormData} inputType='prof_name' data={profs} isProf={true} />
+                        <MultipleInput spanText='อาจารย์' spanClass={'ml-2 mr-4'} formData={formData} setFormData={setFormData} inputType='prof_name' data={profsBranchTag} isProf={true} />
                         <br className='my-2' />
                         <MultipleInput spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_year' data={branch_year} isProf={false} maxLength={5} />
 

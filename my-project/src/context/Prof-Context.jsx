@@ -87,8 +87,8 @@ export const CourseProvider = ({ name, branch_tag, children }) => {
 // Profs table with branch_tag parameter
 const ProfsContext = createContext();
 export const ProfsProvider = ({ branch_tag, children }) => {
-    const { data: profs, isLoading, isError } = useQuery(
-        ['profsData', branch_tag], // Providing branchTag as a query key
+    const { data: profsBranchTag, isprofsBranchTagLoading, isprofsBranchTagError } = useQuery(
+        ['profsData', branch_tag],
         async () => {
             try {
                 const response = await axios.get(`/api/profs/${branch_tag}`);
@@ -100,10 +100,10 @@ export const ProfsProvider = ({ branch_tag, children }) => {
     );
 
     const contextValue = useMemo(() => ({
-        profs,
-        isLoading,
-        isError
-    }), [profs, isLoading, isError]);
+        profsBranchTag,
+        isprofsBranchTagLoading,
+        isprofsBranchTagError
+    }), [profsBranchTag, isprofsBranchTagLoading, isprofsBranchTagError]);
 
     return (
         <ProfsContext.Provider value={contextValue}>
@@ -114,6 +114,12 @@ export const ProfsProvider = ({ branch_tag, children }) => {
 
 //API Context
 const useGroupsByBranchYear = (branchYear) => {
+    const queryKey = ['groups', branchYear];
+
+    if (branchYear === '') {
+        return useQuery(queryKey, { data: [], isLoading: false, isError: false });
+    }
+
     const fetchGroupsByBranchYear = async () => {
         try {
             const response = await axios.get(`/profs/groups/${encodeURIComponent(branchYear)}`);
@@ -126,8 +132,6 @@ const useGroupsByBranchYear = (branchYear) => {
             }
         }
     };
-
-    const queryKey = ['groups', branchYear]; // Include branchYear in the query key
 
     return useQuery(queryKey, fetchGroupsByBranchYear);
 };

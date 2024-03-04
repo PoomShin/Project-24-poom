@@ -7,8 +7,8 @@ export default function HeaderContent({
     currentProf, handleProfChange,
 }) {
     const { branches } = useBranchesContext();
-    const { profs } = useProfsContext();
-    //console.log(profs)
+    const { profsBranchTag } = useProfsContext();
+
     return (
         <>
             <SelectBranch branches={branches} currentBranch={currentBranch} handleBranchChange={handleBranchChange} />
@@ -16,7 +16,7 @@ export default function HeaderContent({
             {(currentPage === 'Home' || currentPage === 'Prof') && (
                 <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
             )}
-            {currentPage === 'Prof' && <SelectPro profs={profs} curProf={currentProf} handleProfChange={handleProfChange} />}
+            {currentPage === 'Prof' && <SelectProf profs={profsBranchTag} curProf={currentProf} handleProfChange={handleProfChange} />}
             {currentPage === 'Lab' && <SelectLab />}
         </>
     );
@@ -53,7 +53,7 @@ const SelectBranchWithYear = ({ currentYear, currentBranch, handleYearChange }) 
     </div>
 );
 
-const SelectPro = ({ profs, curProf, handleProfChange }) => (
+const SelectProf = ({ profs, curProf, handleProfChange }) => (
     <div className='relative col-start-7 flex px-[15%]'>
         <select className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
             value={curProf}
