@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProfsContext, useBranchesContext } from '../../context/Prof-Context';
 import plusIcon from '../../assets/plus.png';
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 const generateTimeOptions = () => {
     const options = [];
     for (let hour = 8; hour <= 24; hour++) {
@@ -17,9 +18,10 @@ const generateTimeOptions = () => {
     }
     return options;
 };
+
 const timeOptions = generateTimeOptions();
 
-export default function AddGroup({ onAddSection, isLab }) {
+export default function AddGroup({ onAddSection, creditHours, isLab, }) {
     const { profsBranchTag } = useProfsContext();
     const { branch_year } = useBranchesContext();
     const [isFormVisible, setIsFormVisible] = useState(false);
@@ -54,36 +56,48 @@ export default function AddGroup({ onAddSection, isLab }) {
         handleShowForm();
     };
 
+    useEffect(() => {
+        const hours = isLab ? creditHours.labHours : creditHours.lectureHours;
+        const unit = isLab ? Math.ceil(creditHours.labHours / 3) : creditHours.lectureHours;
+        const adjustedHours = creditHours.lectureHours > 3 ? '' : hours;
+
+        setFormData(prevData => ({
+            ...prevData,
+            hours: adjustedHours,
+            unit
+        }));
+    }, [creditHours, isLab]);
+
     return (
         <div className='relative h-full min-w-80 flex flex-col justify-center rounded-md bg-slate-700 mr-4'>
             {isFormVisible ? (
-                <form onSubmit={handleSubmit}>
-                    <div className='absolute top-0 right-0 flex text-xs text-white mt-2 mr-2'>
+                <form onSubmit={handleSubmit} className=''>
+                    <div className='absolute top-0 right-0 flex text-xs text-white mt-1 mr-1'>
                         <button className='bg-green-500 hover:bg-green-700 rounded mr-2 px-2 py-1' type='submit'>Add</button>
                         <button className='bg-red-500 hover:bg-red-700 rounded px-2 py-1' type='button' onClick={handleShowForm}>Cancel</button>
                     </div>
 
-                    <div className='flex self-center text-xs text-white mt-4'>
+                    <div className='flex self-center text-xs text-white'>
                         <InputSpan spanText='หมู่' spanClass='ml-4 mr-2' inputClass='w-10 h-5' name='group_num' value={formData.group_num} onChange={handleInputChange} isSelect={false} />
                         <InputSpan spanText='จำนวน' spanClass='mr-2' inputClass='w-10 h-5' name='quantity' value={formData.quantity} onChange={handleInputChange} isSelect={false} />
-                        <InputSpan spanText='หน่วย' spanClass='mr-2' inputClass='w-5 h-5' name='unit' value={formData.unit} onChange={handleInputChange} isSelect={false} />
+                        <InputSpan spanText='หน่วย' spanClass='mr-2' inputClass='w-5 h-5' name='unit' value={formData.unit} onChange={handleInputChange} isSelect={false} readOnly />
                         <InputSpan spanText='ชั่วโมง' spanClass='mr-2' inputClass='w-5 h-5' name='hours' value={formData.hours} onChange={handleInputChange} isSelect={false} />
                     </div>
 
-                    <div className='flex self-center text-xs text-white mt-3'>
-                        <InputSpan spanText='วัน' spanClass='ml-4 mr-2' inputClass='w-12 h-5' name='day_of_week' value={formData.day_of_week} onChange={handleInputChange} isSelect={true} options={daysOfWeek} />
-                        <InputSpan spanText='เริ่ม' spanClass='mr-2' inputClass='w-12 h-5' name='start_time' value={formData.start_time} onChange={handleInputChange} isSelect={true} options={timeOptions} />
-                        <InputSpan spanText='สิ้นสุด' spanClass='mr-2' inputClass='w-12 h-5' name='end_time' value={formData.end_time} onChange={handleInputChange} isSelect={true} options={timeOptions} />
+                    <div className='flex self-center text-sm text-white mb-1'>
+                        <InputSpan spanText='วัน' spanClass='ml-4 mr-2' inputClass='w-12 h-6' name='day_of_week' value={formData.day_of_week} onChange={handleInputChange} isSelect={true} options={daysOfWeek} />
+                        <InputSpan spanText='เริ่ม' spanClass='mr-2' inputClass='w-12 h-6' name='start_time' value={formData.start_time} onChange={handleInputChange} isSelect={true} options={timeOptions} />
+                        <InputSpan spanText='สิ้นสุด' spanClass='mr-2' inputClass='w-12 h-6' name='end_time' value={formData.end_time} onChange={handleInputChange} isSelect={true} options={timeOptions} />
                     </div>
 
-                    <div className='flex flex-col self-center text-xs text-white mt-3'>
+                    <div className='flex flex-col self-center text-xs text-white mt-2'>
                         <MultipleInput spanText='อาจารย์' spanClass={'ml-2 mr-4'} formData={formData} setFormData={setFormData} inputType='prof_name' data={profsBranchTag} isProf={true} />
-                        <br className='my-2' />
+                        <div className='mb-2'></div>
                         <MultipleInput spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_year' data={branch_year} isProf={false} maxLength={5} />
 
                         {isLab &&
-                            <div className='mt-4'>
-                                <InputSpan spanText='ห้องแลป' spanClass='ml-3 mr-1' inputClass='w-60 h-5' name='lab_room' value={formData.lab_room} onChange={handleInputChange} />
+                            <div>
+                                <InputSpan spanText='ห้องแลป' spanClass='ml-3 mr-1' inputClass='w-30 h-5' name='lab_room' value={formData.lab_room} onChange={handleInputChange} />
                             </div>
                         }
                     </div>
@@ -94,12 +108,19 @@ export default function AddGroup({ onAddSection, isLab }) {
 }
 
 //Components
-const InputSpan = ({ spanText, spanClass, inputClass, name, value, onChange, isSelect, options }) => {
+const InputSpan = ({ spanText, spanClass, inputClass, name, value, onChange, isSelect, options, ...prop }) => {
     return (
-        <div className='flex self-center text-xs text-white mt-3'>
+        <div className='flex self-center mt-3'>
             <span className={spanClass}>{spanText}</span>
             {!isSelect ? (
-                <input className={`text-black border rounded-sm mr-2 p-1 ${inputClass}`} type='text' required name={name} value={value} onChange={onChange} />
+                <input className={`text-black border rounded-sm mr-2 p-1 ${inputClass}`}
+                    type='text'
+                    required
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    {...prop}
+                />
             ) : (
                 <select className={`text-black border border-solid rounded-sm border-cyan-500 mr-2 p-1 appearance-none leading-none ${inputClass}`} name={name} value={value} onChange={onChange}>
                     <option value="">{spanText}</option>
