@@ -385,13 +385,32 @@ app.get('/profs/groups/:branchYear', async (req, res) => {
         const decodedBranchYear = decodeURIComponent(branchYear);
 
         const query = `
-        SELECT c.id AS course_id, c.combined_code_curriculum, c.course_type, g.*, gy.branch_year, gp.prof_name
-        FROM courses c
-        JOIN groups g ON c.id = g.course_id
-        JOIN group_branch_year gy ON g.id = gy.group_id
-        JOIN group_profs gp ON g.id = gp.group_id
-        WHERE gy.branch_year = $1
-      `;
+            SELECT 
+                g.Id AS group_id, 
+                g.group_num, 
+                g.quantity, 
+                g.unit, 
+                g.hours, 
+                g.day_of_week, 
+                g.start_time, 
+                g.end_time, 
+                g.lab_room, 
+                g.group_status, 
+                c.combined_code_curriculum,
+                ARRAY_AGG(gp.prof_name) AS prof_names
+            FROM 
+                groups g
+            JOIN 
+                group_branch_year gy ON g.Id = gy.group_id
+            JOIN 
+                group_profs gp ON g.Id = gp.group_id
+            JOIN 
+                courses c ON g.course_id = c.Id
+            WHERE 
+                gy.branch_year = $1
+            GROUP BY 
+                g.Id, c.combined_code_curriculum;
+        `;
 
         const { rows } = await pool.query(query, [decodedBranchYear]);
 

@@ -4,7 +4,7 @@ export default function HeaderContent({
     currentPage,
     currentBranch, handleBranchChange,
     currentYear, handleYearChange,
-    currentProf, handleProfChange,
+    currentProfName, handleProfChange,
 }) {
     const { branches } = useBranchesContext();
     const { profsBranchTag } = useProfsContext();
@@ -16,7 +16,7 @@ export default function HeaderContent({
             {(currentPage === 'Home' || currentPage === 'Prof') && (
                 <SelectBranchWithYear currentYear={currentYear} currentBranch={currentBranch} handleYearChange={handleYearChange} />
             )}
-            {currentPage === 'Prof' && <SelectProf profs={profsBranchTag} curProf={currentProf} handleProfChange={handleProfChange} />}
+            {currentPage === 'Prof' && <SelectProf profs={profsBranchTag} curProf={currentProfName} handleProfChange={handleProfChange} />}
             {currentPage === 'Lab' && <SelectLab />}
         </>
     );

@@ -13,14 +13,13 @@ const generateTimeSlots = () => {
     return timeSlots;
 };
 
-export default function Scheduler({ currentPage, branchYear, currentProf }) {
+export default function Scheduler({ currentPage, branchYear, currentProfName }) {
     const { data: branchYearGroups, isLoading, isError } = useGroupsByBranchYear(branchYear);
-    console.log(branchYearGroups)
 
     return (
         <div className='border rounded-lg bg-gray-800 mx-1'>
             <TimeRows />
-            <DayRows groups={branchYearGroups} page={currentPage} prof={currentProf} />
+            <DayRows groups={branchYearGroups} page={currentPage} profName={currentProfName} />
         </div>
     );
 };

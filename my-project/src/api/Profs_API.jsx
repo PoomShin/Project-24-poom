@@ -12,7 +12,11 @@ const useGroupsByBranchYear = (branchYear) => {
     const fetchGroupsByBranchYear = async () => {
         try {
             const response = await axios.get(`/profs/groups/${encodeURIComponent(branchYear)}`);
-            return response.data;
+            const data = response.data.map(group => ({
+                ...group,
+                prof_names: group.prof_names || [] // Ensure prof_names is an array even if it's null
+            }));
+            return data;
         } catch (error) {
             if (error.response && error.response.status === 404) {
                 throw new Error(`No groups found for the selected branch and year.`);

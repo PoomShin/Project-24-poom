@@ -87,7 +87,7 @@ const getColEndClass = (time) => {
     return hourToColumnEnd[fractionalHour] || '';
 };
 
-export default function DayRows({ groups }) {
+export default function DayRows({ groups, page, profName }) {
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     // Memoized sorted groups
@@ -152,7 +152,7 @@ export default function DayRows({ groups }) {
                             colStart={getColStartClass(group.start_time)}
                             colEnd={getColEndClass(group.end_time)}
                             bgStyle={getBgStyle(group, day)}
-                            codeCurriculum={group.combined_code_curriculum} groupNum={group.group_num} name={group.prof_name} lab={group.lab_room}
+                            codeCurriculum={group.combined_code_curriculum} groupNum={group.group_num} names={group.prof_names} lab={group.lab_room} profName={profName}
                         />
                     ))}
                 </div>

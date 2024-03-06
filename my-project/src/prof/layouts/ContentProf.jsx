@@ -5,7 +5,7 @@ export default function ContentProf({ currentPage, userData }) {
 
     const [branch, setBranch] = useState(branch_tag);
     const [branchYear, setBranchYear] = useState('');
-    const [prof, setProf] = useState(name);
+    const [profName, setProfName] = useState(name);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleYearChange = selectedBranchYear => {
@@ -28,11 +28,11 @@ export default function ContentProf({ currentPage, userData }) {
                 <HeaderContent currentPage={currentPage}
                     currentBranch={branch} handleBranchChange={handleBranchChange}
                     currentYear={branchYear} handleYearChange={handleYearChange}
-                    currentProf={prof} handleProfChange={handleProfChange}
+                    currentProfName={profName} handleProfChange={handleProfChange}
                 />
             </ContentProfHeader>
 
-            <Scheduler currentPage={currentPage} branchYear={branchYear} currentProf={prof} />
+            <Scheduler currentPage={currentPage} branchYear={branchYear} currentProfName={profName} />
 
             {currentPage === 'Home' && (
                 <>
