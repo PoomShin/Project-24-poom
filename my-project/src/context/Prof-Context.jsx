@@ -136,26 +136,7 @@ const useGroupsByBranchYear = (branchYear) => {
     return useQuery(queryKey, fetchGroupsByBranchYear);
 };
 
-const useAddGroupMutation = () => {
-    const queryClient = useQueryClient();
-
-    const addGroup = async (groupData) => {
-        try {
-            const response = await axios.post('/profs/addGroups', groupData);
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data.error || 'Failed to add group. Please try again later.');
-        }
-    };
-
-    return useMutation((groupData) => addGroup(groupData), {
-        onSuccess: () => {
-            queryClient.invalidateQueries('groups');
-        },
-    });
-};
-
 export const useBranchesContext = () => useContext(BranchContext);
 export const useCoursesContext = () => useContext(CourseContext);
 export const useProfsContext = () => useContext(ProfsContext);
-export { useAddGroupMutation, useGroupsByBranchYear }
+export { useGroupsByBranchYear }

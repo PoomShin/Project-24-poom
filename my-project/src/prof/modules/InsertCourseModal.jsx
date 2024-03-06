@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useCoursesContext, useAddGroupMutation } from '../../context/Prof-Context';
+import { useCoursesContext } from '../../context/Prof-Context';
+import { useAddGroupMutation } from '../../api/Profs_API';
 import InputSection from '../components/InputSelect';
 import ButtonCom from '../components/ButtonCom';
 import GroupList from './GroupList';
