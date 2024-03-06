@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useProfsContext, useBranchesContext } from '../../context/Prof-Context';
 import plusIcon from '../../assets/plus.png';
 
@@ -97,7 +97,7 @@ export default function AddGroup({ onAddSection, creditHours, isLab, }) {
                     <div className='flex flex-col self-center text-xs text-white mt-2'>
                         <SelectProf formData={formData} setFormData={setFormData} profsBranchTag={profsBranchTag} />
                         <div className='mb-2'></div>
-                        <SelectBranchYear spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_year' data={branch_year} isProf={false} maxLength={5} />
+                        <SelectBranchYear spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_year' data={branch_year} isProf={false} />
 
                         {isLab &&
                             <div>
@@ -143,7 +143,7 @@ const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
 
     useEffect(() => {
         const profOptions = profsBranchTag
-            .filter(prof => !selectedOptions.includes(prof.name)) // Filter out selected options
+            .filter(prof => !selectedOptions.includes(prof.name))
             .map(prof => ({
                 value: prof.name,
                 label: prof.name
@@ -151,33 +151,36 @@ const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
         setOptions(profOptions);
     }, [profsBranchTag, selectedOptions]);
 
-    const handleAdd = () => {
-        const lastSelectedOption = formData.prof_name[formData.prof_name.length - 1];
-        if (lastSelectedOption && !selectedOptions.includes(lastSelectedOption)) {
-            setSelectedOptions(prevOptions => [...prevOptions, lastSelectedOption]);
+    const handleAdd = useCallback(() => {
+        if (formData.prof_name.length < profsBranchTag.length) {
+            const lastSelectedOption = formData.prof_name[formData.prof_name.length - 1];
+            if (lastSelectedOption && !selectedOptions.includes(lastSelectedOption)) {
+                setSelectedOptions(prevOptions => [...prevOptions, lastSelectedOption]);
+            }
+            setFormData(prevData => ({
+                ...prevData,
+                prof_name: [...prevData.prof_name, ''] // Initialize new item with an empty string
+            }));
         }
-        setFormData(prevData => ({
-            ...prevData,
-            prof_name: [...prevData.prof_name, ''] // Initialize new item with an empty string
-        }));
-    };
+    }, [formData.prof_name, profsBranchTag.length, selectedOptions, setFormData]);
 
-    const handleChange = (e, index) => {
+    const handleChange = useCallback((e, index) => {
         const value = e.target.value;
+        const updatedData = formData.prof_name.map((item, i) => (i === index ? value : item));
         setFormData(prevData => ({
             ...prevData,
-            prof_name: prevData.prof_name.map((item, i) => (i === index ? value : item))
+            prof_name: updatedData
         }));
-    };
+    }, [formData.prof_name, setFormData]);
 
-    const handleRemove = (index) => {
+    const handleRemove = useCallback((index) => {
         const removedOption = formData.prof_name[index];
         setSelectedOptions(prevOptions => prevOptions.filter(option => option !== removedOption));
         setFormData(prevData => ({
             ...prevData,
             prof_name: prevData.prof_name.filter((_, i) => i !== index)
         }));
-    };
+    }, [formData.prof_name, setFormData]);
 
     return (
         <div className='w-72 flex items-center text-xs text-black'>
@@ -185,28 +188,35 @@ const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
             <div className='overflow-x-auto flex items-center'>
                 {formData.prof_name.map((item, index) => (
                     <div key={index} className='relative inline-block mr-2'>
-                        <select
-                            value={item || ''} // Use an empty string for null values
-                            onChange={(e) => handleChange(e, index)}
-                            className='custom-select'
-                        >
-                            <option value=''>Select</option>
-                            {options.map(option => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
+                        {item &&
+                            <p className='bg-white p-0'>{item}</p>
+                        }
+                        {!item &&
+                            <select
+                                value=''
+                                onChange={(e) => handleChange(e, index)}
+                                className='custom-select'
+                            >
+                                <option value=''>Select</option>
+                                {options.map(option => (
+                                    <option key={option.value} value={option.value}>{option.label}</option>
+                                ))}
+                            </select>
+                        }
                         {index !== formData.prof_name.length - 1 && (
-                            <button type='button' className='absolute top-0 right-2 text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
+                            <button type='button' className='absolute top-[-5px] right-[-3px] text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
                         )}
                     </div>
                 ))}
-                <button type='button' onClick={handleAdd} className='text-white text-xl'>+</button>
+                {formData.prof_name.length < profsBranchTag.length && (
+                    <button type='button' onClick={handleAdd} className='text-white text-xl'>+</button>
+                )}
             </div>
         </div>
     );
 };
 
-const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputType, data, maxLength }) => {
+const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputType, data }) => {
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
@@ -216,38 +226,37 @@ const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputTyp
             label: item
         }));
         setOptions(branchYearOptions);
-    }, [data, formData, inputType]); // Update the dependency array
+    }, [data, formData, inputType]);
 
-    const handleAdd = () => {
-        if (formData[inputType].length < maxLength) {
+    const handleAdd = useCallback(() => {
+        if (formData[inputType].length < data.length) {
             const newItem = '';
             setFormData(prevData => ({
                 ...prevData,
-                [inputType]: [...prevData[inputType], newItem] // Initialize with empty string
+                [inputType]: [...prevData[inputType], newItem]
             }));
             setOptions(prevOptions => [...prevOptions, { value: newItem, label: newItem }]);
         }
-    };
+    }, [data, formData, inputType, setFormData]);
 
-    const handleChange = (e, index) => {
+    const handleChange = useCallback((e, index) => {
         const value = e.target.value;
         const updatedData = formData[inputType].map((item, i) => (i === index ? value : item));
         setFormData(prevData => ({
             ...prevData,
             [inputType]: updatedData
         }));
-    };
+    }, [formData, inputType, setFormData]);
 
-    const handleRemove = (index) => {
+    const handleRemove = useCallback((index) => {
         const removedItem = formData[inputType][index];
         setFormData(prevData => ({
             ...prevData,
             [inputType]: prevData[inputType].filter((_, i) => i !== index)
         }));
 
-        // Remove the removed item from options
         setOptions(prevOptions => prevOptions.filter(option => option.value !== removedItem));
-    };
+    }, [formData, inputType, setFormData]);
 
     return (
         <div className='w-72 flex items-center text-xs text-black'>
@@ -255,23 +264,26 @@ const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputTyp
             <div className='overflow-x-auto flex items-center'>
                 {formData[inputType].map((item, index) => (
                     <div key={index} className='relative inline-block mr-2'>
-                        <select
-                            value={item || ''} // Use an empty string for null values
-                            onChange={(e) => handleChange(e, index)}
-                            className='custom-select'
-                        >
-                            <option value=''>Select</option>
-                            {options.map(option => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
+                        {item ? (
+                            <p className='bg-white p-0'>{item}</p>
+                        ) : (
+                            <select
+                                value=''
+                                onChange={(e) => handleChange(e, index)}
+                            >
+                                <option value=''>Select</option>
+                                {options.map(option => (
+                                    <option key={option.value} value={option.value}>{option.label}</option>
+                                ))}
+                            </select>
+                        )}
                         {index !== formData[inputType].length - 1 && (
-                            <button type='button' className='absolute top-0 right-2 text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
+                            <button type='button' className='absolute top-[-6px] right-[-3px] text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
                         )}
                     </div>
                 ))}
                 <button type='button' onClick={handleAdd} className='text-white text-xl'>+</button>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
