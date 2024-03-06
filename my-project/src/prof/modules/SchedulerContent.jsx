@@ -148,7 +148,7 @@ export default function DayRows({ groups }) {
                 <div key={index} className='grid grid-cols-34 border border-gray-700 overflow-y-scroll grid-flow-dense'>
                     <DayBlock day={day} />
                     {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
-                        <TimeBlock key={group.id}
+                        <TimeBlock key={groupIndex}
                             colStart={getColStartClass(group.start_time)}
                             colEnd={getColEndClass(group.end_time)}
                             bgStyle={getBgStyle(group, day)}

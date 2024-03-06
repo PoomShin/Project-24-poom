@@ -52,7 +52,11 @@ export default function AddGroup({ onAddSection, creditHours, isLab, }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         onAddSection(formData);
-        e.target.reset(); // Reset form
+        setFormData(prevData => ({
+            ...prevData,
+            prof_name: [],
+            branch_year: []
+        })); // Reset only prof_name and branch_year fields
         handleShowForm();
     };
 
@@ -91,9 +95,9 @@ export default function AddGroup({ onAddSection, creditHours, isLab, }) {
                     </div>
 
                     <div className='flex flex-col self-center text-xs text-white mt-2'>
-                        <MultipleInput spanText='อาจารย์' spanClass={'ml-2 mr-4'} formData={formData} setFormData={setFormData} inputType='prof_name' data={profsBranchTag} isProf={true} />
+                        <SelectProf formData={formData} setFormData={setFormData} profsBranchTag={profsBranchTag} />
                         <div className='mb-2'></div>
-                        <MultipleInput spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_year' data={branch_year} isProf={false} maxLength={5} />
+                        <SelectBranchYear spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_year' data={branch_year} isProf={false} maxLength={5} />
 
                         {isLab &&
                             <div>
@@ -133,20 +137,103 @@ const InputSpan = ({ spanText, spanClass, inputClass, name, value, onChange, isS
     );
 };
 
-const MultipleInput = ({ spanText, spanClass, formData, setFormData, inputType, data, isProf, ...props }) => {
+const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
+    const [options, setOptions] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    useEffect(() => {
+        const profOptions = profsBranchTag
+            .filter(prof => !selectedOptions.includes(prof.name)) // Filter out selected options
+            .map(prof => ({
+                value: prof.name,
+                label: prof.name
+            }));
+        setOptions(profOptions);
+    }, [profsBranchTag, selectedOptions]);
+
     const handleAdd = () => {
+        const lastSelectedOption = formData.prof_name[formData.prof_name.length - 1];
+        if (lastSelectedOption && !selectedOptions.includes(lastSelectedOption)) {
+            setSelectedOptions(prevOptions => [...prevOptions, lastSelectedOption]);
+        }
         setFormData(prevData => ({
             ...prevData,
-            [inputType]: [...prevData[inputType], ''] // Add an empty string to the specified inputType array
+            prof_name: [...prevData.prof_name, ''] // Initialize new item with an empty string
         }));
     };
+
     const handleChange = (e, index) => {
-        const { value } = e.target;
+        const value = e.target.value;
+        setFormData(prevData => ({
+            ...prevData,
+            prof_name: prevData.prof_name.map((item, i) => (i === index ? value : item))
+        }));
+    };
+
+    const handleRemove = (index) => {
+        const removedOption = formData.prof_name[index];
+        setSelectedOptions(prevOptions => prevOptions.filter(option => option !== removedOption));
+        setFormData(prevData => ({
+            ...prevData,
+            prof_name: prevData.prof_name.filter((_, i) => i !== index)
+        }));
+    };
+
+    return (
+        <div className='w-72 flex items-center text-xs text-black'>
+            <span className='ml-2 mr-4 text-white'>อาจารย์</span>
+            <div className='overflow-x-auto flex items-center'>
+                {formData.prof_name.map((item, index) => (
+                    <div key={index} className='relative inline-block mr-2'>
+                        <select
+                            value={item || ''} // Use an empty string for null values
+                            onChange={(e) => handleChange(e, index)}
+                            className='custom-select'
+                        >
+                            <option value=''>Select</option>
+                            {options.map(option => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
+                        {index !== formData.prof_name.length - 1 && (
+                            <button type='button' className='absolute top-0 right-2 text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
+                        )}
+                    </div>
+                ))}
+                <button type='button' onClick={handleAdd} className='text-white text-xl'>+</button>
+            </div>
+        </div>
+    );
+};
+
+const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputType, data, maxLength }) => {
+    const [options, setOptions] = useState([]);
+
+    useEffect(() => {
+        const branchYearOptions = data.map(item => ({
+            value: item,
+            label: item
+        }));
+        setOptions(branchYearOptions);
+    }, [data]);
+
+    const handleAdd = () => {
+        if (formData[inputType].length < maxLength) {
+            setFormData(prevData => ({
+                ...prevData,
+                [inputType]: [...prevData[inputType], '']
+            }));
+        }
+    };
+
+    const handleChange = (e, index) => {
+        const value = e.target.value;
         setFormData(prevData => ({
             ...prevData,
             [inputType]: prevData[inputType].map((item, i) => (i === index ? value : item))
         }));
     };
+
     const handleRemove = (index) => {
         setFormData(prevData => ({
             ...prevData,
@@ -155,36 +242,27 @@ const MultipleInput = ({ spanText, spanClass, formData, setFormData, inputType, 
     };
 
     return (
-        <div className='w-72 flex items-center text-xs text-white'>
-            <span className={spanClass}>{spanText}</span>
+        <div className='w-72 flex items-center text-xs text-black'>
+            <span className={spanClass + ' text-white'}>{spanText}</span>
             <div className='overflow-x-auto flex items-center'>
-
                 {formData[inputType].map((item, index) => (
                     <div key={index} className='relative inline-block mr-2'>
-
                         <select
-                            className='border rounded-sm appearance-none text-black p-1 mr-2'
                             value={item}
                             onChange={(e) => handleChange(e, index)}
-                            {...props}
+                            className='custom-select'
                         >
-                            <option value="">select prof</option>
-                            {isProf &&
-                                data.map((d, index) => (
-                                    <option key={index} value={d.name}>{d.name}</option>
-                                ))
-                            }
-                            {!isProf && data.map((d, index) => (
-                                <option key={index} value={d}>{d}</option>
+                            <option value=''>Select</option>
+                            {options.map(option => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                         </select>
-
                         {index !== formData[inputType].length - 1 && (
                             <button type='button' className='absolute top-0 right-2 text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
                         )}
                     </div>
                 ))}
-                <img src={plusIcon} alt={`Add ${inputType}`} className='h-5 cursor-pointer' onClick={handleAdd} />
+                <button type='button' onClick={handleAdd} className='text-white text-xl'>+</button>
             </div>
         </div>
     );
