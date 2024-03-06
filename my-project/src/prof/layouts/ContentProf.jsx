@@ -28,6 +28,7 @@ export default function ContentProf({ currentPage, userData }) {
                     currentBranch={branch} handleBranchChange={handleBranchChange}
                     currentYear={branchYear} handleYearChange={handleYearChange}
                     currentProfName={profName} handleProfChange={handleProfChange}
+                    profRole={role}
                 />
             </ContentProfHeader>
 

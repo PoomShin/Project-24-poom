@@ -397,6 +397,7 @@ app.get('/profs/groups/:branchYear', async (req, res) => {
                 g.lab_room, 
                 g.group_status, 
                 c.combined_code_curriculum,
+                c.course_type,
                 ARRAY_AGG(gp.prof_name) AS prof_names
             FROM 
                 groups g
@@ -409,7 +410,7 @@ app.get('/profs/groups/:branchYear', async (req, res) => {
             WHERE 
                 gy.branch_year = $1
             GROUP BY 
-                g.Id, c.combined_code_curriculum;
+                g.Id, c.combined_code_curriculum, c.course_type;
         `;
 
         const { rows } = await pool.query(query, [decodedBranchYear]);
