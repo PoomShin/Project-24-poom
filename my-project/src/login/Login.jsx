@@ -8,7 +8,7 @@ import GoogleButton from './components/GoogleButton';
 import AdminForm from './components/AdminForm';
 
 export default function Login() {
-    const [formData, setFormData] = useState({ username: '', password: '', email: '' });
+    const [formData, setFormData] = useState({ username: '', password: '' });
     const navigate = useNavigate();
 
     const handleLogin = useLoginMutation('/admin/login', ({ name, role, message }) => {
@@ -49,15 +49,15 @@ export default function Login() {
         handleLogin.mutate(formData);
     };
 
-    const handleGoogleLogin = () => {
-        handleProfLogin.mutate(formData);
+    const handleGoogleLogin = (email) => {
+        handleProfLogin.mutate({ email });
     }
 
     return (
         <div className='flex flex-col justify-center items-center min-h-dvh text-center bg-gradient-to-r from-sky-300 to-indigo-900 overflow-hidden'>
             <div className='border border-solid border-black rounded-lg p-12 bg-white shadow-xl shadow-black w-1/4 min-w-[400px]'>
                 <LoginHeader />
-                <GoogleButton setFormData={setFormData} handleLogin={handleGoogleLogin} />
+                <GoogleButton setFormData={setFormData} form={formData} handleLogin={handleGoogleLogin} />
                 <AdminForm formData={formData} onLogin={handleAdminLogin} handleChange={handleChange} />
             </div>
         </div>

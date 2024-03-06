@@ -1,16 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { gapi } from 'gapi-script';
 
 const clientId = "902199029700-1pv3edc1p4oqe8kj2k77ltqapea1ooa2.apps.googleusercontent.com";
 
-export default function GoogleButton({ setFormData, handleLogin }) {
+export default function GoogleButton({ handleLogin }) {
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
         const initializeGoogleApi = async () => {
             try {
-                await gapi.load("client:auth2");
+                await new Promise((resolve, reject) => {
+                    gapi.load('client:auth2', {
+                        callback: resolve,
+                        onerror: reject,
+                    });
+                });
                 await gapi.client.init({
                     clientId: clientId,
                     scope: ''
@@ -27,16 +32,12 @@ export default function GoogleButton({ setFormData, handleLogin }) {
     const handleGoogleLoginSuccess = (res) => {
         const { email, imageUrl } = res.profileObj;
         setProfile(res.profileObj);
-        setFormData(prevFormData => ({
-            ...prevFormData,
-            email: email
-        }));
         localStorage.setItem('userData', JSON.stringify({ imageUrl }));
-        handleLogin();
+        handleLogin(email);
     };
 
     const handleGoogleLoginFailure = (res) => {
-        if (res.error !== "Cross-Origin-Opener-Policy") {
+        if (res.error !== 'Cross-Origin-Opener-Policy') {
             console.error('Google login failure:', res);
         }
     };
