@@ -11,7 +11,7 @@ export default function Table(p) {
                         <th className="px-4 py-2">engname</th>
                         <th className="py-2 w-20">credits</th>
                         <th className="py-2 w-28">course type</th>
-                        <th className="py-2 w-16">transfer</th>
+                        <th className="py-2 w-16">Action</th>
                     </tr>
                 </thead>
                 {p.children}

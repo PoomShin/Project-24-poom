@@ -39,14 +39,17 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
       {
         onSuccess: (res) => {
           alert(res.message);
+          setFilteredData([]);
         },
         onError: (error) => {
-          console.error('Import failed:', error);
-          alert(error);
+          alert(error.response.data.error);
+          const duplicates = error.response.data.duplicates.map((duplicate) => duplicate.combined_code_curriculum);
+          const updatedFilteredData = filteredData.filter((item) => !duplicates.includes(`${item.course_code}-${item.curriculum}`));
+          setFilteredData(updatedFilteredData);
         }
       }
     );
-  }; //Backend API
+  };
 
   const handleImport = (event) => {
     const file = event.target.files[0];
@@ -104,6 +107,11 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     );
   };
 
+  const handleDelete = (rowDataToDelete) => {
+    const updatedFilteredData = filteredData.filter((rowData) => rowData !== rowDataToDelete);
+    setFilteredData(updatedFilteredData);
+  };
+
   const handleCurriculumChange = (e) => {
     const newCurriculum = e.target.value;
     setSelectedCurriculum(newCurriculum);
@@ -142,6 +150,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                   credits={rowData.credit}
                   courseType={rowData.course_type}
                   rowData={rowData}
+                  isTransfer={false}
                   onTransfer={handleTransfer}
                   options={options}
                 />
@@ -163,7 +172,8 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
                   credits={rowData.credit}
                   courseType={rowData.course_type}
                   rowData={rowData}
-                  onTransfer={null}
+                  isTransfer={true}
+                  onTransfer={() => handleDelete(rowData)}
                   options={options}
                 />
               ))}

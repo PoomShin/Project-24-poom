@@ -156,16 +156,27 @@ app.delete('/admin/deleteProf/:id', async (req, res) => {
 });
 app.post('/admin/importCourse', async (req, res) => {
     const { data } = req.body;
+    const duplicateCourses = [];
 
     try {
         for (const item of data) {
-            await pool.query(
-                'INSERT INTO courses (course_code, curriculum, th_name, eng_name, credit, course_type, branch_tag, course_tag, combined_code_curriculum) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-                [item.course_code, parseInt(item.curriculum), item.th_name, item.eng_name, item.credit, item.course_type, item.branch_tag, item.course_tag, `${item.course_code}-${item.curriculum}`]
-            );
+            const existingCourse = await pool.query('SELECT * FROM courses WHERE combined_code_curriculum = $1', [`${item.course_code}-${item.curriculum}`]);
+
+            if (existingCourse.rows.length > 0) {
+                duplicateCourses.push(existingCourse.rows[0]);
+            } else {
+                await pool.query(
+                    'INSERT INTO courses (course_code, curriculum, th_name, eng_name, credit, course_type, branch_tag, course_tag, combined_code_curriculum) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+                    [item.course_code, parseInt(item.curriculum), item.th_name, item.eng_name, item.credit, item.course_type, item.branch_tag, item.course_tag, `${item.course_code}-${item.curriculum}`]
+                );
+            }
         }
 
-        res.json({ message: 'Course data imported successfully' });
+        if (duplicateCourses.length > 0) {
+            res.status(400).json({ error: `There are ${duplicateCourses.length} duplicate courses in your data`, duplicates: duplicateCourses });
+        } else {
+            res.json({ message: 'Course data imported successfully' });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
