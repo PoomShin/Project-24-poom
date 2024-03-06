@@ -210,35 +210,43 @@ const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputTyp
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
-        const branchYearOptions = data.map(item => ({
+        const availableOptions = data.filter(branchYear => !formData[inputType].includes(branchYear));
+        const branchYearOptions = availableOptions.map(item => ({
             value: item,
             label: item
         }));
         setOptions(branchYearOptions);
-    }, [data]);
+    }, [data, formData, inputType]); // Update the dependency array
 
     const handleAdd = () => {
         if (formData[inputType].length < maxLength) {
+            const newItem = '';
             setFormData(prevData => ({
                 ...prevData,
-                [inputType]: [...prevData[inputType], '']
+                [inputType]: [...prevData[inputType], newItem] // Initialize with empty string
             }));
+            setOptions(prevOptions => [...prevOptions, { value: newItem, label: newItem }]);
         }
     };
 
     const handleChange = (e, index) => {
         const value = e.target.value;
+        const updatedData = formData[inputType].map((item, i) => (i === index ? value : item));
         setFormData(prevData => ({
             ...prevData,
-            [inputType]: prevData[inputType].map((item, i) => (i === index ? value : item))
+            [inputType]: updatedData
         }));
     };
 
     const handleRemove = (index) => {
+        const removedItem = formData[inputType][index];
         setFormData(prevData => ({
             ...prevData,
             [inputType]: prevData[inputType].filter((_, i) => i !== index)
         }));
+
+        // Remove the removed item from options
+        setOptions(prevOptions => prevOptions.filter(option => option.value !== removedItem));
     };
 
     return (
@@ -248,7 +256,7 @@ const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputTyp
                 {formData[inputType].map((item, index) => (
                     <div key={index} className='relative inline-block mr-2'>
                         <select
-                            value={item}
+                            value={item || ''} // Use an empty string for null values
                             onChange={(e) => handleChange(e, index)}
                             className='custom-select'
                         >

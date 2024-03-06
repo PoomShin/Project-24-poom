@@ -1,4 +1,4 @@
-import { useGroupsByBranchYear } from "../../context/Prof-Context";
+import { useGroupsByBranchYear } from "../../api/Profs_API";
 import DayRows from "./SchedulerContent";
 
 const generateTimeSlots = () => {

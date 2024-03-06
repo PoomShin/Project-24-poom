@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import axios from 'axios';
 
 //branches table context
@@ -112,31 +112,6 @@ export const ProfsProvider = ({ branch_tag, children }) => {
     );
 };
 
-//API Context
-const useGroupsByBranchYear = (branchYear) => {
-    const queryKey = ['groups', branchYear];
-
-    if (branchYear === '') {
-        return useQuery(queryKey, { data: [], isLoading: false, isError: false });
-    }
-
-    const fetchGroupsByBranchYear = async () => {
-        try {
-            const response = await axios.get(`/profs/groups/${encodeURIComponent(branchYear)}`);
-            return response.data;
-        } catch (error) {
-            if (error.response && error.response.status === 404) {
-                throw new Error(`No groups found for the selected branch and year.`);
-            } else {
-                throw new Error(`Failed to fetch groups: ${error.message}`);
-            }
-        }
-    };
-
-    return useQuery(queryKey, fetchGroupsByBranchYear);
-};
-
 export const useBranchesContext = () => useContext(BranchContext);
 export const useCoursesContext = () => useContext(CourseContext);
 export const useProfsContext = () => useContext(ProfsContext);
-export { useGroupsByBranchYear }
