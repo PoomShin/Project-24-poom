@@ -63,7 +63,7 @@ export default function CourseItems({ courses, onShowBranches }) {
         alert(result.message);
       } catch (error) {
         console.error("Error updating course:", error);
-        alert("Failed to update course. Please try again later.");
+        alert(error);
       }
     } else {
       new_code.value = old_code.textContent;

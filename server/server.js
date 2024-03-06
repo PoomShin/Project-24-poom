@@ -172,12 +172,24 @@ app.post('/admin/importCourse', async (req, res) => {
 });
 app.put('/admin/updateCourse/:id', async (req, res) => {
     const courseId = req.params.id;
-    const { course_code, curriculum, th_name, eng_name, credit, course_type, } = req.body;
+    const { course_code, curriculum, th_name, eng_name, credit, course_type } = req.body;
 
     // Concatenate course_code and curriculum to form combined_code_curriculum
     const combined_code_curriculum = `${course_code}-${curriculum}`;
 
     try {
+        // Check if the combined_code_curriculum already exists for another course
+        const duplicateCheck = await pool.query(
+            'SELECT id FROM courses WHERE combined_code_curriculum = $1 AND id != $2',
+            [combined_code_curriculum, courseId]
+        );
+
+        if (duplicateCheck.rows.length > 0) {
+            // If a duplicate is found, return an error
+            return res.status(400).json({ error: 'Duplicate course detected' });
+        }
+
+        // Update the course if no duplicate is found
         const result = await pool.query(
             'UPDATE courses SET course_code = $1, curriculum = $2, th_name = $3, eng_name = $4, credit = $5, course_type = $6, combined_code_curriculum = $7 WHERE id = $8 RETURNING *',
             [course_code, curriculum, th_name, eng_name, credit, course_type, combined_code_curriculum, courseId]
@@ -195,6 +207,7 @@ app.put('/admin/updateCourse/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to update course. Please try again later.' });
     }
 });
+
 app.delete('/admin/delCourse/:id', async (req, res) => {
     const courseId = req.params.id;
 
