@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { useGroupsByBranchYear } from "../../api/Profs_API";
 import DayRows from "./SchedulerContent";
 
@@ -13,19 +14,8 @@ const generateTimeSlots = () => {
     return timeSlots;
 };
 
-export default function Scheduler({ currentPage, branchYear, currentProfName }) {
-    const { data: branchYearGroups, isLoading, isError } = useGroupsByBranchYear(branchYear);
-
-    return (
-        <div className='border rounded-lg bg-gray-800 mx-1'>
-            <TimeRows />
-            <DayRows groups={branchYearGroups} page={currentPage} profName={currentProfName} />
-        </div>
-    );
-};
-
-const TimeRows = () => {
-    const timeSlots = generateTimeSlots();
+const TimeRows = React.memo(() => {
+    const timeSlots = useMemo(() => generateTimeSlots(), []);
 
     return (
         <div className='grid grid-cols-34'>
@@ -39,4 +29,15 @@ const TimeRows = () => {
             ))}
         </div>
     )
-}
+});
+
+export default function Scheduler({ currentPage, branchYear, currentProfName }) {
+    const { data: branchYearGroups, isLoading, isError } = useGroupsByBranchYear(branchYear);
+
+    return (
+        <div className='border rounded-lg bg-gray-800 mx-1'>
+            <TimeRows />
+            <DayRows groups={branchYearGroups} page={currentPage} profName={currentProfName} />
+        </div>
+    );
+};

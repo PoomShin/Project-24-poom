@@ -17,7 +17,6 @@ export default function ContentProf({ currentPage, userData }) {
     const handleProfChange = selectedProf => {
         setProf(selectedProf)
     }
-
     const toggleModal = useCallback(() => {
         setIsModalOpen(prevState => !prevState);
     }, []);

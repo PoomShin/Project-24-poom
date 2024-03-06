@@ -90,7 +90,6 @@ const getColEndClass = (time) => {
 export default function DayRows({ groups, page, profName }) {
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-    // Memoized sorted groups
     const sortedGroups = useMemo(() => {
         if (!groups) return {};
         return daysOfWeek.reduce((acc, day) => {
