@@ -5,7 +5,7 @@ import TabBar from '../components/TabBar';
 import BranchItems from '../Modules/BranchItems';
 import ProfItems from '../Modules/ProfItems';
 import CourseItems from '../Modules/CourseItems';
-//API
+//Modals
 import AddBranchModal from '../Modals/AddBranchModal';
 import AddProfModal from '../Modals/AddProfModal';
 import AddCourseModal from '../Modals/AddCourseModal';

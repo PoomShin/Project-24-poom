@@ -1,8 +1,13 @@
 import { useState } from "react";
 import DataTable from "react-data-table-component";
+import { useDeleteCourseMutation, useUpdateCourseMutation } from "../../api/admin_api";
 
 export default function CourseItems({ courses, onShowBranches }) {
   const [searchTerm, setSearchTerm] = useState("");
+
+  const deleteCourseMutation = useDeleteCourseMutation();
+  const updateCourseMutation = useUpdateCourseMutation();
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -14,16 +19,16 @@ export default function CourseItems({ courses, onShowBranches }) {
   );
 
   const deleteCourse = (id, code, curriculum, th, eng, credit, type) => {
-    confirm(`Delete ${code} ${curriculum} ${th} ${eng} ${credit} ${type} ?`);
-    document.getElementById(`row-${id}`).style.display = "none";
-    // อย่าลบ real-time delete tytytytytytytytytytytytytyty
-    // ใช้ id ลบ course :)))))))))))))))))))))))))))))))))))))))))))))))))))))
+    if (window.confirm(`Delete ${code} ${curriculum} ${th} ${eng} ${credit} ${type} ?`)) {
+      deleteCourseMutation.mutate(id);
+    }
   };
 
   const edit_course = (id) => {
     input_toggle(id);
   };
-  const submit_edit = (id) => {
+
+  const submit_edit = async (id) => {
     input_toggle(id);
     //old data
     let old_code = document.getElementById(`text_course_code_${id}`);
@@ -39,33 +44,27 @@ export default function CourseItems({ courses, onShowBranches }) {
     let new_eng = document.getElementById(`eng_${id}`);
     let new_credit = document.getElementById(`credit_${id}`);
     let new_type = document.getElementById(`coruse_type_${id}`);
-    //
-    let old_value = `${old_code.textContent} ${old_curriculum.textContent} ${old_th.textContent} ${old_eng.textContent} ${old_credit.textContent} ${old_type.textContent}`;
-    let input_field = `${new_code.value} ${new_curriculum.value} ${new_th.value} ${new_eng.value} ${new_credit.value} ${new_type.value}`;
 
-    let message = `Are you sure you want to make the following changes?
+    let updatedCourseData = {
+      id: id,
+      course_code: new_code.value,
+      curriculum: new_curriculum.value,
+      th_name: new_th.value,
+      eng_name: new_eng.value,
+      credit: new_credit.value,
+      course_type: new_type.value
+    };
 
-Course Code: ${old_code.textContent} -> ${new_code.value}
-Course Curriculum: ${old_curriculum.textContent} -> ${new_curriculum.value}
-th name: ${old_th.textContent} -> ${new_th.value}
-eng name: ${old_eng.textContent} -> ${new_eng.value}
-credit name: ${old_credit.textContent} -> ${new_credit.value}
-type name: ${old_type.textContent} -> ${new_type.value}
-`;
-
-    let con = confirm(message);
+    let con = confirm('do you want to update course?');
 
     if (con) {
-      //อย่าลบ
-      old_code.innerText = new_code.value;
-      old_curriculum.innerText = new_curriculum.value;
-      old_th.innerText = new_th.value;
-      old_eng.innerText = new_eng.value;
-      old_credit.innerText = new_credit.value;
-      old_type.innerText = new_type.value;
-      // เอาตัวแปร new_... ไป update โดยอิงจาก id
-      // vvvv update database vvvv     
-      alert("Data changed");
+      try {
+        const result = await updateCourseMutation.mutateAsync(updatedCourseData);
+        alert(result.message);
+      } catch (error) {
+        console.error("Error updating course:", error);
+        alert("Failed to update course. Please try again later.");
+      }
     } else {
       new_code.value = old_code.textContent;
       new_curriculum.value = old_curriculum.textContent;
@@ -286,21 +285,19 @@ type name: ${old_type.textContent} -> ${new_type.value}
 
   return (
     <>
-      <button
-        className="col-span-8 rounded text-white font-bold bg-blue-500 hover:bg-blue-700 ms-10 mb-3 py-2 px-4"
+      <button className='col-span-8 rounded text-white font-bold bg-blue-500 hover:bg-blue-700 ms-10 mb-3 py-2 px-4'
         onClick={onShowBranches}>
         Return to Branch
       </button>
       <br />
-      <input
-        className="ms-10  mt-5 mb-4 px-2 py-1 rounded border"
-        type="text"
-        placeholder="Search by ID"
+      <input className='ms-10  mt-5 mb-4 px-2 py-1 rounded border'
+        type='text'
+        placeholder='Search by ID'
         value={searchTerm}
         onChange={handleSearch}
       />
 
-      <div className="ms-10 w-[90%] -z-[10]">
+      <div className='ms-10 w-[90%] -z-[10]'>
         <DataTable
           columns={columns}
           data={filteredData}

@@ -8,7 +8,7 @@ import AddCourseSideBar from '../components/AddCourseSideBar';
 
 import transferIcon from '../../assets/transfer.png';
 import Manualimport from '../components/ManualImport';
-import { useImportCourseMutation } from '../../context/Admin-Context';
+import { useImportCourseMutation } from '../../api/admin_api';
 
 const currentYear = (new Date().getFullYear() + 543) % 100;
 

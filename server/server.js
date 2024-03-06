@@ -170,6 +170,50 @@ app.post('/admin/importCourse', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+app.put('/admin/updateCourse/:id', async (req, res) => {
+    const courseId = req.params.id;
+    const { course_code, curriculum, th_name, eng_name, credit, course_type, } = req.body;
+
+    // Concatenate course_code and curriculum to form combined_code_curriculum
+    const combined_code_curriculum = `${course_code}-${curriculum}`;
+
+    try {
+        const result = await pool.query(
+            'UPDATE courses SET course_code = $1, curriculum = $2, th_name = $3, eng_name = $4, credit = $5, course_type = $6, combined_code_curriculum = $7 WHERE id = $8 RETURNING *',
+            [course_code, curriculum, th_name, eng_name, credit, course_type, combined_code_curriculum, courseId]
+        );
+
+        const updatedCourse = result.rows[0];
+
+        if (updatedCourse) {
+            res.json({ message: 'Course updated successfully' });
+        } else {
+            res.status(404).json({ error: 'Course not found' });
+        }
+    } catch (error) {
+        console.error('Error updating course:', error);
+        res.status(500).json({ error: 'Failed to update course. Please try again later.' });
+    }
+});
+app.delete('/admin/delCourse/:id', async (req, res) => {
+    const courseId = req.params.id;
+
+    try {
+        // Execute the SQL query to delete the course with the specific ID
+        const result = await pool.query('DELETE FROM courses WHERE id = $1 RETURNING *', [courseId]);
+
+        // Check if any row was affected
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+
+        // Return success message
+        res.json({ message: 'Course deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting course:', error);
+        res.status(500).json({ error: 'Failed to delete course. Please try again later.' });
+    }
+});
 
 //Profs API
 app.post('/profs/login', async (req, res) => {

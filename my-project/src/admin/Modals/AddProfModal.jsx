@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { useState } from "react";
-import { useAddProfMutation } from "../../context/Admin-Context";
+import { useAddProfMutation } from "../../api/admin_api";
 
 export default function AddProfModal({ branchTag, isVisible, onClose }) {
   const [formData, setFormData] = useState({

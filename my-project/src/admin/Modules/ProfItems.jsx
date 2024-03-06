@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  useUpdateProfMutation,
-  useDeleteProfMutation,
-} from "../../context/Admin-Context";
+import { useDeleteProfMutation, useUpdateProfMutation } from "../../api/admin_api";
 import DataTable from "react-data-table-component";
 
 export default function ProfItems({ profs, onShowBranches }) {
