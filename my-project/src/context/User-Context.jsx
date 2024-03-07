@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useEffect, useMemo } from 'react';
+import { useState, createContext, useContext, useMemo, useEffect } from 'react';
 
 export const UserContext = createContext();
 
@@ -7,15 +7,22 @@ export const useUserContext = () => {
 };
 
 export default function UserProvider({ children }) {
-  const storedUser = useMemo(() => {
-    const data = localStorage.getItem('userData');
-    return data ? JSON.parse(data) : null;
-  }, []);
-
-  const [userContextValues, setUserContextValues] = useState(storedUser);
+  const [userContextValues, setUserContextValues] = useState(() => {
+    try {
+      const storedUserContextValues = localStorage.getItem('userContextValues');
+      return storedUserContextValues ? JSON.parse(storedUserContextValues) : null;
+    } catch (error) {
+      console.error('Error retrieving user context values from localStorage:', error);
+      return null;
+    }
+  });
 
   useEffect(() => {
-    localStorage.setItem('userData', JSON.stringify(userContextValues));
+    try {
+      localStorage.setItem('userContextValues', JSON.stringify(userContextValues));
+    } catch (error) {
+      console.error('Error storing user context values in localStorage:', error);
+    }
   }, [userContextValues]);
 
   const contextValue = useMemo(() => ({ userContextValues, setUserContextValues }), [userContextValues, setUserContextValues]);
@@ -25,4 +32,4 @@ export default function UserProvider({ children }) {
       {children}
     </UserContext.Provider>
   );
-};
+}

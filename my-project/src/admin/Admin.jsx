@@ -6,9 +6,11 @@ import Sidebar from './Layouts/Sidebar';
 import Content from './Layouts/Content';
 
 export default function Admin() {
-  const [name, setName] = useState(useUserContext().userContextValues.name);
+  const { userContextValues } = useUserContext();
+  const { name } = userContextValues || '';
+
   const [branchTag, setBranchTag] = useState(null);
-  const [page, setPage] = useState(localStorage.getItem(true) || 'Branch');
+  const [page, setPage] = useState('Branch');
 
   const memoizedNavbar = useMemo(() => <Navbar name={name} />, [name]);
 

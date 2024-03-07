@@ -4,6 +4,12 @@ router.post('/addBranch', async (req, res) => {
     const { branch_name, branch_tag, course_tag } = req.body;
 
     try {
+        const existingBranch = await pool.query('SELECT * FROM branches WHERE branch_tag = $1 OR course_tag = $2', [branch_tag, course_tag]);
+
+        if (existingBranch.rows.length > 0) {
+            return res.status(400).json({ error: 'Branch tag or course tag already exists' });
+        }
+
         const result = await pool.query(
             'INSERT INTO branches (branch_name, branch_tag, course_tag) VALUES ($1, $2, $3) RETURNING *',
             [branch_name, "T" + branch_tag, course_tag]

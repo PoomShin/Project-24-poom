@@ -32,8 +32,7 @@ export default function GoogleButton({ handleLogin }) {
     const handleGoogleLoginSuccess = (res) => {
         const { email, imageUrl } = res.profileObj;
         setProfile(res.profileObj);
-        localStorage.setItem('userData', JSON.stringify({ imageUrl }));
-        handleLogin(email);
+        handleLogin(email, imageUrl);
     };
 
     const handleGoogleLoginFailure = (res) => {

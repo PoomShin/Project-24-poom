@@ -1,25 +1,30 @@
+import { useState } from 'react';
 import { useDelBranchMutation } from '../../api/admin_api';
+import ConfirmationModal from '../../public/ConfirmationModal';
 import moreIcon from '../../assets/more.png';
 import removeIcon from '../../assets/remove.png';
 
-export default function BranchItems({ branches, onSelectBranch }) {
+export default function BranchItems({ branches, onSelectBranch, refetchBranches }) {
   const delBranchMutation = useDelBranchMutation();
+  const [selectedBranch, setSelectedBranch] = useState(null);
 
   const delBranch = async (branch) => {
-    const { branch_tag, branch_name } = branch;
-    const deleteConfirm = window.confirm(`Delete Branch ${branch_tag} ${branch_name} ?`);
-    if (!deleteConfirm) return;
+    setSelectedBranch(branch);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!selectedBranch) return;
+
+    const { branch_tag, branch_name } = selectedBranch;
     try {
       const result = await delBranchMutation.mutateAsync(branch_tag);
       alert(result.message);
+      refetchBranches();
     } catch (error) {
       console.log(error.message);
       alert(`Failed to delete ${branch_tag} ${branch_name}`);
     } finally {
-      setTimeout(() => {
-        window.location.reload();
-      }, 50);
+      setSelectedBranch(null);
     }
   };
 
@@ -32,6 +37,12 @@ export default function BranchItems({ branches, onSelectBranch }) {
           onRemoveBranch={delBranch}
         />
       ))}
+      <ConfirmationModal
+        isOpen={!!selectedBranch}
+        message={`Delete Branch ${selectedBranch?.branch_tag} ${selectedBranch?.branch_name} ?`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setSelectedBranch(null)}
+      />
     </div>
   );
 };
@@ -45,12 +56,11 @@ const BranchItem = ({ branch, onSelectBranch, onRemoveBranch }) => (
     </div>
 
     <div className='justify-self-end self-end hover:bg-red-300'>
-      <img
-        src={removeIcon}
+      <img src={removeIcon}
         alt='removeIcon'
         width='24px'
         height='24px'
-        onClick={() => onRemoveBranch(branch)} // Change to pass branch_tag instead of the whole branch object
+        onClick={() => onRemoveBranch(branch)}
       />
     </div>
 

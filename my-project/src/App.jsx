@@ -1,3 +1,12 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import UserProvider from "./context/User-Context";
+
+import Admin from './admin/Admin';
+import Login from './login/Login';
+import Prof from "./prof/Prof";
+
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -16,12 +25,3 @@ export default function App() {
     </UserProvider>
   );
 }
-
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import UserProvider from "./context/User-Context";
-
-import Admin from './admin/Admin';
-import Login from './login/Login';
-import Prof from "./prof/Prof";

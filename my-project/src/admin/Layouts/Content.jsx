@@ -22,11 +22,10 @@ const iconMap = {
 };
 
 export default function Content({ currentPage, setCurrentPage, selectedBranchTag, setSelectedBranchTag }) {
+    const { branches, refetchBranches, profs, refetchProfs, courses } = useAdminContext();
+
     const [courseTag, setCourseTag] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const { branches, profs, courses } = useAdminContext();
-    const icon = useMemo(() => iconMap[currentPage], [currentPage]);
 
     const handleSelectBranch = useCallback((branchTag, courseTag) => {
         setCurrentPage(prevPage => prevPage === 'Branch' ? 'Prof' : 'Curriculum');
@@ -43,31 +42,28 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
         setIsModalOpen(prevState => !prevState);
     }, []);
 
+    const icon = useMemo(() => iconMap[currentPage], [currentPage]);
+    const modals = {
+        Branch: { component: AddBranchModal, props: { isVisible: isModalOpen, onClose: toggleModal, refetchBranches: refetchBranches } },
+        Prof: { component: AddProfModal, props: { branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal, refetchProfs: refetchProfs } },
+        Curriculum: { component: AddCourseModal, props: { courseTag: courseTag, branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal } }
+    };
+    const ModalComponent = modals[currentPage];
+
     return (
         <div className='col-span-11 bg-gray-200'>
             <TabBar icon={icon} currentPage={currentPage} toggleModal={toggleModal} />
 
-            {currentPage === 'Branch' && branches && (
-                <>
-                    <BranchItems branches={branches} onSelectBranch={handleSelectBranch} setCurrentPage={setCurrentPage} />
-                    <AddBranchModal isVisible={isModalOpen} onClose={toggleModal} />
-                </>
-            )}
-            {currentPage === 'Course' && branches && (
-                <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />
-            )}
+            {(currentPage === 'Branch' || currentPage === 'Course') && branches && (
+                <BranchItems branches={branches} onSelectBranch={handleSelectBranch} refetchBranches={refetchBranches} />)}
             {currentPage === 'Prof' && profs && (
-                <>
-                    <AddProfModal branchTag={selectedBranchTag} isVisible={isModalOpen} onClose={toggleModal} />
-                    <ProfItems profs={profs} onShowBranches={handleShowBranches} />
-                </>
+                <ProfItems profs={profs} onShowBranches={handleShowBranches} refetchProfs={refetchProfs} />
             )}
             {currentPage === 'Curriculum' && courses && (
-                <>
-                    <CourseItems courses={courses} onShowBranches={handleShowBranches} />
-                    <AddCourseModal courseTag={courseTag} branchTag={selectedBranchTag} isVisible={isModalOpen} onClose={toggleModal} />
-                </>
+                <CourseItems courses={courses} onShowBranches={handleShowBranches} />
             )}
+
+            {ModalComponent && <ModalComponent.component {...ModalComponent.props} />}
         </div>
     );
 }
