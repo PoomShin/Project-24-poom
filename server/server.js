@@ -46,8 +46,8 @@ app.get('/api/courses/:branch_tag', async (req, res) => {
     }
 });
 
-//Admin API
-app.post('/admin/login', async (req, res) => {
+//Login API
+app.post('/login/admin', async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -64,6 +64,26 @@ app.post('/admin/login', async (req, res) => {
         return res.status(500).json({ success: false, error: 'Internal server error' });
     }
 });
+app.post('/login/profs', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const result = await pool.query('SELECT id, name, role, branch_tag FROM profs WHERE email = $1', [email]);
+        const professor = result.rows[0];
+
+        if (professor) {
+            const { id, name, role, branch_tag } = professor;
+            return res.json({ message: 'Professor login successful', id, name, email, role, branch_tag });
+        } else {
+            return res.status(404).json({ message: 'Professor not found' });
+        }
+    } catch (error) {
+        console.error('Error in professor login:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+//Admin API
 app.post('/admin/addBranch', async (req, res) => {
     const { branch_name, branch_tag, course_tag } = req.body;
 
@@ -218,7 +238,6 @@ app.put('/admin/updateCourse/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to update course. Please try again later.' });
     }
 });
-
 app.delete('/admin/delCourse/:id', async (req, res) => {
     const courseId = req.params.id;
 
@@ -240,24 +259,6 @@ app.delete('/admin/delCourse/:id', async (req, res) => {
 });
 
 //Profs API
-app.post('/profs/login', async (req, res) => {
-    const { email } = req.body;
-
-    try {
-        const result = await pool.query('SELECT id, name, role, branch_tag FROM profs WHERE email = $1', [email]);
-        const professor = result.rows[0];
-
-        if (professor) {
-            const { id, name, role, branch_tag } = professor;
-            return res.json({ message: 'Professor login successful', id, name, email, role, branch_tag });
-        } else {
-            return res.status(404).json({ message: 'Professor not found' });
-        }
-    } catch (error) {
-        console.error('Error in professor login:', error);
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-});
 app.post('/profs/addGroups', async (req, res) => {
     const { mergedSections, course_id, group_status, owner_branch_tag } = req.body;
 

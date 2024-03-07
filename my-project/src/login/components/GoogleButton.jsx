@@ -43,7 +43,7 @@ export default function GoogleButton({ handleLogin }) {
     };
 
     return (
-        <div className='flex flex-col items-center border border-solid border-black rounded-tl-lg rounded-tr-lg px-12 pt-3 pb-6 bg-emerald-600'>
+        <div className='flex flex-col items-center border border-solid rounded-tl-lg rounded-tr-lg border-black bg-emerald-600 px-12 pt-3 pb-6'>
             <h1 className='font-bold text-white'>For Professor</h1>
             {profile ? (
                 <GoogleLogout clientId={clientId} buttonText='Log out' onLogoutSuccess={() => setProfile(null)} />

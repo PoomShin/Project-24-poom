@@ -1,24 +1,33 @@
 import { useState, useCallback } from 'react';
+import ContentProfHeader from '../components/ContentProfHeader';
+import HeaderContent from '../components/HeaderContent';
+import Scheduler from '../modules/Scheduler';
+import InsertCourseModal from '../modules/InsertCourseModal';
+import ButtonCom from '../components/ButtonCom';
 
 export default function ContentProf({ currentPage, userData }) {
-    const { id, name, email, role, branch_tag } = userData;
+    const { id, name: profName, role, branch_tag: initialBranch } = userData;
 
-    const [branch, setBranch] = useState(branch_tag);
-    const [branchYear, setBranchYear] = useState('');
-    const [profName, setProfName] = useState(name);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [profState, setProfState] = useState({
+        branch: initialBranch,
+        branchYear: '',
+        profName: profName,
+        isModalOpen: false
+    });
+
+    const { branch, branchYear, isModalOpen } = profState;
 
     const handleYearChange = selectedBranchYear => {
-        setBranchYear(selectedBranchYear)
-    }
+        setProfState(prevState => ({ ...prevState, branchYear: selectedBranchYear }));
+    };
     const handleBranchChange = selectedBranch => {
-        setBranch(selectedBranch)
-    }
+        setProfState(prevState => ({ ...prevState, branch: selectedBranch }));
+    };
     const handleProfChange = selectedProf => {
-        setProf(selectedProf)
-    }
+        setProfState(prevState => ({ ...prevState, profName: selectedProf }));
+    };
     const toggleModal = useCallback(() => {
-        setIsModalOpen(prevState => !prevState);
+        setProfState(prevState => ({ ...prevState, isModalOpen: !prevState.isModalOpen }));
     }, []);
 
     return (
@@ -36,7 +45,7 @@ export default function ContentProf({ currentPage, userData }) {
 
             {currentPage === 'Home' && (
                 <>
-                    <InsertCourseModal ownerBranchTag={branch_tag} isVisible={isModalOpen} onClose={toggleModal} />
+                    <InsertCourseModal ownerBranchTag={branch} isVisible={isModalOpen} onClose={toggleModal} />
                     <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold mb-4 py-2 px-4'
                         text='Add Course' type='button' onClick={toggleModal}
                     />
@@ -45,9 +54,3 @@ export default function ContentProf({ currentPage, userData }) {
         </div>
     );
 }
-
-import ContentProfHeader from '../components/ContentProfHeader';
-import HeaderContent from '../components/HeaderContent';
-import Scheduler from '../modules/Scheduler';
-import InsertCourseModal from '../modules/InsertCourseModal';
-import ButtonCom from '../components/ButtonCom';

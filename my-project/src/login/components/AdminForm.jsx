@@ -19,8 +19,7 @@ export default function AdminForm({ formData, onLogin, handleChange }) {
                     value={formData.password}
                     onChange={handleChange}
                 />
-
-                <button className='rounded my-2 px-8 py-1 text-white bg-green-500 hover:bg-green-600' type='submit'>
+                <button type='submit' className='rounded my-2 px-8 py-1 text-white bg-green-500 hover:bg-green-600'>
                     <span className='text-lg font-bold'>Login</span>
                 </button>
             </form>
@@ -28,7 +27,7 @@ export default function AdminForm({ formData, onLogin, handleChange }) {
     );
 }
 
-const Input = (props) => {
+const Input = ({ ...props }) => {
     return <div className='mb-3'>
         <input {...props} />
     </div>
