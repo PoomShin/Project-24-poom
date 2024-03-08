@@ -28,10 +28,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
 
     const [lectureSection, setLectureSection] = useState([]);
     const [labSection, setLabSection] = useState([]);
-    const [disableSubmit, setDisableSubmit] = useState(false);
-
-    const [openAlert, setOpenAlert] = useState(false);
-    const [alertMessage, setAlertMessage] = useState('');
+    const [mergedSection, setMergedSection] = useState([]);
 
     const [selectedCourse, setSelectedCourse] = useState('');
     const [courseInfo, setCourseInfo] = useState({
@@ -42,6 +39,10 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
         course_type: ''
     });
     const [creditHours, setCreditHours] = useState({ lectureHours: 0, labHours: 0, selfStudyHours: 0 });
+
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [disableSubmit, setDisableSubmit] = useState(false);
 
     const handleCourseChange = e => setSelectedCourse(e.target.value);
 
@@ -62,9 +63,8 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
 
     const handleSubmit = async () => {
         try {
-            const mergedSections = [...lectureSection, ...labSection];
             const groupData = {
-                mergedSections,
+                mergedSection,
                 course_id: courseInfo.id,
                 group_status: 'waiting',
                 owner_branch_tag: ownerBranchTag
@@ -109,12 +109,16 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                 course_type: ''
             });
         }
-    }, [selectedCourse, courses]);
+    }, [selectedCourse, courses]); //reset formdata when change selected course
 
     useEffect(() => {
         const { credit } = courseInfo;
         setCreditHours(parseCredits(credit));
     }, [courseInfo]);
+
+    useEffect(() => {
+        setMergedSection([...lectureSection, ...labSection]);
+    }, [lectureSection, labSection]); //update mergedSection
 
     return isVisible ? (
         createPortal(
@@ -123,43 +127,44 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                 <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50'>
                     <div className='absolute top-0 left-1/2 transform -translate-x-1/2 font-semibold p-4'>
                         <div className='flex'>
-                            <InputSection
-                                style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500'
+                            <InputSection style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500'
                                 value={selectedCourse} onChange={handleCourseChange}
                                 preValue='Select a course' options={courses} optionKey='combined_code_curriculum'
                             />
-                            <InputField placeholder='thname' width={72} value={courseInfo.th_name} readOnly />
-                            <InputField placeholder='engname' width={72} value={courseInfo.eng_name} readOnly />
+                            <input className='w-72 rounded-lg bg-blue-100 mx-2 p-1' placeholder='thname' value={courseInfo.th_name} readOnly />
+                            <input className='w-72 rounded-lg bg-blue-100 mx-2 p-1' placeholder='engname' value={courseInfo.eng_name} readOnly />
                         </div>
                         <div className='flex my-4'>
-                            <InputField placeholder='credit' width={20} value={courseInfo.credit} readOnly />
-                            <InputField placeholder='course type' width={24} value={courseInfo.course_type} readOnly />
+                            <input className='w-20 rounded-lg bg-blue-100 mx-2 p-1' placeholder='credit' value={courseInfo.credit} readOnly />
+                            <input className='w-24 rounded-lg bg-blue-100 mx-2 p-1' placeholder='course type' value={courseInfo.course_type} readOnly />
                         </div>
                     </div>
 
                     <div className='overflow-x-scroll flex flex-col w-10/12'>
-                        {(creditHours.lectureHours > 0 || creditHours.credits > 0) &&
-                            <>
+                        {creditHours.lectureHours > 0 && (
+                            <GroupList
+                                sections={lectureSection}
+                                mergedSection={mergedSection}
+                                onAddSection={section => handleAddSection(section, setLectureSection)}
+                                creditHours={creditHours}
+                                isLab={false}
+                                setDisableSubmit={setDisableSubmit}
+                            >
                                 <span className='text-3xl text-white mb-2'>Lecture</span>
-                                <GroupList sections={lectureSection}
-                                    onAddSection={section => handleAddSection(section, setLectureSection)}
-                                    creditHours={creditHours}
-                                    isLab={false}
-                                    setDisableSubmit={setDisableSubmit}
-                                />
-                            </>
-                        }
-                        {creditHours.labHours > 0 &&
-                            <>
+                            </GroupList>
+                        )}
+                        {creditHours.labHours > 0 && (
+                            <GroupList
+                                sections={labSection}
+                                mergedSection={mergedSection}
+                                onAddSection={section => handleAddSection(section, setLabSection)}
+                                creditHours={creditHours}
+                                isLab={true}
+                                setDisableSubmit={setDisableSubmit}
+                            >
                                 <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
-                                <GroupList sections={labSection}
-                                    onAddSection={section => handleAddSection(section, setLabSection)}
-                                    creditHours={creditHours}
-                                    isLab={true}
-                                    setDisableSubmit={setDisableSubmit}
-                                />
-                            </>
-                        }
+                            </GroupList>
+                        )}
                     </div>
 
                     <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
@@ -176,5 +181,3 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
         )
     ) : null;
 }
-
-const InputField = ({ width, ...props }) => <input className={`w-${width} rounded-lg bg-blue-100 mx-2 p-1`} {...props} />;
