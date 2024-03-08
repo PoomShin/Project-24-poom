@@ -22,7 +22,7 @@ const iconMap = {
 };
 
 export default function Content({ currentPage, setCurrentPage, selectedBranchTag, setSelectedBranchTag }) {
-    const { branches, refetchBranches, profs, refetchProfs, courses } = useAdminContext();
+    const { branches, refetchBranches, profs, refetchProfs, courses, refetchCourses } = useAdminContext();
 
     const [courseTag, setCourseTag] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,7 +60,7 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
                 <ProfItems profs={profs} onShowBranches={handleShowBranches} refetchProfs={refetchProfs} />
             )}
             {currentPage === 'Curriculum' && courses && (
-                <CourseItems courses={courses} onShowBranches={handleShowBranches} />
+                <CourseItems courses={courses} onShowBranches={handleShowBranches} refetchCourses={refetchCourses} />
             )}
 
             {ModalComponent && <ModalComponent.component {...ModalComponent.props} />}

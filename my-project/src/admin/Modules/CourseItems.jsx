@@ -2,12 +2,16 @@ import { useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { useDeleteCourseMutation, useUpdateCourseMutation } from '../../api/admin_api';
 import ConfirmationModal from '../../public/ConfirmationModal';
+import AlertModal from '../../public/AlertModal';
 
-export default function CourseItems({ courses, onShowBranches }) {
+export default function CourseItems({ courses, onShowBranches, refetchCourses }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [confirmMessage, setConfirmMessage] = useState('');
+
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
+
   const [courseToDelete, setCourseToDelete] = useState(null);
+  const [message, setMessage] = useState('');
 
   const deleteCourseMutation = useDeleteCourseMutation();
   const updateCourseMutation = useUpdateCourseMutation();
@@ -19,7 +23,7 @@ export default function CourseItems({ courses, onShowBranches }) {
 
   const deleteCourse = (course) => {
     setCourseToDelete(course);
-    setConfirmMessage(`คุณต้องการลบ ${course.course_code} ${course.curriculum} ${course.th_name} ${course.eng_name} ${course.credit} ${course.course_type}?`);
+    setMessage(`คุณต้องการลบ ${course.course_code} ${course.curriculum} ${course.th_name} ${course.eng_name} ${course.credit} ${course.course_type}?`);
     setIsConfirmationVisible(true);
   };
   const confirmDeleteCourse = async () => {
@@ -60,48 +64,26 @@ export default function CourseItems({ courses, onShowBranches }) {
   };
   const submit_edit = async (id) => {
     input_toggle(id);
-    //old data
-    let old_code = document.getElementById(`text_course_code_${id}`);
-    let old_curriculum = document.getElementById(`text_curriculum_${id}`);
-    let old_th = document.getElementById(`text_th_name_${id}`);
-    let old_eng = document.getElementById(`text_eng_name_${id}`);
-    let old_credit = document.getElementById(`text_credit_${id}`);
-    let old_type = document.getElementById(`text_coruse_type_${id}`);
-    // input value new // new value to update database
-    let new_code = document.getElementById(`course_code_${id}`);
-    let new_curriculum = document.getElementById(`curriculum_${id}`);
-    let new_th = document.getElementById(`th_${id}`);
-    let new_eng = document.getElementById(`eng_${id}`);
-    let new_credit = document.getElementById(`credit_${id}`);
-    let new_type = document.getElementById(`coruse_type_${id}`);
+    setMessage(`คุณต้องการอัพเดทรายวิชา id ${id}`);
+    setIsAlertVisible(true);
 
     let updatedCourseData = {
       id: id,
-      course_code: new_code.value,
-      curriculum: new_curriculum.value,
-      th_name: new_th.value,
-      eng_name: new_eng.value,
-      credit: new_credit.value,
-      course_type: new_type.value
+      course_code: document.getElementById(`course_code_${id}`).value,
+      curriculum: document.getElementById(`curriculum_${id}`).value,
+      th_name: document.getElementById(`th_${id}`).value,
+      eng_name: document.getElementById(`eng_${id}`).value,
+      credit: document.getElementById(`credit_${id}`).value,
+      course_type: document.getElementById(`coruse_type_${id}`).value
     };
 
-    let con = confirm('do you want to update course?');
-
-    if (con) {
-      try {
-        const result = await updateCourseMutation.mutateAsync(updatedCourseData);
-        alert(result.message);
-      } catch (error) {
-        console.error("Error updating course:", error);
-        alert(error);
-      }
-    } else {
-      new_code.value = old_code.textContent;
-      new_curriculum.value = old_curriculum.textContent;
-      new_th.value = old_th.textContent;
-      new_eng.value = old_eng.textContent;
-      new_credit.value = old_credit.textContent;
-      new_type.value = old_type.textContent;
+    try {
+      const result = await updateCourseMutation.mutateAsync(updatedCourseData);
+      setMessage(result.message);
+      refetchCourses();
+    } catch (error) {
+      console.error("Error updating course:", error);
+      setMessage(error.toString());
     }
   };
 
@@ -112,7 +94,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: row => (
         <div>
-          <p id={`text_course_code_${row.id}`}>{row.course_code}</p>
+          <p>{row.course_code}</p>
           <input className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type='text'
             id={`course_code_${row.id}`}
@@ -127,7 +109,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: row => (
         <div>
-          <p id={`text_curriculum_${row.id}`}>{row.curriculum}</p>
+          <p>{row.curriculum}</p>
           <input className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type='text'
             id={`curriculum_${row.id}`}
@@ -142,7 +124,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: row => (
         <div>
-          <p id={`text_th_name_${row.id}`}>{row.th_name}</p>
+          <p>{row.th_name}</p>
           <textarea className={`input-${row.id}  border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type='text-area'
             id={`th_${row.id}`}
@@ -156,7 +138,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: row => (
         <div>
-          <p id={`text_eng_name_${row.id}`}>{row.eng_name}</p>
+          <p>{row.eng_name}</p>
           <textarea
             className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type='text'
@@ -171,7 +153,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: row => (
         <div>
-          <p id={`text_credit_${row.id}`}> {row.credit}</p>
+          <p> {row.credit}</p>
           <input
             className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type='text'
@@ -187,7 +169,7 @@ export default function CourseItems({ courses, onShowBranches }) {
       sortable: true,
       cell: row => (
         <div>
-          <p id={`text_coruse_type_${row.id}`}> {row.course_type}</p>
+          <p> {row.course_type}</p>
           <input className={`input-${row.id} border-yellow-950 mt-3 rounded-md border-solid border-2 w-full hidden`}
             type='text'
             id={`coruse_type_${row.id}`}
@@ -249,7 +231,7 @@ export default function CourseItems({ courses, onShowBranches }) {
     },
     {
       name: '',
-      selector: (row) => [
+      selector: row => [
         row.id,
         row.course_code,
         row.curriculum,
@@ -258,7 +240,7 @@ export default function CourseItems({ courses, onShowBranches }) {
         row.credit,
         row.course_type,
       ],
-      cell: (row) => (
+      cell: row => (
         <div className='flex'>
           <button className='text-black hover:text-white bg-blue-400  hover:bg-blue-600 px-3 py-1 rounded-md border-solid border-2 border-black hidden'
             id={`submit-${row.id}`}
@@ -275,9 +257,15 @@ export default function CourseItems({ courses, onShowBranches }) {
     <>
       {isConfirmationVisible && (
         <ConfirmationModal isOpen={isConfirmationVisible}
-          message={confirmMessage}
-          onConfirm={confirmDeleteCourse}
+          message={message}
+          onConfirm={courseToDelete ? confirmDeleteCourse : submit_edit}
           onCancel={cancelDeleteCourse}
+        />
+      )}
+      {isAlertVisible && (
+        <AlertModal isOpen={isAlertVisible}
+          onClose={() => setIsAlertVisible(false)}
+          message={message}
         />
       )}
 
