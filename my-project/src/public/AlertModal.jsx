@@ -2,7 +2,7 @@ export default function AlertModal({ isOpen, onClose, message }) {
     return (
         <>
             {isOpen && (
-                <div className='fixed top-28 left-0 right-0 flex items-center justify-center z-50'>
+                <div className='fixed top-28 left-0 right-0 flex items-center justify-center z-[60]'>
                     <div className='fixed inset-0 bg-gray-900 opacity-50'></div>
                     <div className='absolute top-1/2 transform -translate-y-1/2 bg-white w-96 rounded-lg p-4 z-50'>
                         <div className='flex justify-between items-center mb-4'>

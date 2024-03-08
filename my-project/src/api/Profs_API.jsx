@@ -5,10 +5,6 @@ import axios from 'axios';
 const useGroupsByBranchYear = (branchYear) => {
     const queryKey = ['groups', branchYear];
 
-    if (branchYear === '') {
-        return useQuery(queryKey, { data: [], isLoading: false, isError: false });
-    }
-
     const fetchGroupsByBranchYear = async () => {
         try {
             const response = await axios.get(`/profs/groups/${encodeURIComponent(branchYear)}`);
@@ -19,9 +15,9 @@ const useGroupsByBranchYear = (branchYear) => {
             return data;
         } catch (error) {
             if (error.response && error.response.status === 404) {
-                throw new Error(`No groups found for the selected branch and year.`);
+                console.error(`No groups found for the selected branch and year.`);
             } else {
-                throw new Error(`Failed to fetch groups: ${error.message}`);
+                console.error(`Failed to fetch groups: ${error.message}`);
             }
         }
     };

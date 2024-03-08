@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useGroupsByBranchYear } from "../../api/Profs_API";
 import DayRows from "./SchedulerContent";
 
@@ -32,7 +32,11 @@ const TimeRows = React.memo(() => {
 });
 
 export default function Scheduler({ currentPage, branchYear, currentProfName }) {
-    const { data: branchYearGroups, isLoading, isError } = useGroupsByBranchYear(branchYear);
+    const { data: branchYearGroups, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
+
+    useEffect(() => {
+        refetch();
+    }, [branchYear, refetch]);
 
     return (
         <div className='border rounded-lg bg-gray-800 mx-1'>
