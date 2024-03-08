@@ -22,6 +22,7 @@ export default function ContentProf({ currentPage, userData }) {
     };
     const handleBranchChange = selectedBranch => {
         setProfState(prevState => ({ ...prevState, branch: selectedBranch }));
+        handleYearChange();
     };
     const handleProfChange = selectedProf => {
         setProfState(prevState => ({ ...prevState, profName: selectedProf }));

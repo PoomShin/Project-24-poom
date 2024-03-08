@@ -1,5 +1,25 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import TimeBlock from "../components/TimeBlock";
+
+const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const PRIORITY_VALUES = {
+    'เฉพาะบังคับ': 5,
+    'เฉพาะเลือก': 4,
+    'เฉพาะทั่วไป': 3,
+    'อื่นๆ': 2,
+    'บริการ': 1,
+};
+
+const COLOR_MAP = {
+    'Mon': 'bg-yellow-400',
+    'Tue': 'bg-pink-400',
+    'Wed': 'bg-green-400',
+    'Thu': 'bg-orange-400',
+    'Fri': 'bg-blue-400',
+    'Sat': 'bg-purple-400',
+    'Sun': 'bg-red-400',
+};
 
 const getColStartClass = (time) => {
     const [hour, minute] = time.split(':').map(str => parseInt(str));
@@ -87,19 +107,22 @@ const getColEndClass = (time) => {
     return hourToColumnEnd[fractionalHour] || '';
 };
 
-export default function DayRows({ groups, page, profName }) {
-    const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+export default function DayRows({ groups, page, profName, seeCourseName }) {
+    const [fullDayBlock, setFullDayBlock] = useState('');
 
     const sortedGroups = useMemo(() => {
         if (!groups) return {};
-        return daysOfWeek.reduce((acc, day) => {
+        return DAYS_OF_WEEK.reduce((acc, day) => {
             acc[day] = groups.filter(group => group.day_of_week === day)
-                .sort((a, b) => (a.start_time !== b.start_time) ? a.start_time.localeCompare(b.start_time) : a.end_time.localeCompare(b.end_time));
+                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
             return acc;
         }, {});
     }, [groups]);
 
-    // Get background style for each group
+    const toggleFullDayBlock = (day) => {
+        setFullDayBlock(prevDay => prevDay === day ? '' : day);
+    };
+
     const getBgStyle = (group, day) => {
         const overlappingGroups = sortedGroups[day].filter(otherGroup =>
             (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
@@ -109,7 +132,7 @@ export default function DayRows({ groups, page, profName }) {
 
         if (overlappingGroups.length > 1) {
             const highestPriorityGroup = overlappingGroups.reduce((highest, current) =>
-                getCourseTypePriority(current.course_type) > getCourseTypePriority(highest.course_type) ? current : highest
+                PRIORITY_VALUES[current.course_type] > PRIORITY_VALUES[highest.course_type] ? current : highest
             );
             return getColorForCourseType(highestPriorityGroup.course_type);
         } else {
@@ -117,19 +140,6 @@ export default function DayRows({ groups, page, profName }) {
         }
     };
 
-    // Get priority for each course type
-    const getCourseTypePriority = (courseType) => {
-        switch (courseType) {
-            case 'เฉพาะบังคับ': return 5;
-            case 'เฉพาะเลือก': return 4;
-            case 'เฉพาะทั่วไป': return 3;
-            case 'อื่นๆ': return 2;
-            case 'บริการ': return 1;
-            default: return 0;
-        }
-    };
-
-    // Get color for each course type
     const getColorForCourseType = (courseType) => {
         switch (courseType) {
             case 'เฉพาะบังคับ': return 'bg-red-400';
@@ -142,36 +152,34 @@ export default function DayRows({ groups, page, profName }) {
     };
 
     return (
-        <>
-            {daysOfWeek.map((day, index) => (
-                <div key={index} className='grid grid-cols-34 border border-gray-700 overflow-y-scroll grid-flow-dense'>
-                    <DayBlock day={day} />
-                    {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
+        DAYS_OF_WEEK.map((day, index) => (
+            <div key={index} className={`grid grid-cols-34 border border-gray-700 overflow-y-scroll grid-flow-dense ${fullDayBlock === day ? 'max-h-fit' : 'max-h-28'}`}>
+                <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
+                {
+                    sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
                         <TimeBlock key={groupIndex}
                             colStart={getColStartClass(group.start_time)}
                             colEnd={getColEndClass(group.end_time)}
                             bgStyle={getBgStyle(group, day)}
-                            codeCurriculum={group.combined_code_curriculum} groupNum={group.group_num} names={group.prof_names} lab={group.lab_room} profName={profName}
+                            engName={group.eng_name}
+                            codeCurriculum={group.combined_code_curriculum}
+                            groupNum={group.group_num}
+                            names={group.prof_names} profName={profName}
+                            lab={group.lab_room}
+                            seeCourseName={seeCourseName}
                         />
-                    ))}
-                </div>
-            ))}
-        </>
+                    ))
+                }
+            </div>
+        ))
     );
 }
 
-const DayBlock = ({ day }) => {
-    const colorMap = {
-        'Mon': 'bg-yellow-400',
-        'Tue': 'bg-pink-400',
-        'Wed': 'bg-green-400',
-        'Thu': 'bg-orange-400',
-        'Fri': 'bg-blue-400',
-        'Sat': 'bg-purple-400',
-        'Sun': 'bg-red-400',
-    };
+const DayBlock = ({ day, onClick, isActive }) => {
     return (
-        <div className={`grid first-line:p-1 md:p-3 col-start-1 col-end-3 border-r-2 dark:border-gray-700 ${colorMap[day]}`}>
+        <div className={`grid first-line:p-1 md:p-3 col-start-1 col-end-3 border-r-2 dark:border-gray-700 ${COLOR_MAP[day]} ${isActive ? 'hover:border-blue-500 hover:border' : ''}`}
+            onClick={onClick}
+        >
             <span className='font-bold dark:text-gray-900'>{day}</span>
         </div>
     );

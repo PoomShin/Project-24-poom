@@ -1,4 +1,4 @@
-export default function TimeBlock({ colStart, colEnd, bgStyle, codeCurriculum, groupNum, names, lab, profName }) {
+export default function TimeBlock({ colStart, colEnd, bgStyle, engName, codeCurriculum, groupNum, names, lab, profName, seeCourseName }) {
     let displayNames = names;
 
     if (Array.isArray(names)) {
@@ -11,18 +11,18 @@ export default function TimeBlock({ colStart, colEnd, bgStyle, codeCurriculum, g
 
     return (
         <div className={`${colStart} ${colEnd} 
-        inline-flex flex-col justify-between border rounded p-2 hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 ${bgStyle}`}>
+        inline-flex flex-col justify-between border rounded hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 ${bgStyle} p-2`}>
             <p className='flex justify-between text-xs'>
                 <span>{codeCurriculum}</span>
                 <span>SEC: {groupNum}</span>
             </p>
-            <div className='flex justify-between text-xs text-gray-700'>
-                <div>
-                    {displayNames}
-                </div>
-                <div className='text-right'>
-                    {lab}
-                </div>
+            <div className='flex justify-between text-xs leading-none text-gray-700'>
+                {seeCourseName ? (
+                    <>
+                        <div>{displayNames}</div>
+                        <div className='text-right'>{lab}</div>
+                    </>
+                ) : <div>{engName}</div>}
             </div>
         </div>
     );
