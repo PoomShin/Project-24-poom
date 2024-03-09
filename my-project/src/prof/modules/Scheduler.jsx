@@ -43,7 +43,6 @@ export default function Scheduler({ currentPage, branchYear, currentProfName }) 
         setSeeCourseName(prevState => !prevState);
     };
 
-
     return (
         <>
             <div className='flex justify-start my-2 ml-1'>

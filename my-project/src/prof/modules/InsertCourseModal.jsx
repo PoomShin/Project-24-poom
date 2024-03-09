@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useCoursesContext } from '../../context/Prof-Context';
 import { useAddGroupMutation } from '../../api/Profs_API';
+//Components
 import AlertModal from '../../public/AlertModal';
 import InputSection from '../components/InputSelect';
 import ButtonCom from '../components/ButtonCom';
-import GroupList from './GroupList';
+import GroupItem from '../components/GroupItem';
+import AddGroup from './AddGroup';
 
 const parseCredits = credits => {
     const matches = credits.match(/(\d+)\((\d+)-(\d+)-(\d+)\)|(\d+)/);
@@ -142,35 +144,43 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
 
                     <div className='overflow-x-scroll flex flex-col w-10/12'>
                         {creditHours.lectureHours > 0 && (
-                            <GroupList
-                                sections={lectureSection}
-                                mergedSection={mergedSection}
-                                onAddSection={section => handleAddSection(section, setLectureSection)}
-                                creditHours={creditHours}
-                                isLab={false}
-                                setDisableSubmit={setDisableSubmit}
-                            >
+                            <>
                                 <span className='text-3xl text-white mb-2'>Lecture</span>
-                            </GroupList>
+                                <div className={`h-64 flex overflow-x-auto p-4 ${false ? 'bg-orange-100' : 'bg-green-100'}`}>
+                                    {lectureSection.map((sec, index) => (
+                                        <GroupItem key={index} {...sec} isLab={false} />
+                                    ))}
+                                    <AddGroup mergedSection={mergedSection}
+                                        onAddSection={section => handleAddSection(section, setLectureSection)}
+                                        creditHours={creditHours} isLab={false}
+                                        setDisableSubmit={setDisableSubmit}
+                                    />
+                                </div>
+                            </>
+
                         )}
                         {creditHours.labHours > 0 && (
-                            <GroupList
-                                sections={labSection}
-                                mergedSection={mergedSection}
-                                onAddSection={section => handleAddSection(section, setLabSection)}
-                                creditHours={creditHours}
-                                isLab={true}
-                                setDisableSubmit={setDisableSubmit}
-                            >
+                            <>
                                 <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
-                            </GroupList>
+                                <div className={`h-64 flex overflow-x-auto p-4 ${true ? 'bg-orange-100' : 'bg-green-100'}`}>
+                                    {labSection.map((sec, index) => (
+                                        <GroupItem key={index} {...sec} isLab={true} />
+                                    ))}
+                                    <AddGroup mergedSection={mergedSection}
+                                        onAddSection={section => handleAddSection(section, setLabSection)}
+                                        creditHours={creditHours} isLab={true}
+                                        setDisableSubmit={setDisableSubmit}
+                                    />
+                                </div>
+                            </>
+
                         )}
                     </div>
 
                     <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
                         <ButtonCom style='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
                             text='Submit' type='button' onClick={handleSubmit}
-                            isDisable={disableSubmit || !selectedCourse}
+                            isDisable={disableSubmit || selectedCourse === ''}
                         />
                         <ButtonCom style='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
                             text='Close' type='button' onClick={closeModal}

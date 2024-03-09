@@ -23,6 +23,7 @@ const generateTimeOptions = () => {
 const timeOptions = generateTimeOptions();
 
 export default function AddGroup({ mergedSection, onAddSection, creditHours, isLab, setDisableSubmit }) {
+    console.log(mergedSection)
     const { profsBranchTag } = useProfsContext();
     const { branch_year } = useBranchesContext();
 
@@ -52,8 +53,8 @@ export default function AddGroup({ mergedSection, onAddSection, creditHours, isL
         }));
     };
     const handleShowForm = () => {
+        setDisableSubmit(prev => !prev);
         setIsFormVisible(prevState => !prevState);
-        setDisableSubmit(prevState => !prevState);
     };
     const handleAdd = (e) => {
         e.preventDefault();
