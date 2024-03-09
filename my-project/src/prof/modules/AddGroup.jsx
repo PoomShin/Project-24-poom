@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useProfsContext, useBranchesContext } from '../../context/Prof-Context';
+import { useProfsContext, useBranchesContext, useGroupContext } from '../../context/Prof-Context';
 import AlertModal from '../../public/AlertModal';
 import plusIcon from '../../assets/plus.png';
 
@@ -23,9 +23,9 @@ const generateTimeOptions = () => {
 const timeOptions = generateTimeOptions();
 
 export default function AddGroup({ mergedSection, onAddSection, creditHours, isLab, setDisableSubmit }) {
-    console.log(mergedSection)
     const { profsBranchTag } = useProfsContext();
     const { branch_year } = useBranchesContext();
+    const { allGroups } = useGroupContext();
 
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');

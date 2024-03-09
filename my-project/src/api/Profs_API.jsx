@@ -1,7 +1,74 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 
-//API Context
+//get branches API
+const useGetAllBranches = () => {
+    const fetchBranches = async () => {
+        try {
+            const response = await axios.get('/api/branches');
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to fetch branches: ${error.message}`);
+            throw new Error('Failed to fetch branches. Please try again later.');
+        }
+    };
+
+    return useQuery('branchTags', fetchBranches);
+};
+//get profs API
+const useGetProfsByBranchTag = (branch_tag) => {
+    return useQuery(
+        ['profsData', branch_tag],
+        async () => {
+            try {
+                const response = await axios.get(`/api/profs/${branch_tag}`);
+                return response.data;
+            } catch (error) {
+                throw new Error(`Failed to fetch professors: ${error.message}`);
+            }
+        }
+    );
+};
+//get courses API
+const useGetCoursesByBranchTag = (branch_tag) => {
+    return useQuery(
+        'courseData',
+        async () => {
+            const response = await axios.get(`/api/courses/${branch_tag}`);
+            return response.data;
+        }
+    );
+};
+
+const useGetProfCoursesByName = (name) => {
+    return useQuery(
+        'profCoursesData',
+        async () => {
+            const response = await axios.get(`/profs/myCourse/${name}`);
+            return response.data;
+        }
+    );
+};
+
+const useGetAllCourses = () => {
+    return useQuery(
+        'allCoursesData',
+        async () => {
+            const response = await axios.get('/profs/allCourse/');
+            return response.data;
+        }
+    );
+};
+//get groups API
+const useAllGroup = () => {
+    return useQuery(
+        'allGroupsData',
+        async () => {
+            const response = await axios.get('/profs/allGroups');
+            return response.data;
+        }
+    );
+};
 const useGroupsByBranchYear = (branchYear) => {
     const queryKey = ['groups', branchYear];
 
@@ -24,7 +91,7 @@ const useGroupsByBranchYear = (branchYear) => {
 
     return useQuery(queryKey, fetchGroupsByBranchYear);
 };
-
+//groups API
 const useAddGroupMutation = () => {
     const queryClient = useQueryClient();
 
@@ -44,4 +111,4 @@ const useAddGroupMutation = () => {
     });
 };
 
-export { useAddGroupMutation, useGroupsByBranchYear }
+export { useAddGroupMutation, useGroupsByBranchYear, useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useAllGroup }

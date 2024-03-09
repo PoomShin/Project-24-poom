@@ -124,6 +124,50 @@ router.get('/allCourse', async (req, res) => {
     }
 });
 
+router.get('/allGroups', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                g.Id AS group_id, 
+                g.group_num, 
+                g.quantity, 
+                g.unit, 
+                g.hours, 
+                g.day_of_week, 
+                g.start_time, 
+                g.end_time, 
+                g.lab_room, 
+                g.group_status, 
+                c.eng_name,
+                c.combined_code_curriculum,
+                c.course_type,
+                ARRAY_AGG(gp.prof_name) AS prof_names,
+                ARRAY_AGG(gy.branch_year) AS branch_years
+            FROM 
+                groups g
+            JOIN 
+                group_branch_year gy ON g.Id = gy.group_id
+            JOIN 
+                group_profs gp ON g.Id = gp.group_id
+            JOIN 
+                courses c ON g.course_id = c.Id
+            GROUP BY 
+                g.Id, c.eng_name, c.combined_code_curriculum, c.course_type;
+        `;
+
+        const { rows } = await pool.query(query);
+
+        if (rows.length === 0) {
+            res.status(404).json({ success: false, error: 'No data found' });
+        } else {
+            res.json(rows);
+        }
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+});
+
 router.get('/groups/:branchYear', async (req, res) => {
     try {
         const { branchYear } = req.params;
