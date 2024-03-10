@@ -28,9 +28,9 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     const { courses } = useCoursesContext();
     const addGroupMutation = useAddGroupMutation();
 
-    const [lectureSection, setLectureSection] = useState([]);
-    const [labSection, setLabSection] = useState([]);
-    const [mergedSection, setMergedSection] = useState([]);
+    const [lectureGroups, setLectureGroups] = useState([]);
+    const [labGroups, setLabGroups] = useState([]);
+    const [mergedGroups, setMergedGroups] = useState([]);
 
     const [selectedCourse, setSelectedCourse] = useState('');
     const [courseInfo, setCourseInfo] = useState({
@@ -51,8 +51,8 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     const handleAddSection = (section, setter) => setter(prevSections => [...prevSections, section]);
 
     const resetFormData = () => {
-        setLectureSection([]);
-        setLabSection([]);
+        setLectureGroups([]);
+        setLabGroups([]);
         setSelectedCourse('');
         setCourseInfo({
             id: null,
@@ -66,7 +66,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     const handleSubmit = async () => {
         try {
             const groupData = {
-                mergedSection,
+                mergedGroups,
                 course_id: courseInfo.id,
                 group_status: 'waiting',
                 owner_branch_tag: ownerBranchTag
@@ -119,8 +119,8 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     }, [courseInfo]);
 
     useEffect(() => {
-        setMergedSection([...lectureSection, ...labSection]);
-    }, [lectureSection, labSection]); //update mergedSection
+        setMergedGroups([...lectureGroups, ...labGroups]);
+    }, [lectureGroups, labGroups]); //update mergedGroups
 
     return isVisible ? (
         createPortal(
@@ -147,11 +147,11 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                             <>
                                 <span className='text-3xl text-white mb-2'>Lecture</span>
                                 <div className={`h-64 flex overflow-x-auto p-4 ${false ? 'bg-orange-100' : 'bg-green-100'}`}>
-                                    {lectureSection.map((sec, index) => (
+                                    {lectureGroups.map((sec, index) => (
                                         <GroupItem key={index} {...sec} isLab={false} />
                                     ))}
-                                    <AddGroup mergedSection={mergedSection}
-                                        onAddSection={section => handleAddSection(section, setLectureSection)}
+                                    <AddGroup mergedGroups={mergedGroups}
+                                        onAddSection={section => handleAddSection(section, setLectureGroups)}
                                         creditHours={creditHours} isLab={false}
                                         setDisableSubmit={setDisableSubmit}
                                     />
@@ -163,11 +163,11 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                             <>
                                 <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
                                 <div className={`h-64 flex overflow-x-auto p-4 ${true ? 'bg-orange-100' : 'bg-green-100'}`}>
-                                    {labSection.map((sec, index) => (
+                                    {labGroups.map((sec, index) => (
                                         <GroupItem key={index} {...sec} isLab={true} />
                                     ))}
-                                    <AddGroup mergedSection={mergedSection}
-                                        onAddSection={section => handleAddSection(section, setLabSection)}
+                                    <AddGroup mergedGroups={mergedGroups}
+                                        onAddSection={section => handleAddSection(section, setLabGroups)}
                                         creditHours={creditHours} isLab={true}
                                         setDisableSubmit={setDisableSubmit}
                                     />

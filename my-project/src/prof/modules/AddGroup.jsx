@@ -22,7 +22,7 @@ const generateTimeOptions = () => {
 
 const timeOptions = generateTimeOptions();
 
-export default function AddGroup({ mergedSection, onAddSection, creditHours, isLab, setDisableSubmit }) {
+export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit }) {
     const { profsBranchTag } = useProfsContext();
     const { branch_year } = useBranchesContext();
     const { allGroups } = useGroupContext();
@@ -65,7 +65,7 @@ export default function AddGroup({ mergedSection, onAddSection, creditHours, isL
             return;
         }
 
-        const isDuplicate = mergedSection.some(section =>
+        const isDuplicate = mergedGroups.some(section =>
             section.group_num === formData.group_num ||
             (section.day_of_week === formData.day_of_week &&
                 (section.start_time === formData.start_time || section.end_time === formData.end_time))

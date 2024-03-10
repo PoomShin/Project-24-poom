@@ -1,10 +1,10 @@
 const { router, pool } = require('./commonImport');
 
 router.post('/addGroups', async (req, res) => {
-    const { mergedSection, course_id, group_status, owner_branch_tag } = req.body;
+    const { mergedGroups, course_id, group_status, owner_branch_tag } = req.body;
 
     try {
-        for (const groupData of mergedSection) {
+        for (const groupData of mergedGroups) {
             const { group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, prof_name, branch_year } = groupData;
 
             const groupResult = await pool.query(
