@@ -1,5 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { useGroupsByBranchYear } from "../../api/Profs_API";
+import React, { useMemo, useState } from 'react';
 import DayRows from "./SchedulerContent";
 
 const generateTimeSlots = () => {
@@ -31,13 +30,9 @@ const TimeRows = React.memo(() => {
     )
 });
 
-export default function Scheduler({ currentPage, branchYear, currentProfName, myBranchTag }) {
-    const { data: branchYearGroups, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
+export default function Scheduler({ currentPage, curBranchYear, userData }) {
+    const { id, name: profName, role, branch_tag: profBranchTag } = userData;
     const [seeCourseName, setSeeCourseName] = useState(false);
-
-    useEffect(() => {
-        refetch();
-    }, [branchYear, refetch]);
 
     const toggleSeeCourseName = () => {
         setSeeCourseName(prevState => !prevState);
@@ -55,9 +50,9 @@ export default function Scheduler({ currentPage, branchYear, currentProfName, my
             <div className='border rounded-lg bg-gray-800 mx-1'>
                 <TimeRows />
                 <DayRows
-                    groups={branchYearGroups}
                     page={currentPage}
-                    profName={currentProfName}
+                    profName={profName}
+                    branchYear={curBranchYear}
                     seeCourseName={seeCourseName}
                 />
             </div>
