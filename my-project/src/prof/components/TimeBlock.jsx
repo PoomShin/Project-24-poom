@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react";
 
-export default function TimeBlock({ colStart, colEnd, bgStyle, engName, codeCurriculum, groupNum, names, lab, profName, seeCourseName, onContextMenu, isOpenContextMenu, onCloseContextMenu }) {
+const TimeBlock = ({
+    colStart,
+    colEnd,
+    bgStyle,
+    group,
+    profName,
+    profRole,
+    profBranch,
+    seeCourseName,
+    onContextMenu,
+    isOpenContextMenu,
+    onCloseContextMenu
+}) => {
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
@@ -19,15 +31,17 @@ export default function TimeBlock({ colStart, colEnd, bgStyle, engName, codeCurr
         }
     }, [isOpenContextMenu, onContextMenu]);
 
-    const displayNames = Array.isArray(names) ? (names.length > 1 || names[0] !== profName ? `${names.join(', ').slice(0, 25)}${names.join(', ').length > 25 ? '...' : ''}` : profName.slice(0, 25) + (profName.length > 25 ? '...' : '')) : names;
+    const displayNames = Array.isArray(group.prof_names) ? (group.prof_names.length > 1 || group.prof_names[0] !== profName ? `${group.prof_names.join(', ').slice(0, 25)}${group.prof_names.join(', ').length > 25 ? '...' : ''}` : profName.slice(0, 25) + (profName.length > 25 ? '...' : '')) : group.prof_names;
 
     const handleCloseContextMenu = () => {
         onCloseContextMenu(); // Call parent's onCloseContextMenu handler
     };
 
+    const canOpenContextMenu = profRole === "prof(SM)" && group.owner_branch_tag === profBranch;
+
     return (
         <>
-            {isOpenContextMenu && (
+            {isOpenContextMenu && canOpenContextMenu && (
                 <div
                     className="absolute z-50 bg-white border rounded shadow-md"
                     style={{
@@ -44,22 +58,26 @@ export default function TimeBlock({ colStart, colEnd, bgStyle, engName, codeCurr
                 </div>
             )}
 
-            <div className={`${colStart} ${colEnd} inline-flex flex-col justify-between border rounded hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 ${bgStyle} p-2 relative`}
-                onContextMenu={isOpenContextMenu ? undefined : onContextMenu} // Disable context menu when it's open
+            <div
+                className={`${colStart} ${colEnd} ${bgStyle} relative inline-flex flex-col justify-between border rounded hover:bg-opacity-70 cursor-pointer bg-opacity-100 border-gray-700 p-2`}
+                onContextMenu={canOpenContextMenu ? onContextMenu : undefined}
             >
                 <p className='flex justify-between text-xs'>
-                    <span>{codeCurriculum}</span>
-                    <span>SEC: {groupNum}</span>
+                    <span>{group.combined_code_curriculum}</span>
+                    <span>SEC: {group.group_num}</span>
                 </p>
                 <div className='flex justify-between text-xs leading-none text-gray-700'>
                     {seeCourseName ? (
                         <>
                             <div>{displayNames}</div>
-                            <div className='text-right'>{lab}</div>
+                            <div className='text-right'>{group.lab_room}</div>
                         </>
-                    ) : <div>{engName}</div>}
+                    ) : <div>{group.eng_name}</div>}
                 </div>
             </div>
         </>
     );
-}
+};
+
+export default TimeBlock;
+

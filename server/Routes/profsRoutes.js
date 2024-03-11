@@ -160,8 +160,9 @@ router.get('/groupsB/:branch', async (req, res) => {
 
         const { rows } = await pool.query(query, [branch]);
 
+        // Check if rows exist, if not, send an empty array as the response
         if (rows.length === 0) {
-            res.status(404).json({ success: false, error: 'No data found for the provided branch' });
+            res.json([]); // Send an empty array as response
         } else {
             res.json(rows);
         }

@@ -13,7 +13,7 @@ export default function NavbarProf({ name, role, img }) {
 
                 <div className='flex flex-col text-center'>
                     <img src={img ? img : userProfile} alt='User_Profile' className='h-14 rounded-full' />
-                    <p className='text-center text-2xl'>{role}</p>
+                    <p className='text-center text-sm font-bold mt-1'>{role}</p>
                 </div>
             </div>
 

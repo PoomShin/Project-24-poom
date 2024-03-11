@@ -52,6 +52,8 @@ export default function Scheduler({ currentPage, curBranchYear, userData }) {
                 <DayRows
                     page={currentPage}
                     profName={profName}
+                    profRole={role}
+                    profBranch={profBranchTag}
                     branchYear={curBranchYear}
                     seeCourseName={seeCourseName}
                 />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useProfsContext, useBranchesContext, useGroupContext } from '../../context/Prof-Context';
+import { useProfsContext, useBranchesContext } from '../../context/Prof-Context';
 import { TextInput, SelectInput, SelectBranchYear, SelectProf } from '../components/AddGroupComponents';
 import AlertModal from '../../public/AlertModal';
 import plusIcon from '../../assets/plus.png';
@@ -23,10 +23,9 @@ const generateTimeOptions = () => {
 
 const timeOptions = generateTimeOptions();
 
-export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit }) {
+export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit, groupsByBranch }) {
     const { profsBranchTag } = useProfsContext();
     const { branch_year } = useBranchesContext();
-    const { groupsByBranch } = useGroupContext();
 
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
@@ -59,7 +58,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
         setIsFormVisible(prevState => !prevState);
     }, [setDisableSubmit]);
 
-    const handleAdd = useCallback((e) => {
+    const handleAdd = useCallback(async (e) => {
         e.preventDefault();
 
         const conflictingProfessor = groupsByBranch.find(group =>
@@ -98,7 +97,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
             ...prevData,
             prof_name: [],
             branch_year: []
-        })); // Reset only prof_name and branch_year fields
+        }));
         handleShowForm();
     }, [formData, groupsByBranch, mergedGroups, onAddSection, handleShowForm]);
 

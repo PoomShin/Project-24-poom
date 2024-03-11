@@ -3,7 +3,7 @@ import AddGroup from './AddGroup';
 
 const getBackgroundColor = isLab => isLab ? 'bg-orange-100' : 'bg-green-100';
 
-export default function InsertGroups({ creditHours, lectureGroups, labGroups, mergedGroups, handleAddSection, setLectureGroups, setLabGroups, setDisableSubmit }) {
+export default function InsertGroups({ creditHours, lectureGroups, labGroups, mergedGroups, handleAddSection, setLectureGroups, setLabGroups, setDisableSubmit, groupsByBranch }) {
     const renderGroups = (groups, isLab) => (
         <div className={`h-64 flex overflow-x-auto p-4 ${getBackgroundColor(isLab)}`}>
             {groups.map((sec, index) => (
@@ -13,6 +13,7 @@ export default function InsertGroups({ creditHours, lectureGroups, labGroups, me
                 onAddSection={section => handleAddSection(section, isLab ? setLabGroups : setLectureGroups)}
                 creditHours={creditHours} isLab={isLab}
                 setDisableSubmit={setDisableSubmit}
+                groupsByBranch={groupsByBranch}
             />
         </div>
     );

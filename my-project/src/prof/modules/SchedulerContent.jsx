@@ -22,7 +22,7 @@ const COLOR_MAP = {
     'Sun': 'bg-red-400',
 };
 
-export default function DayRows({ page, profName, branchYear, seeCourseName }) {
+export default function DayRows({ page, profName, profRole, profBranch, branchYear, seeCourseName }) {
     const { data: groupsByBranchYear, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
 
     const [fullDayBlock, setFullDayBlock] = useState('');
@@ -103,13 +103,13 @@ export default function DayRows({ page, profName, branchYear, seeCourseName }) {
                             colStart={getColumnClass(group.start_time, 'start')}
                             colEnd={getColumnClass(group.end_time, 'end')}
                             bgStyle={getBgStyle(group, day)}
-                            engName={group.eng_name}
-                            codeCurriculum={group.combined_code_curriculum}
-                            groupNum={group.group_num}
-                            names={group.prof_names}
+
+                            group={group}
                             profName={profName}
-                            lab={group.lab_room}
+                            profRole={profRole}
+                            profBranch={profBranch}
                             seeCourseName={seeCourseName}
+
                             onContextMenu={(event) => handleContextMenu(event, group)}
                             isOpenContextMenu={openContextMenu && openContextMenu.group === group}
                             onCloseContextMenu={handleCloseContextMenu}

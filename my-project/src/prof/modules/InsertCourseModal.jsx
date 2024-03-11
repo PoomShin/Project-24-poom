@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useCoursesContext } from '../../context/Prof-Context';
+import { useCoursesContext, useGroupContext } from '../../context/Prof-Context';
 import { useAddGroupMutation } from '../../api/Profs_API';
 //Components
 import AlertModal from '../../public/AlertModal';
@@ -25,6 +25,7 @@ const parseCredits = credits => {
 
 export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }) {
     const addGroupMutation = useAddGroupMutation();
+    const { groupsByBranch, refetchGroupsByBranch } = useGroupContext();
     const { courses } = useCoursesContext();
 
     const [selectedCourse, setSelectedCourse] = useState('');
@@ -71,6 +72,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                 owner_branch_tag: ownerBranchTag
             };
             await addGroupMutation.mutateAsync(groupData);
+            refetchGroupsByBranch();
             resetFormData();
             setAlertMessage('Add groups successfully');
             setOpenAlert(true);
@@ -151,6 +153,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                         handleAddSection={handleAddSection}
                         setLectureGroups={setLectureGroups} setLabGroups={setLabGroups}
                         setDisableSubmit={setDisableSubmit}
+                        groupsByBranch={groupsByBranch}
                     />
 
                     <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
