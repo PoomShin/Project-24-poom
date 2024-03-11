@@ -124,8 +124,9 @@ router.get('/allCourse', async (req, res) => {
     }
 });
 
-router.get('/allGroups', async (req, res) => {
+router.get('/groupsB/:branch', async (req, res) => {
     try {
+        const { branch } = req.params;
         const query = `
             SELECT 
                 g.Id AS group_id, 
@@ -151,24 +152,26 @@ router.get('/allGroups', async (req, res) => {
                 group_profs gp ON g.Id = gp.group_id
             JOIN 
                 courses c ON g.course_id = c.Id
+            WHERE
+                gy.owner_branch_tag = $1
             GROUP BY 
                 g.Id, c.eng_name, c.combined_code_curriculum, c.course_type;
         `;
 
-        const { rows } = await pool.query(query);
+        const { rows } = await pool.query(query, [branch]);
 
         if (rows.length === 0) {
-            res.status(404).json({ success: false, error: 'No data found' });
+            res.status(404).json({ success: false, error: 'No data found for the provided branch' });
         } else {
             res.json(rows);
         }
     } catch (err) {
         console.error('Error executing query', err);
-        res.status(500).json({ success: false, error: 'An error occurred' });
+        res.status(500).json({ success: false, error: 'An error occurred while fetching groups' });
     }
 });
 
-router.get('/groups/:branchYear', async (req, res) => {
+router.get('/groupsBY/:branchYear', async (req, res) => {
     try {
         const { branchYear } = req.params;
         const decodedBranchYear = decodeURIComponent(branchYear);

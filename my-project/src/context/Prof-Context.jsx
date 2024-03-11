@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
-import { useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useAllGroup } from '../api/Profs_API';
+import { useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useGroupByBranch } from '../api/Profs_API';
 
 //branches table context
 const BranchContext = createContext();
@@ -77,15 +77,15 @@ export const ProfsProvider = ({ branch_tag, children }) => {
 };
 
 const GroupContext = createContext();
-export const GroupProvider = ({ children }) => {
-    const { data: allGroups, isLoading: allGroupsLoading, isError: allGroupsError, refetch: refetchAllGroups } = useAllGroup();
+export const GroupProvider = ({ children, ownerBranch }) => {
+    const { data: groupsByBranch, isLoading: groupsByBranchLoading, isError: groupsByBranchError, refetch: refetchGroupsByBranch } = useGroupByBranch(ownerBranch);
 
     const contextValue = useMemo(() => ({
-        allGroups,
-        allGroupsLoading,
-        allGroupsError,
-        refetchAllGroups
-    }), [allGroups, allGroupsLoading, allGroupsError, refetchAllGroups]);
+        groupsByBranch,
+        groupsByBranchLoading,
+        groupsByBranchError,
+        refetchGroupsByBranch
+    }), [groupsByBranch, groupsByBranchLoading, groupsByBranchError, refetchGroupsByBranch]);
 
     return (
         <GroupContext.Provider value={contextValue}>

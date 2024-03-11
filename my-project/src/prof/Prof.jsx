@@ -18,7 +18,7 @@ export default function Prof() {
         <BranchProvider>
             <CourseProvider name={name} branch_tag={branch_tag}>
                 <ProfsProvider branch_tag={branch_tag}>
-                    <GroupProvider>
+                    <GroupProvider ownerBranch={branch_tag}>
                         <div className='grid grid-cols-12 w-full h-full'>
                             {NavBarProfMemo}
                             <SideBarLeft currentPage={currentPage} setCurrentPage={setCurrentPage} />

@@ -60,21 +60,22 @@ const useGetAllCourses = () => {
     );
 };
 //get groups API
-const useAllGroup = () => {
+const useGroupByBranch = (branch) => {
     return useQuery(
-        'allGroupsData',
+        ['groupsByBranch', branch],
         async () => {
-            const response = await axios.get('/profs/allGroups');
+            const response = await axios.get(`/profs/groupsB/${branch}`);
             return response.data;
         }
     );
 };
+
 const useGroupsByBranchYear = (branchYear) => {
     const queryKey = ['groups', branchYear];
 
     const fetchGroupsByBranchYear = async () => {
         try {
-            const response = await axios.get(`/profs/groups/${encodeURIComponent(branchYear)}`);
+            const response = await axios.get(`/profs/groupsBY/${encodeURIComponent(branchYear)}`);
             const data = response.data.map(group => ({
                 ...group,
                 prof_names: group.prof_names || [] // Ensure prof_names is an array even if it's null
@@ -111,4 +112,4 @@ const useAddGroupMutation = () => {
     });
 };
 
-export { useAddGroupMutation, useGroupsByBranchYear, useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useAllGroup }
+export { useAddGroupMutation, useGroupsByBranchYear, useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useGroupByBranch }

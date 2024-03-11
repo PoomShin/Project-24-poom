@@ -6,8 +6,7 @@ import { useAddGroupMutation } from '../../api/Profs_API';
 import AlertModal from '../../public/AlertModal';
 import InputSection from '../components/InputSelect';
 import ButtonCom from '../components/ButtonCom';
-import GroupItem from '../components/GroupItem';
-import AddGroup from './AddGroup';
+import InsertGroups from './InsertGroups';
 
 const parseCredits = credits => {
     const matches = credits.match(/(\d+)\((\d+)-(\d+)-(\d+)\)|(\d+)/);
@@ -25,12 +24,8 @@ const parseCredits = credits => {
 };
 
 export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }) {
-    const { courses } = useCoursesContext();
     const addGroupMutation = useAddGroupMutation();
-
-    const [lectureGroups, setLectureGroups] = useState([]);
-    const [labGroups, setLabGroups] = useState([]);
-    const [mergedGroups, setMergedGroups] = useState([]);
+    const { courses } = useCoursesContext();
 
     const [selectedCourse, setSelectedCourse] = useState('');
     const [courseInfo, setCourseInfo] = useState({
@@ -42,11 +37,15 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     });
     const [creditHours, setCreditHours] = useState({ lectureHours: 0, labHours: 0, selfStudyHours: 0 });
 
-    const [openAlert, setOpenAlert] = useState(false);
-    const [alertMessage, setAlertMessage] = useState('');
+    const [lectureGroups, setLectureGroups] = useState([]);
+    const [labGroups, setLabGroups] = useState([]);
+    const [mergedGroups, setMergedGroups] = useState([]);
     const [disableSubmit, setDisableSubmit] = useState(false);
 
-    const handleCourseChange = e => setSelectedCourse(e.target.value);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const handleCourseChange = selectedOption => setSelectedCourse(selectedOption);
 
     const handleAddSection = (section, setter) => setter(prevSections => [...prevSections, section]);
 
@@ -129,9 +128,13 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                 <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50'>
                     <div className='absolute top-0 left-1/2 transform -translate-x-1/2 font-semibold p-4'>
                         <div className='flex'>
-                            <InputSection style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500'
-                                value={selectedCourse} onChange={handleCourseChange}
-                                preValue='Select a course' options={courses} optionKey='combined_code_curriculum'
+                            <InputSection
+                                style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500 w-48'
+                                value={selectedCourse}
+                                onChange={handleCourseChange}
+                                placeholder='Select a course'
+                                options={courses}
+                                optionKey='combined_code_curriculum'
                             />
                             <input className='w-72 rounded-lg bg-blue-100 mx-2 p-1' placeholder='thname' value={courseInfo.th_name} readOnly />
                             <input className='w-72 rounded-lg bg-blue-100 mx-2 p-1' placeholder='engname' value={courseInfo.eng_name} readOnly />
@@ -142,40 +145,13 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                         </div>
                     </div>
 
-                    <div className='overflow-x-scroll flex flex-col w-10/12'>
-                        {creditHours.lectureHours > 0 && (
-                            <>
-                                <span className='text-3xl text-white mb-2'>Lecture</span>
-                                <div className={`h-64 flex overflow-x-auto p-4 ${false ? 'bg-orange-100' : 'bg-green-100'}`}>
-                                    {lectureGroups.map((sec, index) => (
-                                        <GroupItem key={index} {...sec} isLab={false} />
-                                    ))}
-                                    <AddGroup mergedGroups={mergedGroups}
-                                        onAddSection={section => handleAddSection(section, setLectureGroups)}
-                                        creditHours={creditHours} isLab={false}
-                                        setDisableSubmit={setDisableSubmit}
-                                    />
-                                </div>
-                            </>
-
-                        )}
-                        {creditHours.labHours > 0 && (
-                            <>
-                                <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
-                                <div className={`h-64 flex overflow-x-auto p-4 ${true ? 'bg-orange-100' : 'bg-green-100'}`}>
-                                    {labGroups.map((sec, index) => (
-                                        <GroupItem key={index} {...sec} isLab={true} />
-                                    ))}
-                                    <AddGroup mergedGroups={mergedGroups}
-                                        onAddSection={section => handleAddSection(section, setLabGroups)}
-                                        creditHours={creditHours} isLab={true}
-                                        setDisableSubmit={setDisableSubmit}
-                                    />
-                                </div>
-                            </>
-
-                        )}
-                    </div>
+                    <InsertGroups
+                        creditHours={creditHours}
+                        lectureGroups={lectureGroups} labGroups={labGroups} mergedGroups={mergedGroups}
+                        handleAddSection={handleAddSection}
+                        setLectureGroups={setLectureGroups} setLabGroups={setLabGroups}
+                        setDisableSubmit={setDisableSubmit}
+                    />
 
                     <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
                         <ButtonCom style='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
