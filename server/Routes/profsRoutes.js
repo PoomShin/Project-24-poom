@@ -191,6 +191,7 @@ router.get('/groupsBY/:branchYear', async (req, res) => {
                 c.eng_name,
                 c.combined_code_curriculum,
                 c.course_type,
+                gy.owner_branch_tag,
                 ARRAY_AGG(gp.prof_name) AS prof_names
             FROM 
                 groups g
@@ -203,7 +204,7 @@ router.get('/groupsBY/:branchYear', async (req, res) => {
             WHERE 
                 gy.branch_year = $1
             GROUP BY 
-                g.Id, c.eng_name, c.combined_code_curriculum, c.course_type;
+                g.Id, c.eng_name, c.combined_code_curriculum, c.course_type, gy.owner_branch_tag;
         `;
 
         const { rows } = await pool.query(query, [decodedBranchYear]);

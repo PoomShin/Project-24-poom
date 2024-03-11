@@ -31,7 +31,7 @@ const TimeRows = React.memo(() => {
     )
 });
 
-export default function Scheduler({ currentPage, branchYear, currentProfName }) {
+export default function Scheduler({ currentPage, branchYear, currentProfName, myBranchTag }) {
     const { data: branchYearGroups, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
     const [seeCourseName, setSeeCourseName] = useState(false);
 

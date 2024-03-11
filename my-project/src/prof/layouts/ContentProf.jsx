@@ -42,7 +42,7 @@ export default function ContentProf({ currentPage, userData }) {
                 />
             </ContentProfHeader>
 
-            <Scheduler currentPage={currentPage} branchYear={branchYear} currentProfName={profName} />
+            <Scheduler currentPage={currentPage} branchYear={branchYear} currentProfName={profName} myBranchTag={initialBranch} />
 
             {currentPage === 'Home' && (
                 <>
