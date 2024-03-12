@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import DayRows from "./SchedulerContent";
+import DayRows from "./DayRows";
 
 const generateTimeSlots = () => {
     const timeSlots = [];
@@ -41,13 +41,15 @@ export default function Scheduler({ currentPage, curBranchYear, userData }) {
     return (
         <>
             <div className='flex justify-start my-2 ml-1'>
-                <button className='px-1 bg-violet-600 rounded-md text-white font-bold hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-600'
+                <button className='bg-violet-600 rounded-md text-white font-bold hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-600 px-1'
                     onClick={toggleSeeCourseName}
                 >
                     Course Name
                 </button>
             </div>
-            <div className='border rounded-lg bg-gray-800 mx-1'>
+            <div className='border rounded-lg bg-gray-800 mx-1'
+                onContextMenu={e => e.preventDefault()}
+            >
                 <TimeRows />
                 <DayRows
                     page={currentPage}

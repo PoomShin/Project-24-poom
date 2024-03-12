@@ -1,125 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { useGroupsByBranchYear } from "../../api/Profs_API";
 import TimeBlock from "../components/TimeBlock";
-
-const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-const PRIORITY_VALUES = {
-    'เฉพาะบังคับ': 5,
-    'เฉพาะเลือก': 4,
-    'เฉพาะทั่วไป': 3,
-    'อื่นๆ': 2,
-    'บริการ': 1,
-};
-
-const COLOR_MAP = {
-    'Mon': 'bg-yellow-400',
-    'Tue': 'bg-pink-400',
-    'Wed': 'bg-green-400',
-    'Thu': 'bg-orange-400',
-    'Fri': 'bg-blue-400',
-    'Sat': 'bg-purple-400',
-    'Sun': 'bg-red-400',
-};
-
-export default function DayRows({ page, profName, profRole, profBranch, branchYear, seeCourseName }) {
-    const { data: groupsByBranchYear, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
-
-    const [fullDayBlock, setFullDayBlock] = useState('');
-    const [openContextMenu, setOpenContextMenu] = useState(null);
-    const contextMenuRef = useRef(null);
-
-    const sortedGroups = useMemo(() => {
-        if (!groupsByBranchYear) return {};
-        return DAYS_OF_WEEK.reduce((acc, day) => {
-            acc[day] = groupsByBranchYear.filter(group => group.day_of_week === day)
-                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
-            return acc;
-        }, {});
-    }, [groupsByBranchYear]); //sorted groups แบ่งตามวัน
-
-    const toggleFullDayBlock = (day) => {
-        setFullDayBlock(prevDay => prevDay === day ? '' : day);
-    };
-
-    const getBgStyle = (group, day) => {
-        const overlappingGroups = sortedGroups[day].filter(otherGroup =>
-            (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
-            (group.end_time > otherGroup.start_time && group.end_time <= otherGroup.end_time) ||
-            (group.start_time <= otherGroup.start_time && group.end_time >= otherGroup.end_time)
-        );
-
-        if (overlappingGroups.some(g => PRIORITY_VALUES[g.course_type] > PRIORITY_VALUES[group.course_type])) {
-            return getColorForCourseType(overlappingGroups[0].course_type);
-        } else {
-            return 'bg-green-400'; // Default background color for no overlap
-        }
-    };
-
-    const getColorForCourseType = (courseType) => {
-        switch (courseType) {
-            case 'เฉพาะบังคับ': return 'bg-red-400';
-            case 'เฉพาะเลือก': return 'bg-orange-400';
-            case 'เฉพาะทั่วไป':
-            case 'อื่นๆ': return 'bg-yellow-400';
-            case 'บริการ': return 'bg-green-400';
-            default: return 'bg-green-200'; // Default background color for no overlap
-        }
-    };
-
-    const handleContextMenu = (event, group) => {
-        event.preventDefault();
-        setOpenContextMenu({ group, x: event.clientX, y: event.clientY });
-    };
-
-    const handleCloseContextMenu = () => {
-        setOpenContextMenu(null);
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
-                setOpenContextMenu(null);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        refetch();
-    }, [branchYear, refetch]);
-
-    return (
-        DAYS_OF_WEEK.map((day, index) => (
-            <div key={index} className={`grid grid-cols-34 border border-gray-700 overflow-y-scroll grid-flow-dense ${fullDayBlock === day ? 'max-h-fit' : 'max-h-28'}`}>
-                <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
-                {
-                    sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
-                        <TimeBlock key={groupIndex}
-                            colStart={getColumnClass(group.start_time, 'start')}
-                            colEnd={getColumnClass(group.end_time, 'end')}
-                            bgStyle={getBgStyle(group, day)}
-
-                            group={group}
-                            profName={profName}
-                            profRole={profRole}
-                            profBranch={profBranch}
-                            seeCourseName={seeCourseName}
-
-                            onContextMenu={(event) => handleContextMenu(event, group)}
-                            isOpenContextMenu={openContextMenu && openContextMenu.group === group}
-                            onCloseContextMenu={handleCloseContextMenu}
-                        />
-                    ))
-                }
-            </div>
-        ))
-    );
-}
+import { DAYS_OF_WEEK, PRIORITY_VALUES, COLOR_MAP } from "../data/SchedulerData";
 
 const getColumnClass = (time, type) => {
     const [hour, minute] = time.split(':').map(str => parseInt(str));
@@ -201,7 +83,109 @@ const getColumnClass = (time, type) => {
     return hourToColumn[type][fractionalHour] || '';
 };
 
-const DayBlock = ({ day, onClick, isActive }) => {
+export default function DayRows({ page, profName, profRole, profBranch, branchYear, seeCourseName }) {
+    const { data: groupsByBranchYear, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
+
+    const [fullDayBlock, setFullDayBlock] = useState('');
+    const [openContextMenu, setOpenContextMenu] = useState(null);
+    const contextMenuRef = useRef(null);
+
+    const sortedGroups = useMemo(() => {
+        if (!groupsByBranchYear) return {};
+        return DAYS_OF_WEEK.reduce((acc, day) => {
+            acc[day] = groupsByBranchYear.filter(group => group.day_of_week === day)
+                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
+            return acc;
+        }, {});
+    }, [groupsByBranchYear]); //sorted groups แบ่งตามวัน
+
+    const handleContextMenu = (event, group) => {
+        event.preventDefault();
+        setOpenContextMenu({ group, x: event.clientX, y: event.clientY });
+    };
+
+    const handleCloseContextMenu = () => {
+        setOpenContextMenu(null);
+    };
+
+    const toggleFullDayBlock = (day) => {
+        setFullDayBlock(prevDay => prevDay === day ? '' : day);
+    };
+
+    const getBgStyle = (group, day) => {
+        const overlappingGroups = sortedGroups[day].filter(otherGroup =>
+            (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
+            (group.end_time > otherGroup.start_time && group.end_time <= otherGroup.end_time) ||
+            (group.start_time <= otherGroup.start_time && group.end_time >= otherGroup.end_time)
+        );
+
+        if (overlappingGroups.some(g => PRIORITY_VALUES[g.course_type] > PRIORITY_VALUES[group.course_type])) {
+            return getColorForCourseType(overlappingGroups[0].course_type);
+        } else {
+            return 'bg-green-400'; // Default background color for no overlap
+        }
+    };
+
+    const getColorForCourseType = (courseType) => {
+        switch (courseType) {
+            case 'เฉพาะบังคับ': return 'bg-red-400';
+            case 'เฉพาะเลือก': return 'bg-orange-400';
+            case 'เฉพาะทั่วไป':
+            case 'อื่นๆ': return 'bg-yellow-400';
+            case 'บริการ': return 'bg-green-400';
+            default: return 'bg-green-200';
+        }
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+                setOpenContextMenu(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
+        refetch();
+    }, [branchYear, refetch]);
+
+    return (
+        DAYS_OF_WEEK.map((day, index) => (
+            <div key={index}
+                className={`grid grid-cols-34 border border-gray-700 overflow-y-scroll grid-flow-dense ${fullDayBlock === day ? 'max-h-fit' : 'max-h-28'}`}
+            >
+                <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
+                {
+                    sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
+                        <TimeBlock key={groupIndex}
+                            colStart={getColumnClass(group.start_time, 'start')}
+                            colEnd={getColumnClass(group.end_time, 'end')}
+                            bgStyle={getBgStyle(group, day)}
+
+                            group={group}
+                            profName={profName}
+                            profRole={profRole}
+                            profBranch={profBranch}
+                            branchYear={branchYear}
+                            seeCourseName={seeCourseName}
+
+                            onContextMenu={(event) => handleContextMenu(event, group)}
+                            isOpenContextMenu={openContextMenu && openContextMenu.group === group}
+                            onCloseContextMenu={handleCloseContextMenu}
+                        />
+                    ))
+                }
+            </div>
+        ))
+    );
+}
+
+function DayBlock({ day, onClick, isActive }) {
     return (
         <div className={`grid first-line:p-1 md:p-3 col-start-1 col-end-3 border-r-2 dark:border-gray-700 ${COLOR_MAP[day]} ${isActive ? 'hover:border-blue-500 hover:border' : ''}`}
             onClick={onClick}
