@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import ContentProfHeader from '../components/ContentProfHeader';
 import HeaderContent from '../components/HeaderContent';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
 import ButtonCom from '../components/ButtonCom';
+import { useGetGroupsStatusByBranch } from '../../api/Profs_API';
 
 export default function ContentProf({ currentPage, userData }) {
     const { id, name: myProfName, role, branch_tag: initialBranch } = userData;
@@ -14,8 +15,9 @@ export default function ContentProf({ currentPage, userData }) {
         profName: myProfName,
         isModalOpen: false
     });
-
     const { branch, profName, branchYear, isModalOpen } = profState;
+
+    const { data: groupsStatus, refetch: refetchGroupsStatus } = useGetGroupsStatusByBranch(branch);
 
     const handleYearChange = selectedBranchYear => {
         setProfState(prevState => ({ ...prevState, branchYear: selectedBranchYear }));
@@ -31,6 +33,10 @@ export default function ContentProf({ currentPage, userData }) {
         setProfState(prevState => ({ ...prevState, isModalOpen: !prevState.isModalOpen }));
     }, []);
 
+    useEffect(() => {
+        refetchGroupsStatus();
+    }, [branch]);
+
     return (
         <div className='col-span-8 bg-gray-200'>
             <ContentProfHeader currentPage={currentPage}>
@@ -44,14 +50,18 @@ export default function ContentProf({ currentPage, userData }) {
 
             <Scheduler
                 curPage={currentPage}
+                curBranch={branch}
                 curBranchYear={branchYear}
                 curProf={profName}
                 userData={userData}
+                groupsStatus={groupsStatus}
             />
 
             {currentPage === 'Home' && (
                 <>
-                    <InsertCourseModal ownerBranchTag={branch} isVisible={isModalOpen} onClose={toggleModal} />
+                    <InsertCourseModal ownerBranchTag={branch} isVisible={isModalOpen} onClose={toggleModal}
+                        refetchGroupsStatus={refetchGroupsStatus}
+                    />
                     <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold mb-4 py-2 px-4'
                         text='Add Course' type='button' onClick={toggleModal}
                     />

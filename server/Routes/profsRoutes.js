@@ -221,4 +221,33 @@ router.get('/groupsBY/:branchYear', async (req, res) => {
     }
 });
 
+router.get('/groupsStatus/:branch', async (req, res) => {
+    try {
+        const { branch } = req.params;
+
+        const query = `
+            SELECT 
+                g.day_of_week,
+                g.start_time,
+                g.end_time,
+                g.group_status,
+                gy.branch_year,
+                gy.owner_branch_tag
+            FROM 
+                groups g
+            JOIN 
+                group_branch_year gy ON g.id = gy.group_id
+            WHERE
+                gy.owner_branch_tag = $1;
+        `;
+
+        const { rows } = await pool.query(query, [branch]);
+
+        res.json(rows);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+});
+
 module.exports = router;

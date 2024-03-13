@@ -112,4 +112,14 @@ const useAddGroupMutation = () => {
     });
 };
 
-export { useAddGroupMutation, useGroupsByBranchYear, useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useGroupByBranch }
+const useGetGroupsStatusByBranch = (branch) => {
+    return useQuery(
+        ['groupsStatus', branch],
+        async () => {
+            const response = await axios.get(`/profs/groupsStatus/${branch}`);
+            return response.data;
+        }
+    );
+};
+
+export { useAddGroupMutation, useGroupsByBranchYear, useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useGroupByBranch, useGetGroupsStatusByBranch }

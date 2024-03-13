@@ -32,7 +32,7 @@ const TimeRows = React.memo(() => {
     );
 });
 
-export default function Scheduler({ curPage, curProf, curBranchYear, userData }) {
+export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, userData, groupsStatus }) {
     const { name: profName, role, branch_tag: profBranchTag } = userData;
     const [seeCourseName, setSeeCourseName] = useState(false);
 
@@ -44,7 +44,7 @@ export default function Scheduler({ curPage, curProf, curBranchYear, userData })
         <>
             <div className='flex justify-start my-2 ml-1 gap-2'>
                 <ViewCourseButton onClick={toggleSeeCourseName} seeCourseName={seeCourseName} />
-                <GroupsNotification />
+                <GroupsNotification isDisable={curBranch !== profBranchTag} allGroupsStatus={groupsStatus} />
             </div>
             <div className='border rounded-lg bg-gray-800 mx-1'
                 onContextMenu={e => e.preventDefault()}
