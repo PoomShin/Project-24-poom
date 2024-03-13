@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from 'react';
+import ViewCourseButton from '../components/viewCourseButton';
+import GroupsNotification from '../components/GroupsNotification';
 import DayRows from "./DayRows";
 
 const generateTimeSlots = () => {
@@ -27,11 +29,11 @@ const TimeRows = React.memo(() => {
                 </div>
             ))}
         </div>
-    )
+    );
 });
 
 export default function Scheduler({ curPage, curProf, curBranchYear, userData }) {
-    const { id, name: profName, role, branch_tag: profBranchTag } = userData;
+    const { name: profName, role, branch_tag: profBranchTag } = userData;
     const [seeCourseName, setSeeCourseName] = useState(false);
 
     const toggleSeeCourseName = () => {
@@ -40,11 +42,9 @@ export default function Scheduler({ curPage, curProf, curBranchYear, userData })
 
     return (
         <>
-            <div className='flex justify-start my-2 ml-1'>
-                <button className='bg-violet-600 rounded-md text-white font-bold hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-600 px-1'
-                    onClick={toggleSeeCourseName} >
-                    Course Name
-                </button>
+            <div className='flex justify-start my-2 ml-1 gap-2'>
+                <ViewCourseButton onClick={toggleSeeCourseName} seeCourseName={seeCourseName} />
+                <GroupsNotification />
             </div>
             <div className='border rounded-lg bg-gray-800 mx-1'
                 onContextMenu={e => e.preventDefault()}

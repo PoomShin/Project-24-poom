@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { BranchProvider, CourseProvider, ProfsProvider, GroupProvider } from '../context/Prof-Context';
 import { useUserContext } from '../context/User-Context';
 import NavbarProf from './layouts/NavbarProf';
