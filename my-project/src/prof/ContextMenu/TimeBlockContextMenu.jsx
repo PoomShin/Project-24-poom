@@ -1,4 +1,4 @@
-export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContextMenu, contextMenuPosition, handleCloseContextMenu }) {
+export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContextMenu, contextMenuPosition, handleCloseContextMenu, groupStatus }) {
     return (
         isOpenContextMenu && canOpenContextMenu && (
             <div className='absolute z-50 bg-white border rounded shadow-md'

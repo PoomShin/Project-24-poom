@@ -6,16 +6,16 @@ import InsertCourseModal from '../modules/InsertCourseModal';
 import ButtonCom from '../components/ButtonCom';
 
 export default function ContentProf({ currentPage, userData }) {
-    const { id, name: profName, role, branch_tag: initialBranch } = userData;
+    const { id, name: myProfName, role, branch_tag: initialBranch } = userData;
 
     const [profState, setProfState] = useState({
         branch: initialBranch,
         branchYear: '',
-        profName: profName,
+        profName: myProfName,
         isModalOpen: false
     });
 
-    const { branch, branchYear, isModalOpen } = profState;
+    const { branch, profName, branchYear, isModalOpen } = profState;
 
     const handleYearChange = selectedBranchYear => {
         setProfState(prevState => ({ ...prevState, branchYear: selectedBranchYear }));
@@ -37,12 +37,17 @@ export default function ContentProf({ currentPage, userData }) {
                 <HeaderContent currentPage={currentPage}
                     currentBranch={branch} handleBranchChange={handleBranchChange}
                     currentYear={branchYear} handleYearChange={handleYearChange}
-                    currentProfName={profName} handleProfChange={handleProfChange}
+                    currentProfName={myProfName} handleProfChange={handleProfChange}
                     profRole={role}
                 />
             </ContentProfHeader>
 
-            <Scheduler currentPage={currentPage} curBranchYear={branchYear} userData={userData} />
+            <Scheduler
+                curPage={currentPage}
+                curBranchYear={branchYear}
+                curProf={profName}
+                userData={userData}
+            />
 
             {currentPage === 'Home' && (
                 <>

@@ -6,8 +6,8 @@ export default {
   ],
   theme: {
     extend: {
-      screens: {
-        'xs': '400px',
+      fontFamily: {
+        sans: ['Lato', 'sans-serif'],
       },
       gridTemplateColumns: {
         '26': 'repeat(26, minmax(0, 1fr))',

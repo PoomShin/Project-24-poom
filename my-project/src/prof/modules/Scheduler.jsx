@@ -30,7 +30,7 @@ const TimeRows = React.memo(() => {
     )
 });
 
-export default function Scheduler({ currentPage, curBranchYear, userData }) {
+export default function Scheduler({ curPage, curProf, curBranchYear, userData }) {
     const { id, name: profName, role, branch_tag: profBranchTag } = userData;
     const [seeCourseName, setSeeCourseName] = useState(false);
 
@@ -42,8 +42,7 @@ export default function Scheduler({ currentPage, curBranchYear, userData }) {
         <>
             <div className='flex justify-start my-2 ml-1'>
                 <button className='bg-violet-600 rounded-md text-white font-bold hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-600 px-1'
-                    onClick={toggleSeeCourseName}
-                >
+                    onClick={toggleSeeCourseName} >
                     Course Name
                 </button>
             </div>
@@ -52,8 +51,9 @@ export default function Scheduler({ currentPage, curBranchYear, userData }) {
             >
                 <TimeRows />
                 <DayRows
-                    page={currentPage}
-                    profName={profName}
+                    page={curPage}
+                    myProfName={profName}
+                    curProf={curProf}
                     profRole={role}
                     profBranch={profBranchTag}
                     branchYear={curBranchYear}

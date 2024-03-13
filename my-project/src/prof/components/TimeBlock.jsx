@@ -6,7 +6,7 @@ const TimeBlock = ({
     colEnd,
     bgStyle,
     group,
-    profName,
+    myProfName,
     profRole,
     profBranch,
     branchYear,
@@ -19,6 +19,14 @@ const TimeBlock = ({
     const groupBranchYear = branchYear.substring(0, 3);
     const canOpenContextMenu = profRole === 'prof(SM)' && groupBranchYear === profBranch;
 
+    const displayNames = Array.isArray(group.prof_names) ? (
+        group.prof_names.length > 1 ? (
+            `${myProfName}, ${group.prof_names.filter(name => name !== myProfName).join(', ').slice(0, 25 - myProfName.length)}${group.prof_names.join(', ').length > 25 ? '...' : ''}`
+        ) : (
+            group.prof_names[0] === myProfName ? `${myProfName.slice(0, 25)}${myProfName.length > 25 ? '...' : ''}` : group.prof_names[0]
+        )
+    ) : group.prof_names;
+
     const handleContextMenu = (event) => {
         event.preventDefault();
         setContextMenuPosition({ x: event.clientX, y: event.clientY });
@@ -29,25 +37,21 @@ const TimeBlock = ({
         event.preventDefault();
     };
 
-    const displayNames = Array.isArray(group.prof_names) ? (
-        group.prof_names.length > 1 || group.prof_names[0] !== profName ? `${group.prof_names.join(', ').slice(0, 25)}${group.prof_names.join(', ').length > 25 ? '...' : ''}` : profName.slice(0, 25) + (profName.length > 25 ? '...' : '')
-    ) : group.prof_names;
-
-
     const handleCloseContextMenu = () => {
         onCloseContextMenu(); // Call parent's onCloseContextMenu handler
     };
 
     const borderColorClass = (() => {
+        const borderClass = 'border-2 rounded-sm border-solid border-opacity-100 '
         switch (group.group_status) {
             case 'waiting':
-                return 'border-orange-500';
+                return borderClass + 'border-orange-500';
             case 'accept':
-                return 'border-green-500';
+                return borderClass + 'border-transparent';
             case 'reject':
-                return 'border-red-500';
+                return borderClass + 'border-transparent';
             default:
-                return 'border-gray-700';
+                return borderClass + 'border-gray-700';
         }
     })();
 
@@ -58,16 +62,17 @@ const TimeBlock = ({
                 canOpenContextMenu={canOpenContextMenu}
                 contextMenuPosition={contextMenuPosition}
                 handleCloseContextMenu={handleCloseContextMenu}
+                groupStatus={group.group_status}
             />
             <div
-                className={`${colStart} ${colEnd} ${bgStyle} relative inline-flex flex-col justify-between border rounded hover:bg-opacity-70 cursor-pointer bg-opacity-100 ${borderColorClass} border-2 border-solid border-opacity-100 p-2`}
+                className={`${colStart} ${colEnd} ${bgStyle} ${borderColorClass} p-2 mb-1 relative inline-flex flex-col justify-between text-xs tracking-tight leading-none hover:bg-opacity-70 cursor-pointer`}
                 onContextMenu={canOpenContextMenu ? handleContextMenu : disableBrowserMenu}
             >
-                <p className='flex justify-between text-xs'>
+                <p className={`flex justify-between font-semibold text-black ${(group.group_status === 'accept' || group.group_status === 'reject') && 'text-white'}`}>
                     <span>{group.combined_code_curriculum}</span>
                     <span>SEC: {group.group_num}</span>
                 </p>
-                <div className='flex justify-between text-xs leading-none text-gray-700'>
+                <div className={`flex justify-between text-gray-700 ${(group.group_status === 'accept' || group.group_status === 'reject') && 'text-neutral-300'}`}>
                     {seeCourseName ? (
                         <>
                             <div>{displayNames}</div>

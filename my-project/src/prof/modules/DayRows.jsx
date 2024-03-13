@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { useGroupsByBranchYear } from "../../api/Profs_API";
-import TimeBlock from "../components/TimeBlock";
 import { DAYS_OF_WEEK, PRIORITY_VALUES, COLOR_MAP } from "../data/SchedulerData";
+import TimeBlock from "../components/TimeBlock";
 
 const getColumnClass = (time, type) => {
     const [hour, minute] = time.split(':').map(str => parseInt(str));
@@ -83,7 +83,7 @@ const getColumnClass = (time, type) => {
     return hourToColumn[type][fractionalHour] || '';
 };
 
-export default function DayRows({ page, profName, profRole, profBranch, branchYear, seeCourseName }) {
+export default function DayRows({ page, myProfName, curProf, profRole, profBranch, branchYear, seeCourseName }) {
     const { data: groupsByBranchYear, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
 
     const [fullDayBlock, setFullDayBlock] = useState('');
@@ -92,12 +92,21 @@ export default function DayRows({ page, profName, profRole, profBranch, branchYe
 
     const sortedGroups = useMemo(() => {
         if (!groupsByBranchYear) return {};
-        return DAYS_OF_WEEK.reduce((acc, day) => {
+
+        const filteredGroups = DAYS_OF_WEEK.reduce((acc, day) => {
             acc[day] = groupsByBranchYear.filter(group => group.day_of_week === day)
+                .filter(group => {
+                    if (page === 'Prof') {
+                        return Array.isArray(group.prof_names) && group.prof_names.includes(curProf);
+                    }
+                    return true;
+                })
                 .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
             return acc;
         }, {});
-    }, [groupsByBranchYear]); //sorted groups แบ่งตามวัน
+
+        return filteredGroups;
+    }, [groupsByBranchYear, page, curProf]);     //sorted groups แบ่งตามวัน
 
     const handleContextMenu = (event, group) => {
         event.preventDefault();
@@ -113,16 +122,23 @@ export default function DayRows({ page, profName, profRole, profBranch, branchYe
     };
 
     const getBgStyle = (group, day) => {
-        const overlappingGroups = sortedGroups[day].filter(otherGroup =>
+        const waitingGroups = sortedGroups[day].filter(otherGroup => otherGroup.group_status === 'waiting');
+
+        // Check for overlapping waiting groups
+        const overlappingGroups = waitingGroups.filter(otherGroup =>
             (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
             (group.end_time > otherGroup.start_time && group.end_time <= otherGroup.end_time) ||
             (group.start_time <= otherGroup.start_time && group.end_time >= otherGroup.end_time)
         );
 
-        if (overlappingGroups.some(g => PRIORITY_VALUES[g.course_type] > PRIORITY_VALUES[group.course_type])) {
+        if (overlappingGroups.length > 1 && overlappingGroups.some(g => PRIORITY_VALUES[g.course_type] > PRIORITY_VALUES[group.course_type])) {
             return getColorForCourseType(overlappingGroups[0].course_type);
+        } else if (group.group_status === 'accept') {
+            return 'bg-emerald-800';
+        } else if (group.group_status === 'reject') {
+            return 'bg-rose-800';
         } else {
-            return 'bg-green-400'; // Default background color for no overlap
+            return 'bg-slate-300';
         }
     };
 
@@ -157,7 +173,7 @@ export default function DayRows({ page, profName, profRole, profBranch, branchYe
     return (
         DAYS_OF_WEEK.map((day, index) => (
             <div key={index}
-                className={`grid grid-cols-34 border border-gray-700 overflow-y-scroll grid-flow-dense ${fullDayBlock === day ? 'max-h-fit' : 'max-h-28'}`}
+                className={`grid grid-cols-34 grid-flow-dense border border-gray-700 overflow-y-scroll ${fullDayBlock === day ? 'max-h-fit' : 'max-h-28'}`}
             >
                 <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
                 {
@@ -168,7 +184,7 @@ export default function DayRows({ page, profName, profRole, profBranch, branchYe
                             bgStyle={getBgStyle(group, day)}
 
                             group={group}
-                            profName={profName}
+                            myProfName={myProfName}
                             profRole={profRole}
                             profBranch={profBranch}
                             branchYear={branchYear}
