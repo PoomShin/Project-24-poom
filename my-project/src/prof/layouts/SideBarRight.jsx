@@ -6,7 +6,7 @@ export default function SideBarRight() {
     console.log(profCourses)
     return (
         <div className='overflow-y-auto max-h-dvh grid grid-cols-1 grid-flow-row auto-rows-min col-start-18 col-span-3 items-center border-t-2 border-black bg-ghost_white'>
-            <div className='p-1 bg-burnt_sienna/65'>
+            <div className='bg-burnt_sienna/65 p-1'>
                 <p className='sm:text-xl font-semibold text-center text-white'>My Groups</p>
             </div>
             {profCourses && profCourses.map(course => (

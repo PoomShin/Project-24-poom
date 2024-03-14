@@ -10,6 +10,7 @@ const menuItems = [
 
 export default function SideBarLeft({ currentPage, setCurrentPage }) {
     const navigate = useNavigate();
+    const textPage = (key) => currentPage === key && 'bg-light_blue/65';
 
     const handleChangePage = (newPage) => {
         setCurrentPage(newPage);
@@ -19,7 +20,7 @@ export default function SideBarLeft({ currentPage, setCurrentPage }) {
     return (
         <div className='min-h-dvh flex flex-col items-start col-span-2 border-t-2 border-black bg-ghost_white hover:cursor-pointer'>
             {menuItems.map(({ key, label, icon }) => (
-                <div className={`w-full flex gap-x-3 hover:bg-light_blue/65 ${currentPage === key ? 'bg-light_blue/65' : ''} my-2 py-1`}
+                <div className={'w-full flex gap-x-3 my-2 py-1 hover:bg-light_blue/65 ' + textPage(key)}
                     key={key}
                     onClick={() => handleChangePage(key)}
                 >

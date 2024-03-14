@@ -6,11 +6,8 @@ import DayRows from "./DayRows";
 const generateTimeSlots = () => {
     const timeSlots = [];
     for (let hour = 8; hour < 24; hour++) {
-        for (let minute = 0; minute < 60; minute += 60) {
-            const formattedHour = hour.toString().padStart(2, '0');
-            const formattedMinute = minute.toString().padStart(2, '0');
-            timeSlots.push(`${formattedHour}:${formattedMinute}`);
-        }
+        const formattedHour = hour.toString().padStart(2, '0');
+        timeSlots.push(`${formattedHour}:00`);
     }
     return timeSlots;
 };
@@ -37,11 +34,8 @@ const calculateOverlappingCount = (groupsStatus, curBranchYear) => {
 
     const filteredGroupsStatus = groupsStatus.filter(group => group.branch_year === curBranchYear);
 
-    // Group groupsStatus by day_of_week
     const groupedByDay = filteredGroupsStatus.reduce((acc, group) => {
-        if (!acc[group.day_of_week]) {
-            acc[group.day_of_week] = [];
-        }
+        acc[group.day_of_week] = acc[group.day_of_week] || [];
         acc[group.day_of_week].push(group);
         return acc;
     }, {});
@@ -61,7 +55,6 @@ const calculateOverlappingCount = (groupsStatus, curBranchYear) => {
             const end1 = group1.end_time.split(':').map(Number);
             const start2 = group2.start_time.split(':').map(Number);
 
-            // Check if there is an overlap
             if ((start1[0] < start2[0] || (start1[0] === start2[0] && start1[1] < start2[1])) && (end1[0] > start2[0] || (end1[0] === start2[0] && end1[1] > start2[1]))) {
                 overlappingCount++;
             }
@@ -79,25 +72,15 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
         setSeeCourseName(prevState => !prevState);
     };
 
-    const filteredGroupsStatus = useMemo(() => {
-        return groupsStatus.filter(group => group.branch_year === curBranchYear);
-    }, [groupsStatus, curBranchYear]);
+    const filteredGroupsStatus = useMemo(() => groupsStatus.filter(group => group.branch_year === curBranchYear), [groupsStatus, curBranchYear]);
 
     const statusCounts = useMemo(() => {
-        const counts = {
-            waiting: 0,
-            accept: 0,
-            reject: 0
-        };
-        filteredGroupsStatus.forEach(group => {
-            counts[group.group_status]++;
-        });
+        const counts = { waiting: 0, accept: 0, reject: 0 };
+        filteredGroupsStatus.forEach(group => counts[group.group_status]++);
         return counts;
     }, [filteredGroupsStatus]);
 
-    const overlappingCount = useMemo(() => {
-        return calculateOverlappingCount(groupsStatus, curBranchYear);
-    }, [groupsStatus, curBranchYear]);
+    const overlappingCount = useMemo(() => calculateOverlappingCount(groupsStatus, curBranchYear), [groupsStatus, curBranchYear]);
 
     return (
         <>
