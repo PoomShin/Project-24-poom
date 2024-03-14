@@ -68,6 +68,12 @@ export default {
         '34': '34',
         '35': '35',
       },
+      colors: {
+        columbia_blue: '#BFDBF7',
+        lavender: '#E1E5F2',
+        rose_ebony: '#554348'
+
+      },
     },
   },
 

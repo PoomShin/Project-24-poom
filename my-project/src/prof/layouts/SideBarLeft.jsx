@@ -17,7 +17,7 @@ export default function SideBarLeft({ currentPage, setCurrentPage }) {
     };
 
     return (
-        <div className='min-h-dvh flex flex-col items-start col-span-2 border-2 border-t-2 border-l-0 border-black hover:cursor-pointer'>
+        <div className='min-h-dvh flex flex-col items-start col-span-2 border-2 border-t-2 border-l-0 border-black hover:cursor-pointer font-semibold'>
             {menuItems.map(({ key, label, icon }) => (
                 <div className={`w-full flex gap-x-3 hover:bg-slate-200 ${currentPage === key ? 'bg-sky-200/75' : ''} my-3 py-1`}
                     key={key}
