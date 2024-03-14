@@ -17,14 +17,14 @@ export default function SideBarLeft({ currentPage, setCurrentPage }) {
     };
 
     return (
-        <div className='min-h-dvh col-span-2 flex flex-col items-center border-2 border-t-2 border-l-0 border-black hover:cursor-pointer'>
+        <div className='min-h-dvh flex flex-col items-start col-span-2 border-2 border-t-2 border-l-0 border-black hover:cursor-pointer'>
             {menuItems.map(({ key, label, icon }) => (
-                <div className={`w-full hover:bg-slate-200 ${currentPage === key ? 'bg-sky-200/75' : ''} my-3 py-1`}
+                <div className={`w-full flex gap-x-3 hover:bg-slate-200 ${currentPage === key ? 'bg-sky-200/75' : ''} my-3 py-1`}
                     key={key}
                     onClick={() => handleChangePage(key)}
                 >
-                    <img src={icon} className='inline mr-2 h-7' alt={label} />
-                    <p className='inline sm:text-lg text-[9px]'>{label}</p>
+                    <img src={icon} className='ml-3 h-7' alt={label} />
+                    <p className='inline sm:text-lg text-xs'>{label}</p>
                 </div>
             ))}
         </div>

@@ -4,7 +4,7 @@ import userProfile from '../../assets/profile.png';
 
 export default function NavbarProf({ name, role, img }) {
     return (
-        <div className='px-4 col-span-12 flex items-center justify-between bg-teal-900 text-white sm:text-sm text-xs'>
+        <div className='col-start-1 col-span-20 flex items-center justify-between bg-teal-900 text-white sm:text-sm text-xs px-4'>
             <img src={ku_logo} alt='KU_Logo' className='sm:h-24 h-12' />
 
             <div className='flex items-center'>

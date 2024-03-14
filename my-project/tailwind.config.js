@@ -9,7 +9,12 @@ export default {
       fontFamily: {
         sans: ['Lato', 'sans-serif'],
       },
+      gridColumn: {
+        'span-15': 'span 15 / span 15',
+        'span-20': 'span 20 / span 20',
+      },
       gridTemplateColumns: {
+        '20': 'repeat(20, minmax(0, 1fr))',
         '26': 'repeat(26, minmax(0, 1fr))',
         '34': 'repeat(34, minmax(0, 1fr))',
       },

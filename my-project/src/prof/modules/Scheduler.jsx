@@ -111,6 +111,7 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
                     <p className='text-neutral-900  underline decoration-neutral-600 rounded-sm'>Overlapping: {overlappingCount}</p>
                 </div>
             </div>
+
             <div className='border rounded-lg bg-gray-800 mx-1'
                 onContextMenu={e => e.preventDefault()}
             >

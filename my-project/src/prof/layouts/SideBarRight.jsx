@@ -5,7 +5,7 @@ export default function SideBarRight() {
     const { profCourses } = useCoursesContext();
     console.log(profCourses)
     return (
-        <div className='overflow-y-auto max-h-dvh grid grid-cols-1 col-start-11 col-span-2 items-center border-2 border-t-2 border-r-0 border-black min-h-dvh auto-rows-min grid-flow-row'>
+        <div className='overflow-y-auto max-h-dvh grid grid-cols-1 col-start-18 col-span-3 items-center border-2 border-t-2 border-r-0 border-black min-h-dvh auto-rows-min grid-flow-row'>
             <div className='border-2 border-l-0 border-r-0 border-t-0 border-b-0 border-black bg-gray-200'>
                 <p className='text-teal-900 sm:text-lg text-center'>My Course</p>
             </div>
