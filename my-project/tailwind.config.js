@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Lato', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
       },
       gridColumn: {
         'span-15': 'span 15 / span 15',
@@ -72,6 +72,7 @@ export default {
         burnt_sienna: '#ee6c4d',
         ghost_white: '#f4f4f9',
         light_blue: '#b8dbd9',
+        asparagus: '#60992d',
       },
     },
   },
