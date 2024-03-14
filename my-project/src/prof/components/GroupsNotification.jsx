@@ -19,7 +19,7 @@ const getStatusCounts = (allGroupsStatus) => {
 };
 
 const Button = ({ activeColor, handleClick, isDisable, showNotification }) => (
-    <button className={`p-2 flex items-center rounded-md text-sm font-bold text-white bg-zinc-600 hover:bg-zinc-700 ${activeColor}`}
+    <button className={`p-1 flex items-center rounded-md text-sm font-bold text-white bg-zinc-600 ${activeColor}`}
         onClick={handleClick}
         disabled={isDisable}
     >
@@ -41,9 +41,9 @@ const Modal = ({ handleClose, notificationPosition, statusCounts }) => (
 
             <h2 className='my-2 text-lg font-semibold'>Groups Status: T12</h2>
             <div className='flex gap-3 text-gray-800'>
-                <p className="p-1 bg-yellow-300 rounded-lg">Waiting: {statusCounts.waiting}</p>
-                <p className="p-1 bg-green-300 rounded-lg">Accept: {statusCounts.accept}</p>
-                <p className="p-1 bg-red-300 rounded-lg">Reject: {statusCounts.reject}</p>
+                <p className='p-1 bg-yellow-300 rounded-lg'>Waiting: {statusCounts.waiting}</p>
+                <p className='p-1 bg-green-300 rounded-lg'>Accept: {statusCounts.accept}</p>
+                <p className='p-1 bg-red-300 rounded-lg'>Reject: {statusCounts.reject}</p>
             </div>
         </div>
     </div>

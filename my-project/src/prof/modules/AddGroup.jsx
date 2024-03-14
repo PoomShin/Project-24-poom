@@ -6,6 +6,11 @@ import plusIcon from '../../assets/plus.png';
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+function simplifyTime(timeString) {
+    const [hours, minutes] = timeString.split(':');
+    return `${hours}:${minutes}`;
+}
+
 const generateTimeOptions = () => {
     const options = [];
     for (let hour = 8; hour <= 24; hour++) {
@@ -64,9 +69,12 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
         const conflictingProfessor = groupsByBranch.find(group =>
             group.prof_names.some(profName => formData.prof_name.includes(profName)) && // Check if any professor name in group matches any professor name in formData.prof_name
             group.day_of_week === formData.day_of_week &&
-            ((group.start_time >= formData.start_time && group.start_time < formData.end_time) ||
-                (group.end_time > formData.start_time && group.end_time <= formData.end_time))
+            ((simplifyTime(group.start_time) >= formData.start_time && simplifyTime(group.start_time) < formData.end_time) ||
+                (simplifyTime(group.end_time) > formData.start_time && simplifyTime(group.end_time) <= formData.end_time)
+            )
         );
+        console.log(formData)
+        console.log(conflictingProfessor)
 
         if (conflictingProfessor) {
             setAlertMessage(`${formData.prof_name.join(', ')} already have a course at this time (${formData.day_of_week} ${formData.start_time}-${formData.end_time}).`);
