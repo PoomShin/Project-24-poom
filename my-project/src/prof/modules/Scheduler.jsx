@@ -19,12 +19,12 @@ const TimeRows = React.memo(() => {
     const timeSlots = useMemo(() => generateTimeSlots(), []);
 
     return (
-        <div className='grid grid-cols-34'>
-            <div className='col-span-2 border text-white dark:border-gray-700 py-1 pl-1'>
+        <div className='grid grid-cols-34 text-white'>
+            <div className='col-span-2 border border-gray-700 py-1 pl-1'>
                 Day/Time
             </div>
             {timeSlots.map((timeSlot, index) => (
-                <div key={index} className='col-span-2 border text-white dark:border-gray-700 py-1 pl-1'>
+                <div key={index} className='col-span-2 border border-gray-700 py-1 pl-1'>
                     {timeSlot}
                 </div>
             ))}
@@ -101,7 +101,7 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
 
     return (
         <>
-            <div className='col-span-8 flex flex-wrap items-center justify-start my-2 ml-1 gap-2'>
+            <div className='col-span-8 flex flex-wrap items-center justify-start my-4 ml-1 gap-2'>
                 <ViewCourseButton onClick={toggleSeeCourseName} seeCourseName={seeCourseName} />
                 <GroupsNotification isDisable={curBranch !== profBranchTag} allGroupsStatus={groupsStatus} />
                 <div className='pt-2 leading-none flex gap-2 items-center text-lg font-bold'>

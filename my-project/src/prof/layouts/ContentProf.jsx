@@ -38,7 +38,7 @@ export default function ContentProf({ currentPage, userData }) {
     }, [branch]);
 
     return (
-        <div className='col-start-3 col-span-15 bg-gray-200'>
+        <div className='col-start-3 col-span-15 border-2 border-b-0 border-solid border-black bg-white'>
             <ContentProfHeader currentPage={currentPage}>
                 <HeaderContent currentPage={currentPage}
                     currentBranch={branch} handleBranchChange={handleBranchChange}
