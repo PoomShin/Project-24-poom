@@ -36,7 +36,7 @@ export const BranchProvider = ({ children }) => {
 const CourseContext = createContext();
 export const CourseProvider = ({ name, branch_tag, children }) => {
     const { data: courses, isLoading: coursesLoading, isError: coursesError } = useGetCoursesByBranchTag(branch_tag);
-    const { data: profCourses, isLoading: profCoursesLoading, isError: profCoursesError } = useGetProfCoursesByName(name);
+    const { data: profCourses, isLoading: profCoursesLoading, isError: profCoursesError, refetch: refetchProfCourses } = useGetProfCoursesByName(name);
     const { data: allCourses, isLoading: allCoursesLoading, isError: allCoursesError } = useGetAllCourses();
 
     const contextValue = useMemo(() => ({
@@ -46,10 +46,11 @@ export const CourseProvider = ({ name, branch_tag, children }) => {
         profCourses,
         profCoursesLoading,
         profCoursesError,
+        refetchProfCourses,
         allCourses,
         allCoursesLoading,
         allCoursesError
-    }), [courses, coursesLoading, coursesError, profCourses, profCoursesLoading, profCoursesError, allCourses, allCoursesLoading, allCoursesError]);
+    }), [courses, coursesLoading, coursesError, profCourses, profCoursesLoading, profCoursesError, refetchProfCourses, allCourses, allCoursesLoading, allCoursesError]);
 
     return (
         <CourseContext.Provider value={contextValue}>

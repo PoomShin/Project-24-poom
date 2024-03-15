@@ -227,18 +227,24 @@ router.get('/groupsStatus/:branch', async (req, res) => {
 
         const query = `
             SELECT 
+                g.id as group_id,
                 g.day_of_week,
                 g.start_time,
                 g.end_time,
                 g.group_status,
                 gy.branch_year,
-                gy.owner_branch_tag
+                gy.owner_branch_tag,
+                ARRAY_AGG(gp.prof_name) as profs
             FROM 
                 groups g
             JOIN 
                 group_branch_year gy ON g.id = gy.group_id
+            LEFT JOIN 
+                group_profs gp ON g.id = gp.group_id
             WHERE
-                gy.owner_branch_tag = $1;
+                gy.owner_branch_tag = $1
+            GROUP BY
+                g.id, g.day_of_week, g.start_time, g.end_time, g.group_status, gy.branch_year, gy.owner_branch_tag;
         `;
 
         const { rows } = await pool.query(query, [branch]);

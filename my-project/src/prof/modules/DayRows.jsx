@@ -90,7 +90,7 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
 
     useEffect(() => {
         refetch();
-    }, [branchYear, refetch]);
+    }, [branchYear]);
 
     return (
         DAYS_OF_WEEK.map((day, index) => (

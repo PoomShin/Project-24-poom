@@ -29,10 +29,8 @@ const TimeRows = React.memo(() => {
     );
 });
 
-const calculateOverlappingCount = (groupsStatus, curBranchYear) => {
+const calculateOverlappingCount = (filteredGroupsStatus) => {
     let overlappingCount = 0;
-
-    const filteredGroupsStatus = groupsStatus.filter(group => group.branch_year === curBranchYear);
 
     const groupedByDay = filteredGroupsStatus.reduce((acc, group) => {
         acc[group.day_of_week] = acc[group.day_of_week] || [];
@@ -42,20 +40,29 @@ const calculateOverlappingCount = (groupsStatus, curBranchYear) => {
 
     Object.values(groupedByDay).forEach(groups => {
         const sortedGroups = groups.sort((a, b) => {
-            const timeA = a.start_time.split(':').map(Number);
-            const timeB = b.start_time.split(':').map(Number);
-            return timeA[0] * 60 + timeA[1] - (timeB[0] * 60 + timeB[1]);
+            const getTime = time => {
+                const [hours, minutes] = time.split(':').map(Number);
+                return hours * 60 + minutes;
+            };
+
+            return getTime(a.start_time) - getTime(b.start_time);
         });
 
         for (let i = 0; i < sortedGroups.length - 1; i++) {
-            const group1 = sortedGroups[i];
-            const group2 = sortedGroups[i + 1];
+            const { start_time: startTimeGroup1, end_time: endTimeGroup1 } = sortedGroups[i];
+            const { start_time: startTimeGroup2, end_time: endTimeGroup2 } = sortedGroups[i + 1];
 
-            const start1 = group1.start_time.split(':').map(Number);
-            const end1 = group1.end_time.split(':').map(Number);
-            const start2 = group2.start_time.split(':').map(Number);
+            const getTime = time => {
+                const [hours, minutes] = time.split(':').map(Number);
+                return hours * 60 + minutes;
+            };
 
-            if ((start1[0] < start2[0] || (start1[0] === start2[0] && start1[1] < start2[1])) && (end1[0] > start2[0] || (end1[0] === start2[0] && end1[1] > start2[1]))) {
+            const start1 = getTime(startTimeGroup1);
+            const end1 = getTime(endTimeGroup1);
+            const start2 = getTime(startTimeGroup2);
+            const end2 = getTime(endTimeGroup2);
+
+            if ((start1 < end2 || (start1 === end2 && end1 < start2)) && (end1 > start2 || (end1 === start2 && start1 > end2))) {
                 overlappingCount++;
             }
         }
@@ -68,11 +75,12 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
     const { name: profName, role, branch_tag: profBranchTag } = userData;
     const [seeCourseName, setSeeCourseName] = useState(false);
 
-    const toggleSeeCourseName = () => {
-        setSeeCourseName(prevState => !prevState);
-    };
+    const filteredGroupsStatus = useMemo(() => {
+        const filterFunction = group =>
+            group.branch_year === curBranchYear && (curPage !== 'Prof' || group.profs.includes(curProf));
 
-    const filteredGroupsStatus = useMemo(() => groupsStatus.filter(group => group.branch_year === curBranchYear), [groupsStatus, curBranchYear]);
+        return groupsStatus.filter(filterFunction);
+    }, [groupsStatus, curBranchYear, curPage, curProf]);
 
     const statusCounts = useMemo(() => {
         const counts = { waiting: 0, accept: 0, reject: 0 };
@@ -80,7 +88,11 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
         return counts;
     }, [filteredGroupsStatus]);
 
-    const overlappingCount = useMemo(() => calculateOverlappingCount(groupsStatus, curBranchYear), [groupsStatus, curBranchYear]);
+    const overlappingCount = useMemo(() => calculateOverlappingCount(filteredGroupsStatus, curBranchYear), [filteredGroupsStatus, curBranchYear]);
+
+    const toggleSeeCourseName = () => {
+        setSeeCourseName(prevState => !prevState);
+    };
 
     return (
         <>

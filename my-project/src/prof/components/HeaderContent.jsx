@@ -4,7 +4,7 @@ import { useBranchesContext, useProfsContext } from '../../context/Prof-Context'
 const HeaderSelect = ({ selectName, options = [], value, handleChange, colStart }) => (
     <div className={`relative ${colStart} flex`}>
         <select
-            className='px-[20%] py-2 bg-teal-900 border border-gray-400 rounded-md font-semibold text-white hover:bg-gray-400 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50'
+            className='px-8 py-2 border rounded-sm font-semibold text-white bg-teal-800 hover:bg-teal-900 focus:outline-none focus:border-asparagus focus:ring focus:ring-asparagus/50'
             value={value}
             onChange={e => handleChange(e.target.value)}
         >

@@ -26,7 +26,7 @@ const parseCredits = credits => {
 export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose, refetchGroupsStatus }) {
     const addGroupMutation = useAddGroupMutation();
     const { groupsByBranch, refetchGroupsByBranch } = useGroupContext();
-    const { courses } = useCoursesContext();
+    const { courses, refetchProfCourses } = useCoursesContext();
 
     const [selectedCourse, setSelectedCourse] = useState('');
     const [courseInfo, setCourseInfo] = useState({
@@ -74,6 +74,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose, 
             await addGroupMutation.mutateAsync(groupData);
             await refetchGroupsByBranch();
             await refetchGroupsStatus();
+            await refetchProfCourses();
             resetFormData();
             setAlertMessage('Add groups successfully');
             setOpenAlert(true);

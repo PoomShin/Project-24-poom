@@ -18,9 +18,9 @@ export default function SideBarLeft({ currentPage, setCurrentPage }) {
     };
 
     return (
-        <div className='min-h-dvh flex flex-col items-start col-span-2 border-t-2 border-black bg-ghost_white hover:cursor-pointer'>
+        <div className='min-h-dvh flex flex-col items-start col-span-2 border-t-2 border-black bg-ghost_white bg-gradient-to-b from-ghost_white to-light_blue/45'>
             {menuItems.map(({ key, label, icon }) => (
-                <div className={'w-full flex gap-x-3 my-2 py-1 hover:bg-light_blue/65 ' + textPage(key)}
+                <div className={'w-full flex gap-x-3 my-2 py-1 hover:bg-light_blue/65 hover:cursor-pointer ' + textPage(key)}
                     key={key}
                     onClick={() => handleChangePage(key)}
                 >
