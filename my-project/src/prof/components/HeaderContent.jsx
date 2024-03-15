@@ -20,7 +20,7 @@ const HeaderSelect = ({ selectName, options = [], value, handleChange, colStart 
 
 const MemoizedHeaderSelect = React.memo(HeaderSelect);
 
-export default function HeaderContent({ currentPage, currentBranch, handleBranchChange, currentYear, handleYearChange, currentProf, handleProfChange, profRole }) {
+export default function HeaderContent({ currentPage, currentBranch, handleBranchChange, currentYear, handleYearChange, currentProfName, handleProfChange, profRole }) {
     const { branches } = useBranchesContext();
     const { profsBranchTag } = useProfsContext();
 
@@ -46,7 +46,7 @@ export default function HeaderContent({ currentPage, currentBranch, handleBranch
             {currentPage === 'Prof' && profsBranchTag && (
                 <MemoizedHeaderSelect selectName='prof'
                     options={profsBranchTag.map(prof => ({ value: prof.name, label: prof.name, disabled: false }))}
-                    value={currentProf}
+                    value={currentProfName}
                     handleChange={handleProfChange}
                     colStart='col-start-7'
                 />
