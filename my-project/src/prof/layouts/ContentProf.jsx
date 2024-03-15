@@ -43,7 +43,7 @@ export default function ContentProf({ currentPage, userData }) {
                 <HeaderContent currentPage={currentPage}
                     currentBranch={branch} handleBranchChange={handleBranchChange}
                     currentYear={branchYear} handleYearChange={handleYearChange}
-                    currentProfName={myProfName} handleProfChange={handleProfChange}
+                    currentProfName={profName} handleProfChange={handleProfChange}
                     profRole={role}
                 />
             </ContentProfHeader>
