@@ -29,8 +29,8 @@ export default function SideBarRight() {
         <div className='col-start-18 col-span-3 border-t-2 border-black bg-gradient-to-b from-ghost_white to-burnt_sienna/30'
             onContextMenu={e => e.preventDefault()}
         >
-            <div className='bg-burnt_sienna/65 hover:bg-burnt_sienna/75 pt-6 pb-5 cursor-pointer' onClick={handleToggleMyGroups}>
-                <p className='sm:text-xl font-semibold text-center text-white'>My Groups</p>
+            <div className='bg-burnt_sienna/65 hover:bg-burnt_sienna/75 shadow-md shadow-gray-950 pt-6 pb-5 cursor-pointer' onClick={handleToggleMyGroups}>
+                <p className='sm:text-xl text-lg font-semibold text-center text-white'>My Groups</p>
             </div>
             <div className={`overflow-y-auto flex flex-col ${slideDown} ${myGroupClass}`}>
                 {profCourses && profCourses.map((course, index) => <CourseGroups key={course.id} course={course} colorIndex={index} />)}
@@ -71,7 +71,7 @@ const ProfGroup = ({ group }) => {
     const { icon, bgColor } = statusMappings[group.group_status] || statusMappings.default;
 
     return (
-        <div className={`flex flex-col ring-1 font-semibold ring-red-300 py-1 ${bgColor}`}>
+        <div className={`py-1 flex flex-col ring-1 ring-red-300 font-semibold ${bgColor}`}>
             <div className='flex justify-between mx-3'>
                 <img src={icon} alt='Status Icon' className='h-6' />
                 <p>{group.num}</p>
