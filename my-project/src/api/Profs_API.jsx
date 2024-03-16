@@ -69,7 +69,6 @@ const useGroupByBranch = (branch) => {
         }
     );
 };
-
 const useGroupsByBranchYear = (branchYear) => {
     const queryKey = ['groups', branchYear];
 
@@ -92,6 +91,32 @@ const useGroupsByBranchYear = (branchYear) => {
 
     return useQuery(queryKey, fetchGroupsByBranchYear);
 };
+const useAllGroupsByBranch = (branch) => {
+    return useQuery(
+        ['allGroupsByBranch', branch],
+        async () => {
+            try {
+                const response = await axios.get(`/profs/allGroups/${branch}`);
+                return response.data;
+            } catch (error) {
+                throw new Error(`Failed to fetch groups by branch: ${error.message}`);
+            }
+        }
+    );
+};
+const useGetLabRoomByBranch = (branch) => {
+    return useQuery(
+        ['labRooms', branch],
+        async () => {
+            try {
+                const response = await axios.get(`/profs/labRoom/${branch}`);
+                return response.data;
+            } catch (error) {
+                throw new Error(`Failed to fetch lab rooms: ${error.message}`);
+            }
+        }
+    );
+};
 //groups API
 const useAddGroupMutation = () => {
     const queryClient = useQueryClient();
@@ -111,7 +136,6 @@ const useAddGroupMutation = () => {
         },
     });
 };
-
 const useGetGroupsStatusByBranch = (branch) => {
     return useQuery(
         ['groupsStatus', branch],
@@ -122,4 +146,9 @@ const useGetGroupsStatusByBranch = (branch) => {
     );
 };
 
-export { useAddGroupMutation, useGroupsByBranchYear, useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useGroupByBranch, useGetGroupsStatusByBranch }
+export {
+    useAddGroupMutation, useGroupsByBranchYear, useAllGroupsByBranch, useGetAllBranches,
+    useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag,
+    useGetProfCoursesByName, useGroupByBranch, useGetGroupsStatusByBranch,
+    useGetLabRoomByBranch
+}

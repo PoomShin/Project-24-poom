@@ -13,9 +13,10 @@ export default function ContentProf({ currentPage, userData }) {
         branch: initialBranch,
         branchYear: '',
         profName: myProfName,
+        labRoom: '',
         isModalOpen: false
     });
-    const { branch, profName, branchYear, isModalOpen } = profState;
+    const { branch, profName, branchYear, isModalOpen, labRoom } = profState;
 
     const { data: groupsStatus, refetch: refetchGroupsStatus } = useGetGroupsStatusByBranch(branch);
 
@@ -29,6 +30,9 @@ export default function ContentProf({ currentPage, userData }) {
     const handleProfChange = selectedProf => {
         setProfState(prevState => ({ ...prevState, profName: selectedProf }));
     };
+    const handleLabChange = selectedLab => {
+        setProfState(prevState => ({ ...prevState, labRoom: selectedLab }));
+    }
     const toggleModal = useCallback(() => {
         setProfState(prevState => ({ ...prevState, isModalOpen: !prevState.isModalOpen }));
     }, []);
@@ -44,6 +48,7 @@ export default function ContentProf({ currentPage, userData }) {
                     currentBranch={branch} handleBranchChange={handleBranchChange}
                     currentYear={branchYear} handleYearChange={handleYearChange}
                     currentProfName={profName} handleProfChange={handleProfChange}
+                    currentLab={labRoom} handleLabChange={handleLabChange}
                     profRole={role}
                 />
             </ContentProfHeader>

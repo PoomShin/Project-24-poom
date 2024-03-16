@@ -6,7 +6,7 @@ import TimeBlock from "../components/TimeBlock";
 
 const getColumnClass = (time, type) => gridColData[type][parseFloat(time)] || '';
 
-export default function DayRows({ page, myProfName, curProf, profRole, profBranch, branchYear, seeCourseName }) {
+export default function DayRows({ page, myProfName, curProf, profRole, profBranch, branchYear, seeCourseName, groupsByBranch, groupsByBranchRefetch }) {
     const { data: groupsByBranchYear, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
     const [fullDayBlock, setFullDayBlock] = useState('');
     const [openContextMenu, setOpenContextMenu] = useState(null);
@@ -15,11 +15,13 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
     const filterGroupsByPage = (groups, page, curProf) => {
         if (page === 'Prof') {
             return groups.filter(group => Array.isArray(group.prof_names) && group.prof_names.includes(curProf));
+        } else if (page === 'Lab') {
+            return groups.filter(group => group.lab_room !== "");
         }
         return groups;
     };
 
-    const sortedGroups = useMemo(() => {
+    const sortedDefaultGroups = useMemo(() => {
         if (!groupsByBranchYear) return {};
 
         return DAYS_OF_WEEK.reduce((acc, day) => {
@@ -29,6 +31,21 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
             return acc;
         }, {});
     }, [groupsByBranchYear, page, curProf]);
+
+    const sortedLabGroups = useMemo(() => {
+        if (!groupsByBranch) return {};
+
+        let groups = groupsByBranchYear;
+
+        return DAYS_OF_WEEK.reduce((acc, day) => {
+            const filteredGroups = filterGroupsByPage(groupsByBranch.filter(group => group.day_of_week === day), page, curProf)
+                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
+            acc[day] = filteredGroups;
+            return acc;
+        }, {});
+    }, [groupsByBranch, page, curProf]);
+
+    const sortedGroups = page === 'Lab' ? sortedLabGroups : sortedDefaultGroups;
 
     const handleContextMenu = (event, group) => {
         event.preventDefault();
@@ -90,31 +107,30 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
 
     useEffect(() => {
         refetch();
-    }, [branchYear]);
+        groupsByBranchRefetch();
+    }, [branchYear, page]);
 
     return (
         DAYS_OF_WEEK.map((day, index) => (
             <div key={index}
                 className={`grid grid-cols-34 grid-flow-dense gap-y-2 border border-stone-500 bg-stone-800 overflow-y-auto ${fullDayBlock === day ? 'max-h-72' : 'max-h-16'}`}
             >
-                <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
+                <DayBlock key={`day-${day}`} day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
                 {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
-                    <>
-                        <TimeBlock key={groupIndex}
-                            colStart={getColumnClass(group.start_time, 'start')}
-                            colEnd={getColumnClass(group.end_time, 'end')}
-                            bgStyle={getBgStyle(group, day)}
-                            group={group}
-                            myProfName={myProfName}
-                            profRole={profRole}
-                            profBranch={profBranch}
-                            branchYear={branchYear}
-                            seeCourseName={seeCourseName}
-                            onContextMenu={(event) => handleContextMenu(event, group)}
-                            isOpenContextMenu={openContextMenu && openContextMenu.group === group}
-                            onCloseContextMenu={handleCloseContextMenu}
-                        />
-                    </>
+                    <TimeBlock key={`${day}-${groupIndex}`}
+                        colStart={getColumnClass(group.start_time, 'start')}
+                        colEnd={getColumnClass(group.end_time, 'end')}
+                        bgStyle={getBgStyle(group, day)}
+                        group={group}
+                        myProfName={myProfName}
+                        profRole={profRole}
+                        profBranch={profBranch}
+                        branchYear={branchYear}
+                        seeCourseName={seeCourseName}
+                        onContextMenu={(event) => handleContextMenu(event, group)}
+                        isOpenContextMenu={openContextMenu && openContextMenu.group === group}
+                        onCloseContextMenu={handleCloseContextMenu}
+                    />
                 ))}
             </div>
         ))

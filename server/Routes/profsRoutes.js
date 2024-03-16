@@ -221,6 +221,54 @@ router.get('/groupsBY/:branchYear', async (req, res) => {
     }
 });
 
+router.get('/allGroups/:branch', async (req, res) => {
+    try {
+        const { branch } = req.params;
+
+        const query = `
+            SELECT 
+                g.Id AS group_id, 
+                g.group_num, 
+                g.quantity, 
+                g.unit, 
+                g.hours, 
+                g.day_of_week, 
+                g.start_time, 
+                g.end_time, 
+                g.lab_room, 
+                g.group_status, 
+                c.eng_name,
+                c.combined_code_curriculum,
+                c.course_type,
+                gy.owner_branch_tag,
+                ARRAY_AGG(gp.prof_name) AS prof_names
+            FROM 
+                groups g
+            JOIN 
+                group_branch_year gy ON g.Id = gy.group_id
+            JOIN 
+                group_profs gp ON g.Id = gp.group_id
+            JOIN 
+                courses c ON g.course_id = c.Id
+            WHERE 
+                gy.owner_branch_tag = $1
+            GROUP BY 
+                g.Id, c.eng_name, c.combined_code_curriculum, c.course_type, gy.owner_branch_tag;
+        `;
+
+        const { rows } = await pool.query(query, [branch]);
+
+        if (rows.length === 0) {
+            res.status(404).json({ success: false, error: 'No data found' });
+        } else {
+            res.json(rows);
+        }
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+});
+
 router.get('/groupsStatus/:branch', async (req, res) => {
     try {
         const { branch } = req.params;
@@ -255,5 +303,30 @@ router.get('/groupsStatus/:branch', async (req, res) => {
         res.status(500).json({ success: false, error: 'An error occurred' });
     }
 });
+
+router.get('/labRoom/:branch', async (req, res) => {
+    try {
+        const { branch } = req.params;
+
+        const query = `
+            SELECT 
+                DISTINCT lab_room
+            FROM 
+                groups g
+            JOIN 
+                group_branch_year gy ON g.id = gy.group_id
+            WHERE 
+                gy.owner_branch_tag = $1
+                AND lab_room <> ''
+        `;
+
+        const { rows } = await pool.query(query, [branch]);
+
+        res.json(rows.map(row => row.lab_room));
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+})
 
 module.exports = router;

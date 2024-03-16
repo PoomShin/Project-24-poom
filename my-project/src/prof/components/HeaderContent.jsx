@@ -1,5 +1,6 @@
 import React from 'react';
 import { useBranchesContext, useProfsContext } from '../../context/Prof-Context';
+import { useGetLabRoomByBranch } from '../../api/Profs_API';
 
 const HeaderSelect = ({ selectName, options = [], value, handleChange, colStart }) => (
     <div className={`relative ${colStart} flex`}>
@@ -20,9 +21,10 @@ const HeaderSelect = ({ selectName, options = [], value, handleChange, colStart 
 
 const MemoizedHeaderSelect = React.memo(HeaderSelect);
 
-export default function HeaderContent({ currentPage, currentBranch, handleBranchChange, currentYear, handleYearChange, currentProfName, handleProfChange, profRole }) {
+export default function HeaderContent({ currentPage, currentBranch, handleBranchChange, currentYear, handleYearChange, currentProfName, handleProfChange, profRole, currentLab, handleLabChange }) {
     const { branches } = useBranchesContext();
     const { profsBranchTag } = useProfsContext();
+    const { data: labRoomData } = useGetLabRoomByBranch(currentBranch);
 
     return (
         <>
@@ -53,9 +55,9 @@ export default function HeaderContent({ currentPage, currentBranch, handleBranch
             )}
             {currentPage === 'Lab' && (
                 <MemoizedHeaderSelect selectName='lab'
-                    options={[{ value: 'LabCom23', label: 'LabCom23', disabled: false }]}
-                    value={''}
-                    handleChange={() => { }} //
+                    options={labRoomData && labRoomData.map(lab => ({ value: lab, label: lab, disabled: false }))}
+                    value={currentLab}
+                    handleChange={handleLabChange}
                     colStart='col-start-5'
                 />
             )}
