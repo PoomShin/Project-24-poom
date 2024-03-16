@@ -6,17 +6,23 @@ import TimeBlock from "../components/TimeBlock";
 
 const getColumnClass = (time, type) => gridColData[type][parseFloat(time)] || '';
 
-export default function DayRows({ page, myProfName, curProf, profRole, profBranch, branchYear, seeCourseName, groupsByBranch, groupsByBranchRefetch }) {
+export default function DayRows({ page, myProfName, curProf, curLab, profRole, profBranch, branchYear, seeCourseName, groupsByBranch, groupsByBranchRefetch }) {
     const { data: groupsByBranchYear, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
     const [fullDayBlock, setFullDayBlock] = useState('');
     const [openContextMenu, setOpenContextMenu] = useState(null);
     const contextMenuRef = useRef(null);
+    console.log(curLab)
 
     const filterGroupsByPage = (groups, page, curProf) => {
         if (page === 'Prof') {
             return groups.filter(group => Array.isArray(group.prof_names) && group.prof_names.includes(curProf));
         } else if (page === 'Lab') {
-            return groups.filter(group => group.lab_room !== "");
+            if (curLab === "") {
+                return groups.filter(group => group.lab_room !== "");
+            }
+            else {
+                return groups.filter(group => group.lab_room === curLab);
+            }
         }
         return groups;
     };
@@ -35,17 +41,16 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
     const sortedLabGroups = useMemo(() => {
         if (!groupsByBranch) return {};
 
-        let groups = groupsByBranchYear;
-
         return DAYS_OF_WEEK.reduce((acc, day) => {
             const filteredGroups = filterGroupsByPage(groupsByBranch.filter(group => group.day_of_week === day), page, curProf)
                 .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
             acc[day] = filteredGroups;
             return acc;
         }, {});
-    }, [groupsByBranch, page, curProf]);
+    }, [groupsByBranch, page, curProf, curLab]);
 
     const sortedGroups = page === 'Lab' ? sortedLabGroups : sortedDefaultGroups;
+    console.log(sortedGroups)
 
     const handleContextMenu = (event, group) => {
         event.preventDefault();
@@ -107,8 +112,11 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
 
     useEffect(() => {
         refetch();
+    }, [branchYear]);
+
+    useEffect(() => {
         groupsByBranchRefetch();
-    }, [branchYear, page]);
+    }, [page, curLab]);
 
     return (
         DAYS_OF_WEEK.map((day, index) => (

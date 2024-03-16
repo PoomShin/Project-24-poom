@@ -58,6 +58,7 @@ export default function ContentProf({ currentPage, userData }) {
                 curBranch={branch}
                 curBranchYear={branchYear}
                 curProf={profName}
+                curLab={labRoom}
                 userData={userData}
                 groupsStatus={groupsStatus}
             />

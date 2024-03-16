@@ -72,10 +72,10 @@ const calculateOverlappingCount = (filteredGroupsStatus) => {
     return overlappingCount;
 };
 
-export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, userData, groupsStatus = [] }) {
+export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, curLab, userData, groupsStatus = [] }) {
     const { name: profName, role, branch_tag: profBranchTag } = userData;
     const { data, refetch } = useAllGroupsByBranch(curBranch);
-    const [seeCourseName, setSeeCourseName] = useState(false);
+    const [seeCourseName, setSeeCourseName] = useState(true);
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
@@ -101,12 +101,7 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
             <div className='col-span-8 flex flex-wrap items-center justify-start my-4 ml-1 gap-2'>
                 <ViewCourseButton onClick={toggleSeeCourseName} seeCourseName={seeCourseName} />
                 <GroupsNotification isDisable={curBranch !== profBranchTag} allGroupsStatus={groupsStatus} />
-                <div className='pt-2 leading-none flex gap-2 items-center text-lg font-bold'>
-                    <p className='text-yellow-900 underline decoration-yellow-600 rounded-sm'>Waiting: {statusCounts.waiting}</p>
-                    <p className='text-green-900 underline decoration-green-600 rounded-sm'>Accept: {statusCounts.accept}</p>
-                    <p className='text-red-900 underline decoration-red-600 rounded-sm'>Reject: {statusCounts.reject}</p>
-                    <p className='text-neutral-900  underline decoration-neutral-600 rounded-sm'>Overlapping: {overlappingCount}</p>
-                </div>
+                {curPage !== 'Lab' && <StatusBar statusCounts={statusCounts} overlappingCount={overlappingCount} />}
             </div>
 
             <div className='border bg-light_blue mx-1'
@@ -117,6 +112,7 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
                     page={curPage}
                     myProfName={profName}
                     curProf={curProf}
+                    curLab={curLab}
                     profRole={role}
                     profBranch={profBranchTag}
                     branchYear={curBranchYear}
@@ -126,5 +122,16 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
                 />
             </div>
         </>
+    );
+};
+
+const StatusBar = ({ statusCounts, overlappingCount }) => {
+    return (
+        <div className='pt-2 leading-none flex gap-2 items-center text-lg font-bold'>
+            <p className='text-yellow-900 underline decoration-yellow-600 rounded-sm'>Waiting: {statusCounts.waiting}</p>
+            <p className='text-green-900 underline decoration-green-600 rounded-sm'>Accept: {statusCounts.accept}</p>
+            <p className='text-red-900 underline decoration-red-600 rounded-sm'>Reject: {statusCounts.reject}</p>
+            <p className='text-neutral-900  underline decoration-neutral-600 rounded-sm'>Overlapping: {overlappingCount}</p>
+        </div>
     );
 };
