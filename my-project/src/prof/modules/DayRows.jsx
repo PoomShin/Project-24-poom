@@ -95,24 +95,26 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
     return (
         DAYS_OF_WEEK.map((day, index) => (
             <div key={index}
-                className={`grid grid-cols-34 grid-flow-dense gap-y-1 border border-gray-700 overflow-y-scroll ${fullDayBlock === day ? 'max-h-fit' : 'max-h-28'}`}
+                className={`grid grid-cols-34 grid-flow-dense gap-y-2 border border-stone-500 bg-stone-800 overflow-y-auto ${fullDayBlock === day ? 'max-h-72' : 'max-h-16'}`}
             >
                 <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
                 {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
-                    <TimeBlock key={groupIndex}
-                        colStart={getColumnClass(group.start_time, 'start')}
-                        colEnd={getColumnClass(group.end_time, 'end')}
-                        bgStyle={getBgStyle(group, day)}
-                        group={group}
-                        myProfName={myProfName}
-                        profRole={profRole}
-                        profBranch={profBranch}
-                        branchYear={branchYear}
-                        seeCourseName={seeCourseName}
-                        onContextMenu={(event) => handleContextMenu(event, group)}
-                        isOpenContextMenu={openContextMenu && openContextMenu.group === group}
-                        onCloseContextMenu={handleCloseContextMenu}
-                    />
+                    <>
+                        <TimeBlock key={groupIndex}
+                            colStart={getColumnClass(group.start_time, 'start')}
+                            colEnd={getColumnClass(group.end_time, 'end')}
+                            bgStyle={getBgStyle(group, day)}
+                            group={group}
+                            myProfName={myProfName}
+                            profRole={profRole}
+                            profBranch={profBranch}
+                            branchYear={branchYear}
+                            seeCourseName={seeCourseName}
+                            onContextMenu={(event) => handleContextMenu(event, group)}
+                            isOpenContextMenu={openContextMenu && openContextMenu.group === group}
+                            onCloseContextMenu={handleCloseContextMenu}
+                        />
+                    </>
                 ))}
             </div>
         ))
@@ -121,10 +123,10 @@ export default function DayRows({ page, myProfName, curProf, profRole, profBranc
 
 function DayBlock({ day, onClick, isActive }) {
     return (
-        <div className={`grid first-line:p-1 md:p-3 col-start-1 col-end-3 border-r-2 dark:border-gray-700 ${COLOR_MAP[day]} ${isActive ? 'hover:border-blue-500 hover:border' : ''}`}
+        <div className={`md:p-3 col-start-1 col-end-3 ${COLOR_MAP[day]} ${isActive ? 'ring ring-sky-300' : ''} cursor-pointer`}
             onClick={onClick}
         >
-            <span className='font-bold dark:text-gray-900'>{day}</span>
+            <span className=' font-semibold text-black'>{day}</span>
         </div>
     );
 }

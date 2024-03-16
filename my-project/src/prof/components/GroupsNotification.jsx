@@ -29,7 +29,7 @@ const Button = ({ activeColor, handleClick, isDisable, showNotification }) => (
 );
 
 const Modal = ({ handleClose, notificationPosition, statusCounts }) => (
-    <div className='fixed inset-0 flex items-center justify-center z-50'>
+    <div className='absolute inset-0 flex items-center justify-center z-50'>
         <div className='p-6 text-sm text-white bg-gray-800 rounded-lg shadow-md'
             style={{ position: 'absolute', top: notificationPosition.y - 100, left: notificationPosition.x }}
         >

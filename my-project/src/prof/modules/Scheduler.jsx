@@ -16,12 +16,12 @@ const TimeRows = React.memo(() => {
     const timeSlots = useMemo(() => generateTimeSlots(), []);
 
     return (
-        <div className='grid grid-cols-34 text-white'>
+        <div className='grid grid-cols-34 text-black font-semibold'>
             <div className='col-span-2 border border-gray-700 py-1 pl-1'>
                 Day/Time
             </div>
             {timeSlots.map((timeSlot, index) => (
-                <div key={index} className='col-span-2 border border-gray-700 py-1 pl-1'>
+                <div key={index} className='col-span-2 border border-gray-950 py-1 pl-1'>
                     {timeSlot}
                 </div>
             ))}
@@ -107,7 +107,7 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
                 </div>
             </div>
 
-            <div className='border rounded-lg bg-gray-800 mx-1'
+            <div className='border bg-light_blue mx-1'
                 onContextMenu={e => e.preventDefault()}
             >
                 <TimeRows />

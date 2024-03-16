@@ -65,7 +65,7 @@ const TimeBlock = ({
                 groupStatus={group.group_status}
             />
             <div
-                className={`${colStart} ${colEnd} ${bgStyle} ${borderColorClass} 
+                className={`${colStart} ${colEnd} ${bgStyle} ${borderColorClass}
                 p-2 relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer`}
                 onContextMenu={canOpenContextMenu ? handleContextMenu : disableBrowserMenu}
             >
