@@ -11,46 +11,27 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
     const [fullDayBlock, setFullDayBlock] = useState('');
     const [openContextMenu, setOpenContextMenu] = useState(null);
     const contextMenuRef = useRef(null);
-    console.log(curLab)
 
-    const filterGroupsByPage = (groups, page, curProf) => {
+    const filterGroupsByPage = (groups) => {
         if (page === 'Prof') {
             return groups.filter(group => Array.isArray(group.prof_names) && group.prof_names.includes(curProf));
         } else if (page === 'Lab') {
-            if (curLab === "") {
-                return groups.filter(group => group.lab_room !== "");
-            }
-            else {
-                return groups.filter(group => group.lab_room === curLab);
-            }
+            return curLab === "" ? groups.filter(group => group.lab_room !== "") : groups.filter(group => group.lab_room === curLab);
         }
         return groups;
     };
 
-    const sortedDefaultGroups = useMemo(() => {
-        if (!groupsByBranchYear) return {};
+    const sortedGroups = useMemo(() => {
+        const groupsToSort = page === 'Lab' ? groupsByBranch : groupsByBranchYear;
+        if (!groupsToSort) return {};
 
         return DAYS_OF_WEEK.reduce((acc, day) => {
-            const filteredGroups = filterGroupsByPage(groupsByBranchYear.filter(group => group.day_of_week === day), page, curProf)
+            const filteredGroups = filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day))
                 .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
             acc[day] = filteredGroups;
             return acc;
         }, {});
-    }, [groupsByBranchYear, page, curProf]);
-
-    const sortedLabGroups = useMemo(() => {
-        if (!groupsByBranch) return {};
-
-        return DAYS_OF_WEEK.reduce((acc, day) => {
-            const filteredGroups = filterGroupsByPage(groupsByBranch.filter(group => group.day_of_week === day), page, curProf)
-                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
-            acc[day] = filteredGroups;
-            return acc;
-        }, {});
-    }, [groupsByBranch, page, curProf, curLab]);
-
-    const sortedGroups = page === 'Lab' ? sortedLabGroups : sortedDefaultGroups;
-    console.log(sortedGroups)
+    }, [groupsByBranch, groupsByBranchYear, page, curProf, curLab]);
 
     const handleContextMenu = (event, group) => {
         event.preventDefault();

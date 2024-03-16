@@ -90,10 +90,10 @@ export default function Scheduler({ curPage, curBranch, curBranchYear, curProf, 
         return counts;
     }, [filteredGroupsStatus]);
 
-    const overlappingCount = useMemo(() => calculateOverlappingCount(filteredGroupsStatus, curBranchYear), [filteredGroupsStatus, curBranchYear]);
+    const overlappingCount = useMemo(() => calculateOverlappingCount(filteredGroupsStatus), [filteredGroupsStatus]);
 
     const toggleSeeCourseName = () => {
-        setSeeCourseName(prevState => !prevState);
+        setSeeCourseName(prevState => !prevState); 
     };
 
     return (
