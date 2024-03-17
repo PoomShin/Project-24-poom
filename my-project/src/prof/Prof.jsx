@@ -7,7 +7,7 @@ import ContentProf from './layouts/ContentProf';
 import SideBarRight from './layouts/SideBarRight';
 
 export default function Prof() {
-    const { userContextValues, setUserContextValues } = useUserContext()
+    const { userContextValues } = useUserContext()
     const { name = '', role = '', branch_tag = '', imageUrl = '' } = userContextValues || {};
 
     const [currentPage, setCurrentPage] = useState('Home');

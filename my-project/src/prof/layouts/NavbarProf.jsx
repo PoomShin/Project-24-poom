@@ -10,16 +10,12 @@ export default function NavbarProf({ name, role, img }) {
             <div className='flex items-center'>
                 <img src={notification} alt='Notification' className='sm:h-9 h-6' />
                 <p className='sm:px-5 px-2'>{name}</p>
-
+                
                 <div className='flex flex-col items-center py-1'>
-                    <img className='sm:h-14 sm:w-14 h-7 w-7 rounded-full'
-                        src={img ? img : userProfile}
-                        alt='User_Profile'
-                    />
+                    <img className='sm:h-14 sm:w-14 h-7 w-7 rounded-full' src={img ? img : userProfile} alt='User_Profile' />
                     <p className='font-bold mt-1'>{role}</p>
                 </div>
             </div>
-
         </div>
     );
 }

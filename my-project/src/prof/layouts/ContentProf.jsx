@@ -1,31 +1,25 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useGetGroupsStatusByBranch } from '../../api/Profs_API';
 import ContentProfHeader from '../components/ContentProfHeader';
-import HeaderContent from '../components/HeaderContent';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
 import ButtonCom from '../components/ButtonCom';
-import { useGetGroupsStatusByBranch } from '../../api/Profs_API';
 
 export default function ContentProf({ currentPage, userData }) {
-    const { id, name: myProfName, role, branch_tag: initialBranch } = userData;
-
+    const { name: myProfName, role, branch_tag: initialBranch } = userData;
     const [profState, setProfState] = useState({
         branch: initialBranch,
         branchYear: '',
         profName: myProfName,
         labRoom: '',
-        isModalOpen: false
     });
-    const { branch, profName, branchYear, isModalOpen, labRoom } = profState;
-
-    const { data: groupsStatus, refetch: refetchGroupsStatus } = useGetGroupsStatusByBranch(branch);
-
-    const handleYearChange = selectedBranchYear => {
-        setProfState(prevState => ({ ...prevState, branchYear: selectedBranchYear }));
-    };
+    const { branch, profName, branchYear, labRoom } = profState;
     const handleBranchChange = selectedBranch => {
         setProfState(prevState => ({ ...prevState, branch: selectedBranch }));
         handleYearChange();
+    };
+    const handleYearChange = selectedBranchYear => {
+        setProfState(prevState => ({ ...prevState, branchYear: selectedBranchYear }));
     };
     const handleProfChange = selectedProf => {
         setProfState(prevState => ({ ...prevState, profName: selectedProf }));
@@ -33,25 +27,25 @@ export default function ContentProf({ currentPage, userData }) {
     const handleLabChange = selectedLab => {
         setProfState(prevState => ({ ...prevState, labRoom: selectedLab }));
     }
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const toggleModal = useCallback(() => {
-        setProfState(prevState => ({ ...prevState, isModalOpen: !prevState.isModalOpen }));
+        setIsModalOpen(prev => !prev)
     }, []);
 
+    const { data: groupsStatus, refetch: refetchGroupsStatus } = useGetGroupsStatusByBranch(branch);
     useEffect(() => {
         refetchGroupsStatus();
     }, [branch]);
 
     return (
         <div className='col-start-3 col-span-15 border-2 border-b-0 border-solid border-black bg-white'>
-            <ContentProfHeader currentPage={currentPage}>
-                <HeaderContent currentPage={currentPage}
-                    currentBranch={branch} handleBranchChange={handleBranchChange}
-                    currentYear={branchYear} handleYearChange={handleYearChange}
-                    currentProfName={profName} handleProfChange={handleProfChange}
-                    currentLab={labRoom} handleLabChange={handleLabChange}
-                    profRole={role}
-                />
-            </ContentProfHeader>
+            <ContentProfHeader currentPage={currentPage}
+                currentBranch={branch} handleBranchChange={handleBranchChange}
+                currentYear={branchYear} handleYearChange={handleYearChange}
+                currentProfName={profName} handleProfChange={handleProfChange} profRole={role}
+                currentLab={labRoom} handleLabChange={handleLabChange}
+            />
 
             <Scheduler
                 curPage={currentPage}
