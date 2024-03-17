@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 
 //get branches API
-const useGetAllBranches = () => {
+export const useGetAllBranches = () => {
     const fetchBranches = async () => {
         try {
             const response = await axios.get('/api/branches');
@@ -16,7 +16,7 @@ const useGetAllBranches = () => {
     return useQuery('branchTags', fetchBranches);
 };
 //get profs API
-const useGetProfsByBranchTag = (branch_tag) => {
+export const useGetProfsByBranchTag = (branch_tag) => {
     return useQuery(
         ['profsData', branch_tag],
         async () => {
@@ -30,7 +30,7 @@ const useGetProfsByBranchTag = (branch_tag) => {
     );
 };
 //get courses API
-const useGetCoursesByBranchTag = (branch_tag) => {
+export const useGetCoursesByBranchTag = (branch_tag) => {
     return useQuery(
         'courseData',
         async () => {
@@ -40,7 +40,7 @@ const useGetCoursesByBranchTag = (branch_tag) => {
     );
 };
 
-const useGetProfCoursesByName = (name) => {
+export const useGetProfCoursesByName = (name) => {
     return useQuery(
         'profCoursesData',
         async () => {
@@ -50,7 +50,7 @@ const useGetProfCoursesByName = (name) => {
     );
 };
 
-const useGetAllCourses = () => {
+export const useGetAllCourses = () => {
     return useQuery(
         'allCoursesData',
         async () => {
@@ -60,7 +60,7 @@ const useGetAllCourses = () => {
     );
 };
 //get groups API
-const useGroupByBranch = (branch) => {
+export const useGroupByBranch = (branch) => {
     return useQuery(
         ['groupsByBranch', branch],
         async () => {
@@ -69,7 +69,7 @@ const useGroupByBranch = (branch) => {
         }
     );
 };
-const useGroupsByBranchYear = (branchYear) => {
+export const useGroupsByBranchYear = (branchYear) => {
     const queryKey = ['groups', branchYear];
 
     const fetchGroupsByBranchYear = async () => {
@@ -91,7 +91,7 @@ const useGroupsByBranchYear = (branchYear) => {
 
     return useQuery(queryKey, fetchGroupsByBranchYear);
 };
-const useAllGroupsByBranch = (branch) => {
+export const useAllGroupsByBranch = (branch) => {
     return useQuery(
         ['allGroupsByBranch', branch],
         async () => {
@@ -104,7 +104,7 @@ const useAllGroupsByBranch = (branch) => {
         }
     );
 };
-const useGetLabRoomByBranch = (branch) => {
+export const useGetLabRoomByBranch = (branch) => {
     return useQuery(
         ['labRooms', branch],
         async () => {
@@ -117,8 +117,17 @@ const useGetLabRoomByBranch = (branch) => {
         }
     );
 };
-//groups API
-const useAddGroupMutation = () => {
+export const useGetGroupsStatusByBranch = (branch) => {
+    return useQuery(
+        ['groupsStatus', branch],
+        async () => {
+            const response = await axios.get(`/profs/groupsStatus/${branch}`);
+            return response.data;
+        }
+    );
+};
+//groups other API
+export const useAddGroupMutation = () => {
     const queryClient = useQueryClient();
 
     const addGroup = async (groupData) => {
@@ -132,23 +141,29 @@ const useAddGroupMutation = () => {
 
     return useMutation((groupData) => addGroup(groupData), {
         onSuccess: () => {
+            queryClient.invalidateQueries('profCoursesData');
             queryClient.invalidateQueries('groups');
+            queryClient.invalidateQueries('groupsStatus');
         },
     });
 };
-const useGetGroupsStatusByBranch = (branch) => {
-    return useQuery(
-        ['groupsStatus', branch],
-        async () => {
-            const response = await axios.get(`/profs/groupsStatus/${branch}`);
-            return response.data;
-        }
-    );
-};
+export const useDelCourseByName = () => {
+    const queryClient = useQueryClient();
 
-export {
-    useAddGroupMutation, useGroupsByBranchYear, useAllGroupsByBranch, useGetAllBranches,
-    useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag,
-    useGetProfCoursesByName, useGroupByBranch, useGetGroupsStatusByBranch,
-    useGetLabRoomByBranch
-}
+    const delCourseByNameMutation = async ({ courseId, profName }) => {
+        try {
+            const response = await axios.delete(`/profs/delCourse/${courseId}/${profName}`);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to delete course. Please try again later.');
+        }
+    };
+
+    return useMutation(delCourseByNameMutation, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('profCoursesData');
+            queryClient.invalidateQueries('groups');
+            queryClient.invalidateQueries('groupsStatus');
+        },
+    });
+};

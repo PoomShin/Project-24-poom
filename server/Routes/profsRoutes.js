@@ -329,4 +329,28 @@ router.get('/labRoom/:branch', async (req, res) => {
     }
 })
 
+router.delete('/delCourse/:courseId/:profName', async (req, res) => {
+    try {
+        const { courseId, profName } = req.params;
+
+        // Delete all groups with the specified course_id and where the provided profName exists in group_profs
+        const query = `
+            DELETE FROM groups 
+            WHERE course_id = $1 
+            AND EXISTS (
+                SELECT 1 
+                FROM group_profs 
+                WHERE group_id = groups.Id
+                AND prof_name = $2
+            )
+        `;
+        await pool.query(query, [courseId, profName]);
+
+        res.json({ success: true, message: `All groups with the specified course_id and professor's name '${profName}' have been deleted` });
+    } catch (error) {
+        console.error('Error deleting groups:', error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+
 module.exports = router;

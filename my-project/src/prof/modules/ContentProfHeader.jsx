@@ -51,7 +51,7 @@ export default function ContentProfHeader({
             )}
             {(currentPage === 'Home' || currentPage === 'Prof') && (
                 <MemoizedHeaderSelect colStart='col-start-5'
-                    selectName='select year'
+                    defaultSelect='select year'
                     options={Array.from({ length: 4 }, (_, i) => ({ value: `${currentBranch}/${i + 1}`, label: `${currentBranch}/${i + 1}`, disabled: false }))}
                     value={currentYear}
                     handleChange={handleYearChange}
@@ -59,7 +59,7 @@ export default function ContentProfHeader({
             )}
             {currentPage === 'Prof' && profsBranchTag && (
                 <MemoizedHeaderSelect colStart='col-start-7'
-                    selectName='select prof'
+                    defaultSelect='select prof'
                     options={profsBranchTag.map(prof => ({ value: prof.name, label: prof.name, disabled: false }))}
                     value={currentProfName}
                     handleChange={handleProfChange}
@@ -67,7 +67,7 @@ export default function ContentProfHeader({
             )}
             {currentPage === 'Lab' && (
                 <MemoizedHeaderSelect colStart='col-start-5'
-                    selectName='select lab'
+                    defaultSelect='select lab'
                     options={labRoomData && labRoomData.map(lab => ({ value: lab, label: lab, disabled: false }))}
                     value={currentLab}
                     handleChange={handleLabChange}

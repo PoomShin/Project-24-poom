@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 import { useCoursesContext } from '../../context/Prof-Context';
 import { PRIORITY_VALUES } from '../data/SchedulerData';
-import waitingIcon from '../../assets/more.png';
-import acceptIcon from '../../assets/accept.png';
-import rejectIcon from '../../assets/decline.png';
+import { statusMappings } from '../data/SidebarRightData';
+import FilterButton from '../components/FilterButton';
+import BranchYearItems from '../components/BranchYearItems';
+import CourseGroupContextMenu from '../ContextMenu/CourseGroupContextMenu';
 import filterIcon from '../../assets/filter.png';
-
-const statusMappings = {
-    waiting: { icon: waitingIcon, bgColor: 'bg-gray-200' },
-    accept: { icon: acceptIcon, bgColor: 'bg-green-200' },
-    reject: { icon: rejectIcon, bgColor: 'bg-red-200' },
-    default: { icon: waitingIcon, bgColor: 'bg-gray-200' }
-};
 
 const groupColors = ['bg-blue-200', 'bg-green-200', 'bg-yellow-200', 'bg-pink-200', 'bg-purple-200', 'bg-orange-200', 'bg-teal-200', 'bg-red-200'];
 
 export default function SideBarRight() {
     const { profCourses } = useCoursesContext();
+
+    const [openContextMenuId, setOpenContextMenuId] = useState(null);
     const [isMyGroupsOpen, setIsMyGroupsOpen] = useState(true);
     const [type, setType] = useState(null);
     const [filterCriteria, setFilterCriteria] = useState({
@@ -60,6 +56,10 @@ export default function SideBarRight() {
         }
     };
 
+    const handleOpenContextMenu = (groupId) => {
+        setOpenContextMenuId(groupId);
+    };
+
     const filteredCourses = profCourses ? profCourses.slice().sort(sortCourses) : []
 
     return (
@@ -77,14 +77,18 @@ export default function SideBarRight() {
             </div>
             <div className={`overflow-y-auto flex flex-col ${slideDown} ${myGroupClass} custom-scrollbar`}>
                 {filteredCourses.map((course, index) => (
-                    <CourseGroups key={course.id} course={course} colorIndex={index} />
+                    <CourseGroups key={course.id} course={course} colorIndex={index}
+                        onContextMenuOpen={handleOpenContextMenu}
+                        isContextMenuOpen={openContextMenuId === course.id}
+                    />
                 ))}
             </div>
         </div >
     );
 }
 
-const CourseGroups = ({ course, colorIndex }) => {
+const CourseGroups = ({ course, colorIndex, onContextMenuOpen, isContextMenuOpen }) => {
+    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
     const [isOpen, setIsOpen] = useState(false);
 
     const bgColor = groupColors[colorIndex % groupColors.length];
@@ -96,18 +100,41 @@ const CourseGroups = ({ course, colorIndex }) => {
         setIsOpen(prev => !prev);
     };
 
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        const rect = e.currentTarget.getBoundingClientRect();
+        const offsetX = rect.width / 2 - 40;
+        const offsetY = rect.height / 2;
+        setContextMenuPosition({ x: offsetX, y: offsetY });
+        onContextMenuOpen(course.id); // Notify the parent component that the context menu is open
+    };
+
     return (
-        <div>
-            <div className={`flex justify-between border-0 border-b-2 border-black font-semibold cursor-pointer ${groupBorder} ${bgColor} hover:bg-gray-200`} onClickCapture={handleToggleGroup}>
-                <p className='ml-2'>{course.combined_code_curriculum}</p>
-                <p className='mx-2'>{course.course_type}</p>
+        <>
+            <div className='relative'>
+                {isContextMenuOpen && (
+                    <CourseGroupContextMenu
+                        courseId={course.id}
+                        position={contextMenuPosition}
+                        onClose={() => onContextMenuOpen(null)} // Close the context menu when it's closed
+                    />
+                )}
+                <div className={`flex justify-between border-0 border-b-2 border-black font-semibold cursor-pointer ${groupBorder} ${bgColor} hover:bg-gray-200`}
+                    onClickCapture={handleToggleGroup}
+                    onContextMenu={handleContextMenu}
+                >
+                    <p className='ml-2'>{course.combined_code_curriculum}</p>
+                    <p className='mx-2'>{course.course_type}</p>
+                </div>
+                <div className={`overflow-hidden ${myCourseClass}`}>
+                    {course.groups && course.groups.map(group => (
+                        <ProfGroup key={group.id} group={group} />
+                    ))}
+                </div>
             </div>
-            <div className={`overflow-hidden ${myCourseClass}`}>
-                {course.groups && course.groups.map(group => <ProfGroup key={group.id} group={group} />)}
-            </div>
-        </div>
+        </>
     );
-}
+};
 
 const ProfGroup = React.memo(({ group }) => {
     const startTime = group.start_time.slice(0, 5);
@@ -131,21 +158,3 @@ const ProfGroup = React.memo(({ group }) => {
         </div>
     );
 });
-
-const BranchYearItems = ({ branchYear }) => {
-    return (
-        <p className='rounded-sm bg-indigo-900 text-yellow-200 text-xs ml-2 p-1'>
-            {branchYear}
-        </p>
-    );
-}
-
-const FilterButton = ({ filterName, filterCriteria, onClick }) => {
-    return (
-        <button className={`px-1 border border-gray-600 shadow-sm shadow-black text-white bg-gray-700 ${filterCriteria === 'min' ? 'bg-gradient-to-b from-blue-600 to-gray-600' : 'bg-gradient-to-t from-blue-600 to-gray-600'}`}
-            onClick={onClick}
-        >
-            {filterName}
-        </button>
-    )
-}

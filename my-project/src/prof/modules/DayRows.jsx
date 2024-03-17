@@ -102,9 +102,7 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
 
     return (
         DAYS_OF_WEEK.map((day, index) => (
-            <div key={index}
-                className={`grid grid-cols-34 grid-flow-dense gap-y-2 border border-stone-500 bg-stone-800 overflow-y-auto ${fullDayBlock === day ? 'max-h-72' : 'max-h-16'}`}
-            >
+            <div key={index} className={`grid grid-cols-34 grid-flow-dense gap-y-2 border border-stone-500 bg-stone-800 overflow-y-auto ${fullDayBlock === day ? 'max-h-72' : 'max-h-16'}`}>
                 <DayBlock key={`day-${day}`} day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
                 {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
                     <TimeBlock key={`${day}-${groupIndex}`}
