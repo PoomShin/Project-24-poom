@@ -98,7 +98,7 @@ const CourseGroups = ({ course, colorIndex }) => {
 
     return (
         <div>
-            <div className={`flex justify-between border-0 border-b-2 border-black font-semibold cursor-pointer ${groupBorder} ${bgColor}`} onClickCapture={handleToggleGroup}>
+            <div className={`flex justify-between border-0 border-b-2 border-black font-semibold cursor-pointer ${groupBorder} ${bgColor} hover:bg-gray-200`} onClickCapture={handleToggleGroup}>
                 <p className='ml-2'>{course.combined_code_curriculum}</p>
                 <p className='mx-2'>{course.course_type}</p>
             </div>

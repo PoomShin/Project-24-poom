@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useGetGroupsStatusByBranch } from '../../api/Profs_API';
-import ContentProfHeader from '../components/ContentProfHeader';
+import ContentProfHeader from '../modules/ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
 import ButtonCom from '../components/ButtonCom';
@@ -48,12 +48,12 @@ export default function ContentProf({ currentPage, userData }) {
             />
 
             <Scheduler
+                userData={userData}
                 curPage={currentPage}
                 curBranch={branch}
                 curBranchYear={branchYear}
                 curProf={profName}
                 curLab={labRoom}
-                userData={userData}
                 groupsStatus={groupsStatus}
             />
 

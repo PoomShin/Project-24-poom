@@ -1,13 +1,14 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { useGroupsByBranchYear } from "../../api/Profs_API";
+import { DAYS_OF_WEEK, PRIORITY_VALUES } from "../data/SchedulerData";
 import gridColData from "../data/gridColData";
-import { DAYS_OF_WEEK, PRIORITY_VALUES, COLOR_MAP } from "../data/SchedulerData";
+import DayBlock from "../components/DayBlock";
 import TimeBlock from "../components/TimeBlock";
 
 const getColumnClass = (time, type) => gridColData[type][parseFloat(time)] || '';
 
 export default function DayRows({ page, myProfName, curProf, curLab, profRole, profBranch, branchYear, seeCourseName, groupsByBranch, groupsByBranchRefetch }) {
-    const { data: groupsByBranchYear, isLoading, isError, refetch } = useGroupsByBranchYear(branchYear);
+    const { data: groupsByBranchYear, refetch } = useGroupsByBranchYear(branchYear);
     const [fullDayBlock, setFullDayBlock] = useState('');
     const [openContextMenu, setOpenContextMenu] = useState(null);
     const contextMenuRef = useRef(null);
@@ -19,27 +20,6 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
             return curLab === "" ? groups.filter(group => group.lab_room !== "") : groups.filter(group => group.lab_room === curLab);
         }
         return groups;
-    };
-
-    const sortedGroups = useMemo(() => {
-        const groupsToSort = page === 'Lab' ? groupsByBranch : groupsByBranchYear;
-        if (!groupsToSort) return {};
-
-        return DAYS_OF_WEEK.reduce((acc, day) => {
-            const filteredGroups = filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day))
-                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
-            acc[day] = filteredGroups;
-            return acc;
-        }, {});
-    }, [groupsByBranch, groupsByBranchYear, page, curProf, curLab]);
-
-    const handleContextMenu = (event, group) => {
-        event.preventDefault();
-        setOpenContextMenu({ group, x: event.clientX, y: event.clientY });
-    };
-
-    const handleCloseContextMenu = () => {
-        setOpenContextMenu(null);
     };
 
     const toggleFullDayBlock = (day) => {
@@ -78,6 +58,15 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
         return 'bg-slate-300';
     };
 
+    const handleContextMenu = (event, group) => {
+        event.preventDefault();
+        setOpenContextMenu({ group, x: event.clientX, y: event.clientY });
+    };
+
+    const handleCloseContextMenu = () => {
+        setOpenContextMenu(null);
+    };
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
@@ -98,6 +87,18 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
     useEffect(() => {
         groupsByBranchRefetch();
     }, [page, curLab]);
+
+    const sortedGroups = useMemo(() => {
+        const groupsToSort = page === 'Lab' ? groupsByBranch : groupsByBranchYear;
+        if (!groupsToSort) return {};
+
+        return DAYS_OF_WEEK.reduce((acc, day) => {
+            const filteredGroups = filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day))
+                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
+            acc[day] = filteredGroups;
+            return acc;
+        }, {});
+    }, [groupsByBranch, groupsByBranchYear, page, curProf, curLab]);
 
     return (
         DAYS_OF_WEEK.map((day, index) => (
@@ -123,15 +124,5 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
                 ))}
             </div>
         ))
-    );
-}
-
-function DayBlock({ day, onClick, isActive }) {
-    return (
-        <div className={`md:p-3 col-start-1 col-end-3 ${COLOR_MAP[day]} ${isActive ? 'ring ring-sky-300' : ''} cursor-pointer`}
-            onClick={onClick}
-        >
-            <span className=' font-semibold text-black'>{day}</span>
-        </div>
     );
 }

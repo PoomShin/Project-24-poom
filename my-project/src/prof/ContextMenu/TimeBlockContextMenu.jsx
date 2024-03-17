@@ -1,7 +1,7 @@
 export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContextMenu, contextMenuPosition, handleCloseContextMenu, groupStatus }) {
     return (
         isOpenContextMenu && canOpenContextMenu && (
-            <div className='absolute z-50 bg-white border rounded shadow-md'
+            <div className='absolute z-40 bg-white border rounded shadow-md'
                 style={{
                     top: contextMenuPosition.y + 10,
                     left: contextMenuPosition.x,

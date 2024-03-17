@@ -1,21 +1,16 @@
 import { useState } from 'react';
 import TimeBlockContentMenu from '../ContextMenu/TimeBlockContextMenu';
 
-const TimeBlock = ({
-    colStart,
-    colEnd,
-    bgStyle,
+export default function TimeBlock({
+    colStart, colEnd, bgStyle,
     group,
-    myProfName,
-    profRole,
-    profBranch,
+    myProfName, profRole, profBranch,
     branchYear,
     seeCourseName,
-    onContextMenu,
-    isOpenContextMenu,
-    onCloseContextMenu,
-}) => {
+    onContextMenu, isOpenContextMenu, onCloseContextMenu,
+}) {
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
     const groupBranchYear = branchYear.substring(0, 3);
     const canOpenContextMenu = profRole === 'prof(SM)' && groupBranchYear === profBranch;
 
@@ -64,9 +59,7 @@ const TimeBlock = ({
                 handleCloseContextMenu={handleCloseContextMenu}
                 groupStatus={group.group_status}
             />
-            <div
-                className={`${colStart} ${colEnd} ${bgStyle} ${borderColorClass}
-                p-2 relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer`}
+            <div className={`relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer p-2 ${colStart} ${colEnd} ${bgStyle} ${borderColorClass}`}
                 onContextMenu={canOpenContextMenu ? handleContextMenu : disableBrowserMenu}
             >
                 <p className={`flex justify-between font-semibold text-black ${(group.group_status === 'accept' || group.group_status === 'reject') && 'text-white'}`}>
@@ -85,5 +78,3 @@ const TimeBlock = ({
         </>
     );
 };
-
-export default TimeBlock;
