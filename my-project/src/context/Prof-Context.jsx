@@ -34,7 +34,7 @@ export const BranchProvider = ({ children }) => {
 
 //courses table context
 const CourseContext = createContext();
-export const CourseProvider = ({ name, branch_tag, children }) => {
+export const CourseProvider = ({ branch_tag, name, children }) => {
     const { data: courses, isLoading: coursesLoading, isError: coursesError } = useGetCoursesByBranchTag(branch_tag);
     const { data: profCourses, isLoading: profCoursesLoading, isError: profCoursesError, refetch: refetchProfCourses } = useGetProfCoursesByName(name);
     const { data: allCourses, isLoading: allCoursesLoading, isError: allCoursesError } = useGetAllCourses();

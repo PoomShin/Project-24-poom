@@ -16,7 +16,7 @@ export default function Prof() {
 
     return (
         <BranchProvider>
-            <CourseProvider name={name} branch_tag={branch_tag}>
+            <CourseProvider branch_tag={branch_tag} name={name} >
                 <ProfsProvider branch_tag={branch_tag}>
                     <GroupProvider ownerBranch={branch_tag}>
                         <div className='grid grid-cols-20'>
