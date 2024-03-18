@@ -141,7 +141,7 @@ export const useAddGroupMutation = () => {
 
     return useMutation((groupData) => addGroup(groupData), {
         onSuccess: () => {
-            queryClient.invalidateQueries('profCoursesData');
+            queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('groups');
             queryClient.invalidateQueries('groupsStatus');
             queryClient.invalidateQueries('allGroupsByBranch');
@@ -163,7 +163,7 @@ export const useDelCourseByName = () => {
 
     return useMutation(delCourseByNameMutation, {
         onSuccess: () => {
-            queryClient.invalidateQueries('profCoursesData');
+            queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('groups');
             queryClient.invalidateQueries('groupsStatus');
             queryClient.invalidateQueries('allGroupsByBranch');

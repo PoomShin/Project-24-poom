@@ -1,37 +1,48 @@
+import React, { useMemo } from 'react';
+import { useGroupContext } from '../../context/Prof-Context';
 import GroupItem from '../components/GroupItem';
 import AddGroup from './AddGroup';
 
 const getBackgroundColor = isLab => isLab ? 'bg-orange-100' : 'bg-green-100';
 
-export default function InsertGroups({ creditHours, lectureGroups, labGroups, mergedGroups, handleAddSection, setLectureGroups, setLabGroups, setDisableSubmit, groupsByBranch }) {
-    const renderGroups = (groups, isLab) => (
-        <div className={`h-64 flex overflow-x-auto p-4 ${getBackgroundColor(isLab)}`}>
-            {groups.map((sec, index) => (
-                <GroupItem key={index} {...sec} isLab={isLab} />
-            ))}
-            <AddGroup mergedGroups={mergedGroups}
-                onAddSection={section => handleAddSection(section, isLab ? setLabGroups : setLectureGroups)}
-                creditHours={creditHours} isLab={isLab}
-                setDisableSubmit={setDisableSubmit}
-                groupsByBranch={groupsByBranch}
-            />
-        </div>
-    );
+export default function InsertGroups({ creditHours, lectureGroups, labGroups, mergedGroups, setLectureGroups, setLabGroups, setMergedGroups, setDisableSubmit }) {
+    const { groupsByBranch } = useGroupContext();
+
+    const handleAddGroup = (section, setter) => setter(prevSections => [...prevSections, section]);
+
+    const handleDeleteGroup = (groupNum, isLab) => {
+        if (isLab) {
+            setLabGroups(prevLabGroups => prevLabGroups.filter(group => group.group_num !== groupNum));
+        } else {
+            setLectureGroups(prevLectureGroups => prevLectureGroups.filter(group => group.group_num !== groupNum));
+        }
+    };
+
+    const renderGroups = useMemo(() => (headerName, groups, isLab) => (
+        <>
+            <span className='text-3xl text-white'>{headerName}</span>
+            <div className={`h-64 flex overflow-x-auto p-4 ${getBackgroundColor(isLab)}`}>
+                {groups.map((sec, index) => (
+                    <GroupItem key={index} {...sec} isLab={isLab} onDelete={handleDeleteGroup} />
+                ))}
+                <AddGroup mergedGroups={mergedGroups}
+                    onAddSection={section => handleAddGroup(section, isLab ? setLabGroups : setLectureGroups)}
+                    creditHours={creditHours} isLab={isLab}
+                    setDisableSubmit={setDisableSubmit}
+                    groupsByBranch={groupsByBranch}
+                />
+            </div>
+        </>
+    ), [creditHours, mergedGroups, handleAddGroup, setLectureGroups, setLabGroups, groupsByBranch]);
 
     return (
-        <div className='overflow-x-scroll flex flex-col w-10/12'>
+        <div className='overflow-x-scroll flex flex-col gap-y-2 w-10/12'>
             {creditHours.lectureHours > 0 && (
-                <>
-                    <span className='text-3xl text-white mb-2'>Lecture</span>
-                    {renderGroups(lectureGroups, false)}
-                </>
+                renderGroups('Lecture', lectureGroups, false)
             )}
             {creditHours.labHours > 0 && (
-                <>
-                    <span className='text-3xl text-white mt-8 mb-2'>Laboratory</span>
-                    {renderGroups(labGroups, true)}
-                </>
+                renderGroups('Laboratory', labGroups, true)
             )}
         </div>
     );
-}
+};

@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useCoursesContext, useGroupContext } from '../../context/Prof-Context';
+import { useCoursesContext } from '../../context/Prof-Context';
 import { useAddGroupMutation } from '../../api/Profs_API';
 //Components
 import AlertModal from '../../public/AlertModal';
 import InputSection from '../components/InputSelect';
 import ButtonCom from '../components/ButtonCom';
 import InsertGroups from './InsertGroups';
+
+const initialCourseInfoState = {
+    selectedCourse: '',
+    id: null,
+    th_name: '',
+    eng_name: '',
+    credit: '',
+    course_type: '',
+};
 
 const parseCredits = credits => {
     const matches = credits.match(/(\d+)\((\d+)-(\d+)-(\d+)\)|(\d+)/);
@@ -24,45 +33,32 @@ const parseCredits = credits => {
 };
 
 export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }) {
+    const { courses } = useCoursesContext(); //for checking if this prop have ovelappign course with yourself
     const addGroupMutation = useAddGroupMutation();
-    const { groupsByBranch } = useGroupContext();
-    const { courses } = useCoursesContext();
 
-    const [selectedCourse, setSelectedCourse] = useState('');
-    const [courseInfo, setCourseInfo] = useState({
-        id: null,
-        th_name: '',
-        eng_name: '',
-        credit: '',
-        course_type: ''
-    });
+    const [courseInfo, setCourseInfo] = useState(initialCourseInfoState);
     const [creditHours, setCreditHours] = useState({ lectureHours: 0, labHours: 0, selfStudyHours: 0 });
 
     const [lectureGroups, setLectureGroups] = useState([]);
     const [labGroups, setLabGroups] = useState([]);
     const [mergedGroups, setMergedGroups] = useState([]);
-    const [disableSubmit, setDisableSubmit] = useState(false);
 
     const [openAlert, setOpenAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [disableSubmit, setDisableSubmit] = useState(false);
 
-    const handleCourseChange = selectedOption => setSelectedCourse(selectedOption);
-
-    const handleAddSection = (section, setter) => setter(prevSections => [...prevSections, section]);
+    const handleCourseChange = (selectedOption) => {
+        setCourseInfo(prevState => ({
+            ...prevState,
+            selectedCourse: selectedOption
+        }));
+    };
 
     const resetFormData = () => {
         setLectureGroups([]);
         setLabGroups([]);
-        setSelectedCourse('');
-        setCourseInfo({
-            id: null,
-            th_name: '',
-            eng_name: '',
-            credit: '',
-            course_type: ''
-        });
+        setCourseInfo(initialCourseInfoState);
     };
-
     const handleSubmit = async () => {
         try {
             const groupData = {
@@ -83,35 +79,27 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     };
 
     const closeModal = () => {
-        setSelectedCourse('');
+        handleCourseChange('');
         onClose();
     }
-
     const closeAlert = () => {
         setOpenAlert(false)
         onClose();
     }
 
     useEffect(() => {
-        const selectedCourseData = courses?.find(course => course.combined_code_curriculum === selectedCourse);
+        const selectedCourseData = courses?.find(course => course.combined_code_curriculum === courseInfo.selectedCourse);
         if (selectedCourseData) {
-            setCourseInfo({
+            setCourseInfo(prevState => ({
+                ...prevState,
                 id: selectedCourseData.id,
                 th_name: selectedCourseData.th_name,
                 eng_name: selectedCourseData.eng_name,
                 credit: selectedCourseData.credit,
                 course_type: selectedCourseData.course_type
-            });
-        } else {
-            setCourseInfo({
-                id: null,
-                th_name: '',
-                eng_name: '',
-                credit: '',
-                course_type: ''
-            });
-        }
-    }, [selectedCourse, courses]); //reset formdata when change selected course
+            }));
+        } else setCourseInfo(initialCourseInfoState);
+    }, [courseInfo.selectedCourse, courses]);
 
     useEffect(() => {
         const { credit } = courseInfo;
@@ -129,9 +117,8 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                 <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50'>
                     <div className='absolute top-0 left-1/2 transform -translate-x-1/2 font-semibold p-4'>
                         <div className='flex'>
-                            <InputSection
-                                style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500 w-48'
-                                value={selectedCourse}
+                            <InputSection style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500 w-48'
+                                value={courseInfo.selectedCourse}
                                 onChange={handleCourseChange}
                                 placeholder='Select a course'
                                 options={courses}
@@ -149,16 +136,14 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                     <InsertGroups
                         creditHours={creditHours}
                         lectureGroups={lectureGroups} labGroups={labGroups} mergedGroups={mergedGroups}
-                        handleAddSection={handleAddSection}
-                        setLectureGroups={setLectureGroups} setLabGroups={setLabGroups}
+                        setLectureGroups={setLectureGroups} setLabGroups={setLabGroups} setMergedGroups={setMergedGroups}
                         setDisableSubmit={setDisableSubmit}
-                        groupsByBranch={groupsByBranch}
                     />
 
                     <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
                         <ButtonCom style='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
                             text='Submit' type='button' onClick={handleSubmit}
-                            isDisable={disableSubmit || selectedCourse === ''}
+                            isDisable={disableSubmit || courseInfo.selectedCourse === ''}
                         />
                         <ButtonCom style='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
                             text='Close' type='button' onClick={closeModal}
