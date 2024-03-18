@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useGetGroupsStatusByBranch } from '../../api/Profs_API';
+import { getGroupsStatusByBranch } from '../../api/Profs_API';
 import ContentProfHeader from '../modules/ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
@@ -7,6 +7,7 @@ import ButtonCom from '../components/ButtonCom';
 
 export default function ContentProf({ currentPage, userData }) {
     const { name: myProfName, role, branch_tag: initialBranch } = userData;
+
     const [profState, setProfState] = useState({
         branch: initialBranch,
         branchYear: '',
@@ -14,6 +15,7 @@ export default function ContentProf({ currentPage, userData }) {
         labRoom: '',
     });
     const { branch, profName, branchYear, labRoom } = profState;
+
     const handleBranchChange = selectedBranch => {
         setProfState(prevState => ({ ...prevState, branch: selectedBranch }));
         handleYearChange();
@@ -33,7 +35,7 @@ export default function ContentProf({ currentPage, userData }) {
         setIsModalOpen(prev => !prev)
     }, []);
 
-    const { data: groupsStatus, refetch: refetchGroupsStatus } = useGetGroupsStatusByBranch(branch);
+    const { data: groupsStatus, refetch: refetchGroupsStatus } = getGroupsStatusByBranch(branch);
     useEffect(() => {
         refetchGroupsStatus();
     }, [branch]);

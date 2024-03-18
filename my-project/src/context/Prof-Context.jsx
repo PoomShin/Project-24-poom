@@ -1,10 +1,10 @@
 import { createContext, useContext, useMemo } from 'react';
-import { useGetAllBranches, useGetProfsByBranchTag, useGetAllCourses, useGetCoursesByBranchTag, useGetProfCoursesByName, useGroupByBranch } from '../api/Profs_API';
+import { getAllBranches, getProfsByBranchTag, getAllCourses, getCoursesByBranchTag, getCoursesByProf, getGroupsByBranch } from '../api/Profs_API';
 
 //branches table context
 const BranchContext = createContext();
 export const BranchProvider = ({ children }) => {
-    const { data: branches, isLoading, isError } = useGetAllBranches(); // using useGetAllBranches hook to fetch branches
+    const { data: branches } = getAllBranches();
 
     const generateBranchesWithYears = (branches) => {
         const branch_year = [];
@@ -21,9 +21,7 @@ export const BranchProvider = ({ children }) => {
     const contextValue = useMemo(() => ({
         branches,
         branch_year,
-        isLoading,
-        isError
-    }), [branches, isLoading, isError]);
+    }), [branches, branch_year]);
 
     return (
         <BranchContext.Provider value={contextValue}>
@@ -35,22 +33,16 @@ export const BranchProvider = ({ children }) => {
 //courses table context
 const CourseContext = createContext();
 export const CourseProvider = ({ branch_tag, name, children }) => {
-    const { data: courses, isLoading: coursesLoading, isError: coursesError } = useGetCoursesByBranchTag(branch_tag);
-    const { data: profCourses, isLoading: profCoursesLoading, isError: profCoursesError, refetch: refetchProfCourses } = useGetProfCoursesByName(name);
-    const { data: allCourses, isLoading: allCoursesLoading, isError: allCoursesError } = useGetAllCourses();
+    const { data: courses } = getCoursesByBranchTag(branch_tag);
+    const { data: profCourses, refetch: refetchProfCourses } = getCoursesByProf(name);
+    const { data: allCourses } = getAllCourses();
 
     const contextValue = useMemo(() => ({
         courses,
-        coursesLoading,
-        coursesError,
         profCourses,
-        profCoursesLoading,
-        profCoursesError,
         refetchProfCourses,
         allCourses,
-        allCoursesLoading,
-        allCoursesError
-    }), [courses, coursesLoading, coursesError, profCourses, profCoursesLoading, profCoursesError, refetchProfCourses, allCourses, allCoursesLoading, allCoursesError]);
+    }), [courses, profCourses, refetchProfCourses, allCourses]);
 
     return (
         <CourseContext.Provider value={contextValue}>
@@ -62,13 +54,11 @@ export const CourseProvider = ({ branch_tag, name, children }) => {
 // Profs table with branch_tag parameter
 const ProfsContext = createContext();
 export const ProfsProvider = ({ branch_tag, children }) => {
-    const { data: profsBranchTag, isLoading: isProfsBranchTagLoading, isError: isProfsBranchTagError } = useGetProfsByBranchTag(branch_tag);
+    const { data: profsBranchTag } = getProfsByBranchTag(branch_tag);
 
     const contextValue = useMemo(() => ({
         profsBranchTag,
-        isProfsBranchTagLoading,
-        isProfsBranchTagError
-    }), [profsBranchTag, isProfsBranchTagLoading, isProfsBranchTagError]);
+    }), [profsBranchTag]);
 
     return (
         <ProfsContext.Provider value={contextValue}>
@@ -79,14 +69,12 @@ export const ProfsProvider = ({ branch_tag, children }) => {
 
 const GroupContext = createContext();
 export const GroupProvider = ({ children, ownerBranch }) => {
-    const { data: groupsByBranch, isLoading: groupsByBranchLoading, isError: groupsByBranchError, refetch: refetchGroupsByBranch } = useGroupByBranch(ownerBranch);
+    const { data: groupsByBranch, refetch: refetchGroupsByBranch } = getGroupsByBranch(ownerBranch);
 
     const contextValue = useMemo(() => ({
         groupsByBranch,
-        groupsByBranchLoading,
-        groupsByBranchError,
         refetchGroupsByBranch
-    }), [groupsByBranch, groupsByBranchLoading, groupsByBranchError, refetchGroupsByBranch]);
+    }), [groupsByBranch, refetchGroupsByBranch]);
 
     return (
         <GroupContext.Provider value={contextValue}>

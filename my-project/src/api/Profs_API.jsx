@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 
 //get branches API
-export const useGetAllBranches = () => {
+export const getAllBranches = () => {
     const fetchBranches = async () => {
         try {
             const response = await axios.get('/api/branches');
@@ -16,7 +16,7 @@ export const useGetAllBranches = () => {
     return useQuery('branchTags', fetchBranches);
 };
 //get profs API
-export const useGetProfsByBranchTag = (branch_tag) => {
+export const getProfsByBranchTag = (branch_tag) => {
     return useQuery(
         ['profsData', branch_tag],
         async () => {
@@ -30,7 +30,7 @@ export const useGetProfsByBranchTag = (branch_tag) => {
     );
 };
 //get courses API
-export const useGetCoursesByBranchTag = (branch_tag) => {
+export const getCoursesByBranchTag = (branch_tag) => {
     return useQuery(
         'courseData',
         async () => {
@@ -40,9 +40,9 @@ export const useGetCoursesByBranchTag = (branch_tag) => {
     );
 };
 
-export const useGetProfCoursesByName = (name) => {
+export const getCoursesByProf = (name) => {
     return useQuery(
-        'profCoursesData',
+        'CoursesByProf',
         async () => {
             const response = await axios.get(`/profs/myCourse/${name}`);
             return response.data;
@@ -50,7 +50,7 @@ export const useGetProfCoursesByName = (name) => {
     );
 };
 
-export const useGetAllCourses = () => {
+export const getAllCourses = () => {
     return useQuery(
         'allCoursesData',
         async () => {
@@ -60,7 +60,7 @@ export const useGetAllCourses = () => {
     );
 };
 //get groups API
-export const useGroupByBranch = (branch) => {
+export const getGroupsByBranch = (branch) => {
     return useQuery(
         ['groupsByBranch', branch],
         async () => {
@@ -117,7 +117,7 @@ export const useGetLabRoomByBranch = (branch) => {
         }
     );
 };
-export const useGetGroupsStatusByBranch = (branch) => {
+export const getGroupsStatusByBranch = (branch) => {
     return useQuery(
         ['groupsStatus', branch],
         async () => {
