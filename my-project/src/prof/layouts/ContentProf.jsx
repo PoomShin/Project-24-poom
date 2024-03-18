@@ -57,14 +57,10 @@ export default function ContentProf({ currentPage, userData }) {
                 groupsStatus={groupsStatus}
             />
 
-            {currentPage === 'Home' && (
-                <>
-                    <InsertCourseModal ownerBranchTag={branch} isVisible={isModalOpen} onClose={toggleModal} />
-                    <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold mb-4 py-2 px-4'
-                        text='Add Course' type='button' onClick={toggleModal}
-                    />
-                </>
-            )}
+            <InsertCourseModal ownerBranchTag={branch} isVisible={isModalOpen} onClose={toggleModal} />
+            <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold mb-4 py-2 px-4'
+                text='Add Course' type='button' onClick={toggleModal}
+            />
         </div>
     );
 }

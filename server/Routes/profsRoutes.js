@@ -9,7 +9,7 @@ router.post('/addGroups', async (req, res) => {
 
             const groupResult = await pool.query(
                 'INSERT INTO groups (course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, group_status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
-                [course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, group_status]
+                [course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room.toLowerCase(), group_status]
             );
 
             const groupId = groupResult.rows[0].id;

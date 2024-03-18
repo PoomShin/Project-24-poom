@@ -144,6 +144,8 @@ export const useAddGroupMutation = () => {
             queryClient.invalidateQueries('profCoursesData');
             queryClient.invalidateQueries('groups');
             queryClient.invalidateQueries('groupsStatus');
+            queryClient.invalidateQueries('allGroupsByBranch');
+            queryClient.invalidateQueries('labRooms');
         },
     });
 };
@@ -164,6 +166,8 @@ export const useDelCourseByName = () => {
             queryClient.invalidateQueries('profCoursesData');
             queryClient.invalidateQueries('groups');
             queryClient.invalidateQueries('groupsStatus');
+            queryClient.invalidateQueries('allGroupsByBranch');
+            queryClient.invalidateQueries('labRooms');
         },
     });
 };
