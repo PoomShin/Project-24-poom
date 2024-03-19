@@ -3,14 +3,14 @@ import { FaTimes } from 'react-icons/fa';
 export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContextMenu, contextMenuPosition, handleCloseContextMenu, group }) {
     return (
         isOpenContextMenu && canOpenContextMenu && (
-            <div className='absolute z-40 bg-white border rounded shadow-md'
+            <div className='absolute z-40 bg-white border rounded shadow-md shadow-stone-600 font-semibold'
                 style={{
                     top: contextMenuPosition.y + 10,
                     left: contextMenuPosition.x,
                 }}
             >
-                <div className='p-2 flex flex-col items-center shadow-md'>
-                    <button className='absolute top-0 right-0 mt-1 focus:outline-none' onClick={handleCloseContextMenu}>
+                <div className='p-2 flex flex-col items-center'>
+                    <button className='absolute top-0 right-0 focus:outline-none' onClick={handleCloseContextMenu}>
                         <FaTimes />
                     </button>
                     {group.group_status === 'accept' || group.group_status === 'waiting' ? (

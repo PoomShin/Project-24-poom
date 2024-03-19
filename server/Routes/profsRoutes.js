@@ -37,7 +37,6 @@ router.get('/myCourse/:name', async (req, res) => {
     try {
         const { name } = req.params;
 
-        // Fetch unique courses for the professor
         const courseQuery = `
             SELECT DISTINCT c.id, c.combined_code_curriculum, c.course_type
             FROM courses c
@@ -48,29 +47,27 @@ router.get('/myCourse/:name', async (req, res) => {
 
         const { rows: courseRows } = await pool.query(courseQuery, [name]);
 
-        // Extract course IDs
-        const courseIds = courseRows.map(row => row.id);
+        const groupQuery = `
+            SELECT g.*, ARRAY_AGG(gy.branch_year) AS branch_years
+            FROM groups g
+            JOIN group_branch_year gy ON g.id = gy.group_id
+            JOIN group_profs gp ON g.id = gp.group_id
+            WHERE gp.prof_name = $1
+            GROUP BY g.id
+        `;
+        const { rows: groupRows } = await pool.query(groupQuery, [name]);
 
-        // Fetch all groups and branch_years for each course
-        const courseDataPromises = courseIds.map(async courseId => {
-            const groupQuery = `
-                SELECT g.*, ARRAY_AGG(gy.branch_year) AS branch_years
-                FROM groups g
-                JOIN group_branch_year gy ON g.id = gy.group_id
-                WHERE g.course_id = $1
-                GROUP BY g.id
-            `;
-            const { rows: groupRows } = await pool.query(groupQuery, [courseId]);
-            return groupRows;
+        const groupsByCourse = {};
+        groupRows.forEach(group => {
+            if (!groupsByCourse[group.course_id]) {
+                groupsByCourse[group.course_id] = [];
+            }
+            groupsByCourse[group.course_id].push(group);
         });
 
-        // Wait for all course data queries to finish
-        const courseData = await Promise.all(courseDataPromises);
-
-        // Combine the course data with branch_years
-        const result = courseRows.map((courseRow, index) => ({
+        const result = courseRows.map(courseRow => ({
             ...courseRow,
-            groups: courseData[index]
+            groups: groupsByCourse[courseRow.id] || []
         }));
 
         res.json(result);

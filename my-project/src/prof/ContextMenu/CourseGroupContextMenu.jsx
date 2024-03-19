@@ -18,7 +18,7 @@ export default function CourseGroupContextMenu({ courseId, position, onClose }) 
     };
 
     return (
-        <div className='absolute z-40 bg-gray-800 border border-gray-700 rounded shadow-md text-white' style={{
+        <div className='absolute z-50 bg-gray-800 border border-gray-700 rounded shadow-md font-semibold text-white' style={{
             top: y + 10,
             left: x,
         }}>

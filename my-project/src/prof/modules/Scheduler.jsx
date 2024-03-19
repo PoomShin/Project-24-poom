@@ -14,7 +14,7 @@ export default function Scheduler({ userData, curPage, curBranch, curBranchYear,
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
-            group.branch_year === curBranchYear && (curPage !== 'Prof' || group.profs.includes(curProf));
+            group.branch_year === curBranchYear && (curPage !== 'Prof' || group.profs.includes(curProf)) && group.group_status !== 'reject';
 
         return groupsStatus.filter(filterFunction);
     }, [groupsStatus, curBranchYear, curPage, curProf]);
