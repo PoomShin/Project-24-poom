@@ -1,13 +1,10 @@
 import React, { useMemo } from 'react';
-import { useGroupContext } from '../../context/Prof-Context';
 import GroupItem from '../components/GroupItem';
 import AddGroup from './AddGroup';
 
 const getBackgroundColor = isLab => isLab ? 'bg-orange-100' : 'bg-green-100';
 
-export default function InsertGroups({ creditHours, lectureGroups, labGroups, mergedGroups, setLectureGroups, setLabGroups, setMergedGroups, setDisableSubmit }) {
-    const { groupsByBranch } = useGroupContext();
-
+export default function InsertGroups({ creditHours, lectureGroups, labGroups, mergedGroups, setLectureGroups, setLabGroups, setDisableSubmit }) {
     const handleAddGroup = (section, setter) => setter(prevSections => [...prevSections, section]);
 
     const handleDeleteGroup = (groupNum, isLab) => {
@@ -29,11 +26,10 @@ export default function InsertGroups({ creditHours, lectureGroups, labGroups, me
                     onAddSection={section => handleAddGroup(section, isLab ? setLabGroups : setLectureGroups)}
                     creditHours={creditHours} isLab={isLab}
                     setDisableSubmit={setDisableSubmit}
-                    groupsByBranch={groupsByBranch}
                 />
             </div>
         </>
-    ), [creditHours, mergedGroups, handleAddGroup, setLectureGroups, setLabGroups, groupsByBranch]);
+    ), [creditHours, mergedGroups, handleAddGroup, setLectureGroups, setLabGroups]);
 
     return (
         <div className='overflow-x-scroll flex flex-col gap-y-2 w-10/12'>

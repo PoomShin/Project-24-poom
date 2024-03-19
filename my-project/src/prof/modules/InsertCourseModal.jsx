@@ -136,7 +136,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                     <InsertGroups
                         creditHours={creditHours}
                         lectureGroups={lectureGroups} labGroups={labGroups} mergedGroups={mergedGroups}
-                        setLectureGroups={setLectureGroups} setLabGroups={setLabGroups} setMergedGroups={setMergedGroups}
+                        setLectureGroups={setLectureGroups} setLabGroups={setLabGroups}
                         setDisableSubmit={setDisableSubmit}
                     />
 

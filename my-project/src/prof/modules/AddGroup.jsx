@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useProfsContext, useBranchesContext } from '../../context/Prof-Context';
+import { useProfsContext, useBranchesContext, useGroupContext } from '../../context/Prof-Context';
 import { TextInput, SelectInput, SelectBranchYear, SelectProf } from '../components/AddGroupComponents';
 import AlertModal from '../../public/AlertModal';
 import plusIcon from '../../assets/plus.png';
@@ -28,14 +28,15 @@ const generateTimeOptions = () => {
 
 const timeOptions = generateTimeOptions();
 
-export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit, groupsByBranch }) {
+export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit }) {
     const { profsBranchTag } = useProfsContext();
     const { branch_year } = useBranchesContext();
+    const { groupsByBranch } = useGroupContext();
 
     const [isFormVisible, setIsFormVisible] = useState(false);
-    const [alertMessage, setAlertMessage] = useState('');
     const [isInvalidTime, setIsInvalidTime] = useState(false);
     const [isDuplicate, setIsDuplicate] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     const [formData, setFormData] = useState({
         group_num: '',
@@ -58,7 +59,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
         }));
     }, []);
 
-    const handleShowForm = useCallback(() => {
+    const handleFormToggle = useCallback(() => {
         setDisableSubmit(prev => !prev);
         setIsFormVisible(prevState => !prevState);
     }, [setDisableSubmit]);
@@ -66,15 +67,14 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
     const handleAdd = useCallback(async (e) => {
         e.preventDefault();
 
-        const conflictingProfessor = groupsByBranch.find(group =>
+        const overlapWithYourself = groupsByBranch.find(group =>
             group.prof_names.some(profName => formData.prof_name.includes(profName)) && // Check if any professor name in group matches any professor name in formData.prof_name
             group.day_of_week === formData.day_of_week &&
             ((simplifyTime(group.start_time) >= formData.start_time && simplifyTime(group.start_time) < formData.end_time) ||
                 (simplifyTime(group.end_time) > formData.start_time && simplifyTime(group.end_time) <= formData.end_time)
             )
         );
-
-        if (conflictingProfessor) {
+        if (overlapWithYourself) {
             setAlertMessage(`${formData.prof_name.join(', ')} already have a course at this time (${formData.day_of_week} ${formData.start_time}-${formData.end_time}).`);
             setIsDuplicate(true);
             return;
@@ -91,7 +91,6 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
             (section.day_of_week === formData.day_of_week &&
                 (section.start_time === formData.start_time || section.end_time === formData.end_time))
         );
-
         if (isDuplicate) {
             setAlertMessage('Duplicate group or day and time');
             setIsDuplicate(true);
@@ -104,8 +103,8 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
             prof_name: [],
             branch_year: []
         }));
-        handleShowForm();
-    }, [formData, groupsByBranch, mergedGroups, onAddSection, handleShowForm]);
+        handleFormToggle();
+    }, [formData, groupsByBranch, mergedGroups, onAddSection, handleFormToggle]);
 
     useEffect(() => {
         const hours = isLab ? creditHours.labHours : creditHours.lectureHours;
@@ -130,7 +129,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
                     <form onSubmit={handleAdd}>
                         <div className='absolute top-0 right-0 flex text-xs text-white mt-1 mr-1'>
                             <button className='bg-green-500 hover:bg-green-700 rounded mr-2 px-2 py-1' type='submit'>Add</button>
-                            <button className='bg-red-500 hover:bg-red-700 rounded px-2 py-1' type='button' onClick={handleShowForm}>Cancel</button>
+                            <button className='bg-red-500 hover:bg-red-700 rounded px-2 py-1' type='button' onClick={handleFormToggle}>Cancel</button>
                         </div>
 
                         <div className='flex self-center text-xs text-white'>
@@ -158,7 +157,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
                             }
                         </div>
                     </form>
-                ) : <img src={plusIcon} alt='Add Section' className='h-24 self-center' onClick={handleShowForm} />}
+                ) : <img src={plusIcon} alt='Add Section' className='h-24 self-center' onClick={handleFormToggle} />}
             </div>
         </>
     );
