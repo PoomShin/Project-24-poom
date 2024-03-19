@@ -33,16 +33,16 @@ export const BranchProvider = ({ children }) => {
 //courses table context
 const CourseContext = createContext();
 export const CourseProvider = ({ branch_tag, name, children }) => {
-    const { data: courses } = getCoursesByBranchTag(branch_tag);
+    const { data: coursesBranch } = getCoursesByBranchTag(branch_tag);
     const { data: profCourses, refetch: refetchProfCourses } = getCoursesByProf(name);
     const { data: allCourses } = getAllCourses();
 
     const contextValue = useMemo(() => ({
-        courses,
+        coursesBranch,
         profCourses,
         refetchProfCourses,
         allCourses,
-    }), [courses, profCourses, refetchProfCourses, allCourses]);
+    }), [coursesBranch, profCourses, refetchProfCourses, allCourses]);
 
     return (
         <CourseContext.Provider value={contextValue}>
@@ -54,11 +54,11 @@ export const CourseProvider = ({ branch_tag, name, children }) => {
 // Profs table with branch_tag parameter
 const ProfsContext = createContext();
 export const ProfsProvider = ({ branch_tag, children }) => {
-    const { data: profsBranchTag } = getProfsByBranchTag(branch_tag);
+    const { data: profsBranch } = getProfsByBranchTag(branch_tag);
 
     const contextValue = useMemo(() => ({
-        profsBranchTag,
-    }), [profsBranchTag]);
+        profsBranch,
+    }), [profsBranch]);
 
     return (
         <ProfsContext.Provider value={contextValue}>

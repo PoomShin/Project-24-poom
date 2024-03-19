@@ -1,0 +1,76 @@
+import React from 'react';
+import { useBranchesContext, useProfsContext } from '../../context/Prof-Context';
+import { useGetLabRoomByBranch } from '../../api/Profs_API';
+import { IconData } from '../data/IconData';
+
+const HeaderSelect = ({ colStart, defaultSelect, options = [], value, handleChange }) => (
+    <div className={`relative ${colStart} flex`}>
+        <select
+            className='px-8 py-2 border rounded-sm font-semibold text-white bg-teal-800 hover:bg-teal-900 focus:outline-none focus:border-asparagus focus:ring focus:ring-asparagus/50'
+            value={value}
+            onChange={e => handleChange(e.target.value)}
+        >
+            {defaultSelect && <option value=''>{defaultSelect}</option>}
+            {options.map(option => (
+                <option key={option.value} value={option.value} disabled={option.disabled}>
+                    {option.label}
+                </option>
+            ))}
+        </select>
+    </div>
+);
+
+const MemoizedHeaderSelect = React.memo(HeaderSelect);
+
+export default function ContentProfHeader(props) {
+    const { page, branch, branchYear, profName, labRoom, onBranchChange, onBranchYearChange, onProfChange, onLabRoomChange } = props;
+    const { branches = [] } = useBranchesContext();
+    const { profsBranch } = useProfsContext();
+    const { data: labRoomData } = useGetLabRoomByBranch(branch);
+    const icon = IconData[page];
+
+    return (
+        <div className='overflow-auto grid grid-cols-10 items-center bg-light_blue p-4'>
+            <div className='flex gap-2 items-center col-start-1'>
+                <img src={icon} className='h-10' alt='' />
+                <p className='text-3xl font-semibold text-teal-950'>{page}</p>
+            </div>
+
+            <MemoizedHeaderSelect
+                colStart='col-start-3'
+                options={branches.map(branch => ({ value: branch.branch_tag, label: branch.branch_tag, disabled: props.profRole === 'prof' }))}
+                value={branch}
+                handleChange={onBranchChange}
+            />
+
+            {(page === 'Home' || page === 'Prof') && (
+                <MemoizedHeaderSelect
+                    colStart='col-start-5'
+                    defaultSelect='select year'
+                    options={Array.from({ length: 4 }, (_, i) => ({ value: `${branch}/${i + 1}`, label: `${branch}/${i + 1}`, disabled: false }))}
+                    value={branchYear}
+                    handleChange={onBranchYearChange}
+                />
+            )}
+            {page === 'Prof' ? (
+                <MemoizedHeaderSelect
+                    colStart='col-start-7'
+                    defaultSelect='select prof'
+                    options={profsBranch.map(prof => ({ value: prof.name, label: prof.name, disabled: false }))}
+                    value={profName}
+                    handleChange={onProfChange}
+                />
+            ) : (
+                page === 'Lab' && (
+                    <MemoizedHeaderSelect
+                        colStart='col-start-5'
+                        defaultSelect='select lab'
+                        options={labRoomData && labRoomData.map(lab => ({ value: lab, label: lab, disabled: false }))}
+                        value={labRoom}
+                        handleChange={onLabRoomChange}
+                    />
+                )
+            )}
+        </div>
+    );
+}

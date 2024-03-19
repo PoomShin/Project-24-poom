@@ -22,7 +22,7 @@ export default function Prof() {
                         <div className='grid grid-cols-20'>
                             {NavBarProfMemo}
                             <SideBarLeft currentPage={currentPage} setCurrentPage={setCurrentPage} />
-                            <ContentProf currentPage={currentPage} userData={userContextValues} />
+                            <ContentProf userData={userContextValues} currentPage={currentPage} />
                             <SideBarRight />
                         </div>
                     </GroupProvider>

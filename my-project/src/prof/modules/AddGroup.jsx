@@ -29,7 +29,7 @@ const generateTimeOptions = () => {
 const timeOptions = generateTimeOptions();
 
 export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit }) {
-    const { profsBranchTag } = useProfsContext();
+    const { profsBranch } = useProfsContext();
     const { branch_year } = useBranchesContext();
     const { groupsByBranch } = useGroupContext();
 
@@ -146,7 +146,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
                         </div>
 
                         <div className='flex flex-col self-center text-xs text-white mt-2'>
-                            <SelectProf formData={formData} setFormData={setFormData} profsBranchTag={profsBranchTag} />
+                            <SelectProf formData={formData} setFormData={setFormData} profsBranchTag={profsBranch} />
                             <div className='mb-2'></div>
                             <SelectBranchYear spanText='สาขา' spanClass={'ml-5 mr-4'} formData={formData} setFormData={setFormData} inputType='branch_year' data={branch_year} isProf={false} />
 

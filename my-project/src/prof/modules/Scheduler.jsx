@@ -6,11 +6,14 @@ import GroupsNotification from './GroupsNotification';
 import TimeRows from '../components/TimeRows';
 import DayRows from "./DayRows";
 
-export default function Scheduler({ userData, curPage, curBranch, curBranchYear, curProf, curLab, groupsStatus = [] }) {
+export default function Scheduler({ userData, groupsStatus = [], curPage, curBranch, curBranchYear, curProf, curLab }) {
     const { name: profName, role, branch_tag: profBranchTag } = userData;
-    const { data, refetch } = useAllGroupsByBranch(curBranch);
+    const { data: allBranchGroups, refetch: refetchAllBranchGroups } = useAllGroupsByBranch(curBranch);
 
     const [seeCourseName, setSeeCourseName] = useState(true);
+    const toggleSeeCourseName = () => {
+        setSeeCourseName(prevState => !prevState);
+    };
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
@@ -24,10 +27,6 @@ export default function Scheduler({ userData, curPage, curBranch, curBranchYear,
         filteredGroupsStatus.forEach(group => counts[group.group_status]++);
         return counts;
     }, [filteredGroupsStatus]);
-
-    const toggleSeeCourseName = () => {
-        setSeeCourseName(prevState => !prevState);
-    };
 
     const overlappingCount = useMemo(() => calculateOverlappingCount(filteredGroupsStatus), [filteredGroupsStatus]);
 
@@ -50,8 +49,8 @@ export default function Scheduler({ userData, curPage, curBranch, curBranchYear,
                     profBranch={profBranchTag}
                     branchYear={curBranchYear}
                     seeCourseName={seeCourseName}
-                    groupsByBranch={data}
-                    groupsByBranchRefetch={refetch}
+                    groupsByBranch={allBranchGroups}
+                    groupsByBranchRefetch={refetchAllBranchGroups}
                 />
             </div>
         </>

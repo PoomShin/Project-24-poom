@@ -8,33 +8,12 @@ import AlertModal from '../../public/AlertModal';
 import InputSection from '../components/InputSelect';
 import ButtonCom from '../components/ButtonCom';
 import InsertGroups from './InsertGroups';
-
-const initialCourseInfoState = {
-    selectedCourse: '',
-    id: null,
-    th_name: '',
-    eng_name: '',
-    credit: '',
-    course_type: '',
-};
-
-const parseCredits = credits => {
-    const matches = credits.match(/(\d+)\((\d+)-(\d+)-(\d+)\)|(\d+)/);
-    if (matches) {
-        const [, totalHours, lectureHours, labHours, selfStudyHours, singleCredit] = matches;
-        if (lectureHours && labHours && selfStudyHours) {
-            return { lectureHours: parseInt(lectureHours), labHours: parseInt(labHours), selfStudyHours: parseInt(selfStudyHours) };
-        } else if (totalHours) {
-            return { lectureHours: parseInt(totalHours), labHours: 0, selfStudyHours: 0 };
-        } else if (singleCredit) {
-            return { lectureHours: parseInt(singleCredit), labHours: 0, selfStudyHours: 0 };
-        }
-    }
-    return { lectureHours: 0, labHours: 0, selfStudyHours: 0 };
-};
+//data
+import { initialCourseInfoState } from '../data/initialData';
+import { parseCredits } from '../data/functions';
 
 export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }) {
-    const { courses } = useCoursesContext(); //for checking if this prop have ovelappign course with yourself
+    const { coursesBranch } = useCoursesContext(); //for checking if this prop have ovelappign course with yourself
     const addGroupMutation = useAddGroupMutation();
 
     const [courseInfo, setCourseInfo] = useState(initialCourseInfoState);
@@ -88,7 +67,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     }
 
     useEffect(() => {
-        const selectedCourseData = courses?.find(course => course.combined_code_curriculum === courseInfo.selectedCourse);
+        const selectedCourseData = coursesBranch?.find(course => course.combined_code_curriculum === courseInfo.selectedCourse);
         if (selectedCourseData) {
             setCourseInfo(prevState => ({
                 ...prevState,
@@ -113,7 +92,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                                 value={courseInfo.selectedCourse}
                                 onChange={handleCourseChange}
                                 placeholder='Select a course'
-                                options={courses}
+                                options={coursesBranch}
                                 optionKey='combined_code_curriculum'
                             />
                             <input className='w-72 rounded-lg bg-blue-100 mx-2 p-1' placeholder='thname' value={courseInfo.th_name} readOnly />
