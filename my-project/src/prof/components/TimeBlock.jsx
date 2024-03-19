@@ -32,23 +32,18 @@ export default function TimeBlock({
         event.preventDefault();
     };
 
-    const handleCloseContextMenu = () => {
-        onCloseContextMenu(); // Call parent's onCloseContextMenu handler
-    };
-
-    const borderColorClass = (() => {
-        const borderClass = 'border-2 rounded-sm border-solid border-opacity-100 '
+    const getBorderColorClass = () => {
+        const borderClass = 'border-2 rounded-sm border-solid border-opacity-100 ';
         switch (group.group_status) {
             case 'waiting':
                 return borderClass + 'border-orange-500';
             case 'accept':
-                return borderClass + 'border-transparent';
             case 'reject':
                 return borderClass + 'border-transparent';
             default:
                 return borderClass + 'border-gray-700';
         }
-    })();
+    };
 
     return (
         <>
@@ -56,10 +51,10 @@ export default function TimeBlock({
                 isOpenContextMenu={isOpenContextMenu}
                 canOpenContextMenu={canOpenContextMenu}
                 contextMenuPosition={contextMenuPosition}
-                handleCloseContextMenu={handleCloseContextMenu}
-                groupStatus={group.group_status}
+                handleCloseContextMenu={onCloseContextMenu}
+                group={group}
             />
-            <div className={`relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer p-2 ${colStart} ${colEnd} ${bgStyle} ${borderColorClass}`}
+            <div className={`relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer p-2 ${colStart} ${colEnd} ${bgStyle} ${getBorderColorClass()}`}
                 onContextMenu={canOpenContextMenu ? handleContextMenu : disableBrowserMenu}
             >
                 <p className={`flex justify-between font-semibold text-black ${(group.group_status === 'accept' || group.group_status === 'reject') && 'text-white'}`}>

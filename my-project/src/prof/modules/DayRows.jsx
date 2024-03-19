@@ -5,10 +5,22 @@ import gridColData from "../data/gridColData";
 import DayBlock from "../components/DayBlock";
 import TimeBlock from "../components/TimeBlock";
 
+const getColorForCourseType = (courseType) => {
+    const colorMap = {
+        'เฉพาะบังคับ': 'bg-red-300',
+        'เฉพาะเลือก': 'bg-orange-400',
+        'เฉพาะทั่วไป': 'bg-yellow-400',
+        'อื่นๆ': 'bg-yellow-400',
+        'บริการ': 'bg-green-400',
+    };
+    return colorMap[courseType] || 'bg-green-200';
+};
+
 const getColumnClass = (time, type) => gridColData[type][parseFloat(time)] || '';
 
 export default function DayRows({ page, myProfName, curProf, curLab, profRole, profBranch, branchYear, seeCourseName, groupsByBranch, groupsByBranchRefetch }) {
     const { data: groupsByBranchYear, refetch } = useGroupsByBranchYear(branchYear);
+
     const [fullDayBlock, setFullDayBlock] = useState('');
     const [openContextMenu, setOpenContextMenu] = useState(null);
     const contextMenuRef = useRef(null);
@@ -27,17 +39,6 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
     };
 
     const getBgStyle = (group, day) => {
-        const getColorForCourseType = (courseType) => {
-            const colorMap = {
-                'เฉพาะบังคับ': 'bg-red-300',
-                'เฉพาะเลือก': 'bg-orange-400',
-                'เฉพาะทั่วไป': 'bg-yellow-400',
-                'อื่นๆ': 'bg-yellow-400',
-                'บริการ': 'bg-green-400',
-            };
-            return colorMap[courseType] || 'bg-green-200';
-        };
-
         const allGroupsForDay = sortedGroups[day];
 
         if (group.group_status === 'accept') return 'bg-emerald-800';
@@ -93,7 +94,7 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
         if (!groupsToSort) return {};
 
         return DAYS_OF_WEEK.reduce((acc, day) => {
-            const filteredGroups = filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day))
+            const filteredGroups = filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day && group.group_status !== 'reject'))
                 .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
             acc[day] = filteredGroups;
             return acc;

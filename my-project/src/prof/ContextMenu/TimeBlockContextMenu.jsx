@@ -1,4 +1,6 @@
-export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContextMenu, contextMenuPosition, handleCloseContextMenu, groupStatus }) {
+import { FaTimes } from 'react-icons/fa';
+
+export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContextMenu, contextMenuPosition, handleCloseContextMenu, group }) {
     return (
         isOpenContextMenu && canOpenContextMenu && (
             <div className='absolute z-40 bg-white border rounded shadow-md'
@@ -7,10 +9,18 @@ export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContext
                     left: contextMenuPosition.x,
                 }}
             >
-                <div className='p-2 flex flex-col items-center'>
-                    <button className='block w-full py-1 px-2 text-left hover:bg-gray-200'>Accept Group</button>
-                    <button className='block w-full py-1 px-2 text-left hover:bg-gray-200'>Delete Group</button>
-                    <button className='block w-full py-1 px-2 text-left hover:bg-gray-200' onClick={handleCloseContextMenu}>Close Menu</button>
+                <div className='p-2 flex flex-col items-center shadow-md'>
+                    <button className='absolute top-0 right-0 mt-1 focus:outline-none' onClick={handleCloseContextMenu}>
+                        <FaTimes />
+                    </button>
+                    {group.group_status === 'accept' || group.group_status === 'waiting' ? (
+                        <>
+                            <button className='block w-full py-1 px-2 text-left hover:bg-gray-200' onClick={() => handleAcceptGroup(group)}>Accept Group</button>
+                            <button className='block w-full py-1 px-2 text-left hover:bg-gray-200' onClick={() => handleRejectGroup(group)}>Reject Group</button>
+                        </>
+                    ) : group.group_status === 'accept' ? (
+                        <button className='block w-full py-1 px-2 text-left hover:bg-gray-200' onClick={() => handleResetGroup(group)}>Reset Group</button>
+                    ) : null}
                 </div>
             </div>
         )

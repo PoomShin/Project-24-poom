@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useCoursesContext } from '../../context/Prof-Context';
 import { useAddGroupMutation } from '../../api/Profs_API';
+import { useMergedGroups } from '../CustomHook/useMergedGroups';
 //Components
 import AlertModal from '../../public/AlertModal';
 import InputSection from '../components/InputSelect';
@@ -41,7 +42,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
 
     const [lectureGroups, setLectureGroups] = useState([]);
     const [labGroups, setLabGroups] = useState([]);
-    const [mergedGroups, setMergedGroups] = useState([]);
+    const mergedGroups = useMergedGroups(lectureGroups, labGroups);
 
     const [openAlert, setOpenAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
@@ -79,7 +80,6 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     };
 
     const closeModal = () => {
-        handleCourseChange('');
         onClose();
     }
     const closeAlert = () => {
@@ -98,17 +98,9 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                 credit: selectedCourseData.credit,
                 course_type: selectedCourseData.course_type
             }));
+            setCreditHours(parseCredits(courseInfo.credit));
         } else setCourseInfo(initialCourseInfoState);
-    }, [courseInfo.selectedCourse, courses]);
-
-    useEffect(() => {
-        const { credit } = courseInfo;
-        setCreditHours(parseCredits(credit));
-    }, [courseInfo]);
-
-    useEffect(() => {
-        setMergedGroups([...lectureGroups, ...labGroups]);
-    }, [lectureGroups, labGroups]); //update mergedGroups
+    }, [courseInfo.selectedCourse, courseInfo.credit]);
 
     return isVisible ? (
         createPortal(
