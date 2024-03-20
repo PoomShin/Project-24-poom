@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useAllGroupsByBranch } from '../../api/Profs_API';
 import { calculateOverlappingCount } from '../data/functions';
 import ViewCourseButton from '../components/viewCourseButton';
@@ -11,9 +11,7 @@ export default function Scheduler({ userData, groupsStatus = [], curPage, curBra
     const { data: allBranchGroups, refetch: refetchAllBranchGroups } = useAllGroupsByBranch(curBranch);
 
     const [seeCourseName, setSeeCourseName] = useState(true);
-    const toggleSeeCourseName = () => {
-        setSeeCourseName(prevState => !prevState);
-    };
+    const toggleSeeCourseName = () => setSeeCourseName(prevState => !prevState);
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
@@ -29,6 +27,10 @@ export default function Scheduler({ userData, groupsStatus = [], curPage, curBra
     }, [filteredGroupsStatus]);
 
     const overlappingCount = useMemo(() => calculateOverlappingCount(filteredGroupsStatus), [filteredGroupsStatus]);
+
+    useEffect(() => {
+        refetchAllBranchGroups();
+    }, [curPage, curLab]);
 
     return (
         <>
@@ -50,7 +52,6 @@ export default function Scheduler({ userData, groupsStatus = [], curPage, curBra
                     branchYear={curBranchYear}
                     seeCourseName={seeCourseName}
                     groupsByBranch={allBranchGroups}
-                    groupsByBranchRefetch={refetchAllBranchGroups}
                 />
             </div>
         </>

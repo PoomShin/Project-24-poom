@@ -33,6 +33,15 @@ export const generateTimeOptions = () => {
     return options;
 };
 
+export const generateTimeSlots = () => {
+    const timeSlots = [];
+    for (let hour = 8; hour < 24; hour++) {
+        const formattedHour = hour.toString().padStart(2, '0');
+        timeSlots.push(`${formattedHour}:00`);
+    }
+    return timeSlots;
+};
+
 export const calculateOverlappingCount = (filteredGroupsStatus) => {
     let overlappingCount = 0;
 

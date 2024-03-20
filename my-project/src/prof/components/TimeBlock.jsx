@@ -1,48 +1,49 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { GRID_COL_DATA } from '../data/SchedulerData';
 import TimeBlockContentMenu from '../ContextMenu/TimeBlockContextMenu';
 
+const getColumnClass = (time, type) => GRID_COL_DATA[type][parseFloat(time)] || '';
+
 export default function TimeBlock({
-    colStart, colEnd, bgStyle,
+    bgStyle,
     group,
-    myProfName, profRole, profBranch,
+    myProfName,
+    profRole,
+    profBranch,
     branchYear,
     seeCourseName,
-    onContextMenu, isOpenContextMenu, onCloseContextMenu,
+    onContextMenu,
+    isOpenContextMenu,
+    onCloseContextMenu,
 }) {
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
-    const groupBranchYear = branchYear.substring(0, 3);
-    const canOpenContextMenu = profRole === 'prof(SM)' && groupBranchYear === profBranch;
+    const groupBranchYear = useMemo(() => branchYear.substring(0, 3), [branchYear]);
+    const canOpenContextMenu = useMemo(() => profRole === 'prof(SM)' && groupBranchYear === profBranch, [profRole, groupBranchYear, profBranch]);
 
-    const displayNames = Array.isArray(group.prof_names) ? (
-        group.prof_names.length > 1 ? (
-            `${myProfName.split(' ')[0]}, ${group.prof_names.filter(name => name !== myProfName).map(name => name.split(' ')[0]).join(', ').slice(0, 25 - myProfName.length)}${group.prof_names.join(', ').length > 25 ? '...' : ''}`
-        ) : (
-            group.prof_names[0] === myProfName ? `${myProfName.split(' ')[0].slice(0, 25)}${myProfName.length > 25 ? '...' : ''}` : group.prof_names[0].split(' ')[0]
-        )
-    ) : group.prof_names;
+    const displayNames = useMemo(() => {
+        if (!Array.isArray(group.prof_names)) return group.prof_names;
+        if (group.prof_names.length === 1) {
+            return group.prof_names[0] === myProfName ? `${myProfName.split(' ')[0].slice(0, 25)}${myProfName.length > 25 ? '...' : ''}` : group.prof_names[0].split(' ')[0];
+        }
+        const otherProfNames = group.prof_names.filter(name => name !== myProfName).map(name => name.split(' ')[0]).join(', ');
+        return `${myProfName.split(' ')[0]}, ${otherProfNames.slice(0, 25 - myProfName.length)}${otherProfNames.length > 25 ? '...' : ''}`;
+    }, [group.prof_names, myProfName]);
+
+    const getBorderColorClass = useMemo(() => {
+        const borderClass = 'border-2 rounded-sm border-solid border-opacity-100 ';
+        switch (group.group_status) {
+            case 'waiting':
+                return borderClass + 'border-orange-500';
+            default:
+                return borderClass + 'border-transparent';
+        }
+    }, [group.group_status]);
 
     const handleContextMenu = (event) => {
         event.preventDefault();
         setContextMenuPosition({ x: event.clientX, y: event.clientY });
         onContextMenu(event);
-    };
-
-    const disableBrowserMenu = (event) => {
-        event.preventDefault();
-    };
-
-    const getBorderColorClass = () => {
-        const borderClass = 'border-2 rounded-sm border-solid border-opacity-100 ';
-        switch (group.group_status) {
-            case 'waiting':
-                return borderClass + 'border-orange-500';
-            case 'accept':
-            case 'reject':
-                return borderClass + 'border-transparent';
-            default:
-                return borderClass + 'border-gray-700';
-        }
     };
 
     return (
@@ -54,8 +55,10 @@ export default function TimeBlock({
                 handleCloseContextMenu={onCloseContextMenu}
                 group={group}
             />
-            <div className={`relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer p-2 ${colStart} ${colEnd} ${bgStyle} ${getBorderColorClass()}`}
-                onContextMenu={canOpenContextMenu ? handleContextMenu : disableBrowserMenu}
+            <div
+                className={`relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer p-2 
+                ${getColumnClass(group.start_time, 'start')} ${getColumnClass(group.end_time, 'end')} ${bgStyle} ${getBorderColorClass}`}
+                onContextMenu={canOpenContextMenu ? handleContextMenu : (event) => event.preventDefault()}
             >
                 <p className={`flex justify-between font-semibold text-black ${(group.group_status === 'accept' || group.group_status === 'reject') && 'text-white'}`}>
                     <span>{group.combined_code_curriculum}</span>
@@ -72,4 +75,4 @@ export default function TimeBlock({
             </div>
         </>
     );
-};
+}
