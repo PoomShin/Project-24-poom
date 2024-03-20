@@ -7,8 +7,7 @@ import ContentProf from './layouts/ContentProf';
 import SideBarRight from './layouts/SideBarRight';
 
 export default function Prof() {
-    const { userContextValues } = useUserContext()
-    const { name = '', role = '', branch_tag = '', imageUrl = '' } = userContextValues || {};
+    const { name = '', role = '', branch_tag = '', imageUrl = '' } = useUserContext()?.userContextValues || {};
 
     const [currentPage, setCurrentPage] = useState('Home');
 
@@ -22,7 +21,7 @@ export default function Prof() {
                         <div className='grid grid-cols-20'>
                             {NavBarProfMemo}
                             <SideBarLeft currentPage={currentPage} setCurrentPage={setCurrentPage} />
-                            <ContentProf userData={userContextValues} currentPage={currentPage} />
+                            <ContentProf userData={{ name, role, branch_tag, imageUrl }} currentPage={currentPage} />
                             <SideBarRight />
                         </div>
                     </GroupProvider>

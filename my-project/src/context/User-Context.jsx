@@ -2,10 +2,6 @@ import { useState, createContext, useContext, useMemo, useEffect } from 'react';
 
 export const UserContext = createContext();
 
-export const useUserContext = () => {
-  return useContext(UserContext);
-};
-
 export default function UserProvider({ children }) {
   const [userContextValues, setUserContextValues] = useState(() => {
     try {
@@ -25,7 +21,7 @@ export default function UserProvider({ children }) {
     }
   }, [userContextValues]);
 
-  const contextValue = useMemo(() => ({ userContextValues, setUserContextValues }), [userContextValues, setUserContextValues]);
+  const contextValue = { userContextValues, setUserContextValues };
 
   return (
     <UserContext.Provider value={contextValue}>
@@ -33,3 +29,5 @@ export default function UserProvider({ children }) {
     </UserContext.Provider>
   );
 }
+
+export const useUserContext = () => useContext(UserContext);

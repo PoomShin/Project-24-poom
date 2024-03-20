@@ -53,7 +53,6 @@ export default function ContentProf({ userData, currentPage }) {
             />
 
             <Scheduler
-                userData={userData}
                 groupsStatus={groupsBranchStatus}
                 curPage={currentPage}
                 curBranch={currentBranch}

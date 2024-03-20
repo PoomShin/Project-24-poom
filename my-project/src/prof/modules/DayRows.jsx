@@ -1,11 +1,14 @@
 import { useMemo, useState, useRef, useEffect } from "react";
+import { useUserContext } from "../../context/User-Context";
 import { useGroupsByBranchYear } from "../../api/Profs_API";
 import { DAYS_OF_WEEK, PRIORITY_VALUES, COURSE_TYPE_COLOR_MAP, Days_COLOR_MAP } from "../data/SchedulerData";
 import TimeBlock from "../components/TimeBlock";
 
 const getColorForCourseType = (courseType) => COURSE_TYPE_COLOR_MAP[courseType] || 'bg-green-200';
 
-export default function DayRows({ page, myProfName, curProf, curLab, profRole, profBranch, branchYear, seeCourseName, groupsByBranch }) {
+export default function DayRows({ page, curProf, curLab, branchYear, seeCourseName, groupsByBranch }) {
+    const { name: myProfName, role: profRole, branch_tag: profBranch } = useUserContext().userContextValues;
+
     const { data: groupsByBranchYear, refetch: refetchGroupsByBranchYear } = useGroupsByBranchYear(branchYear);
     const contextMenuRef = useRef(null);
     const [fullDayBlock, setFullDayBlock] = useState('');
@@ -38,7 +41,6 @@ export default function DayRows({ page, myProfName, curProf, curLab, profRole, p
     const getBgStyle = (group, day) => {
         const allGroupsForDay = sortedGroups[day];
         if (group.group_status === 'accept') return 'bg-emerald-800';
-        if (group.group_status === 'reject') return 'bg-rose-800';
         const overlappingGroups = allGroupsForDay.filter(otherGroup =>
             (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
             (group.end_time > otherGroup.start_time && group.end_time <= otherGroup.end_time) ||

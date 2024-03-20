@@ -6,8 +6,7 @@ import GroupsNotification from './GroupsNotification';
 import TimeRows from '../components/TimeRows';
 import DayRows from "./DayRows";
 
-export default function Scheduler({ userData, groupsStatus = [], curPage, curBranch, curBranchYear, curProf, curLab }) {
-    const { name: profName, role, branch_tag: profBranchTag } = userData;
+export default function Scheduler({ groupsStatus = [], curPage, curBranch, curBranchYear, curProf, curLab }) {
     const { data: allBranchGroups, refetch: refetchAllBranchGroups } = useAllGroupsByBranch(curBranch);
 
     const [seeCourseName, setSeeCourseName] = useState(true);
@@ -44,11 +43,8 @@ export default function Scheduler({ userData, groupsStatus = [], curPage, curBra
                 <TimeRows />
                 <DayRows
                     page={curPage}
-                    myProfName={profName}
                     curProf={curProf}
                     curLab={curLab}
-                    profRole={role}
-                    profBranch={profBranchTag}
                     branchYear={curBranchYear}
                     seeCourseName={seeCourseName}
                     groupsByBranch={allBranchGroups}
