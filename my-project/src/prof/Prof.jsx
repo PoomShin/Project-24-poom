@@ -7,9 +7,9 @@ import ContentProf from './layouts/ContentProf';
 import SideBarRight from './layouts/SideBarRight';
 
 export default function Prof() {
-    const { name = '', role = '', branch_tag = '', imageUrl = '' } = useUserContext()?.userContextValues || {};
-
     const [currentPage, setCurrentPage] = useState('Home');
+
+    const { name = '', role = '', branch_tag = '', imageUrl = '' } = useUserContext()?.userContextValues || {};
 
     const NavBarProfMemo = useMemo(() => <NavbarProf name={name} role={role} img={imageUrl} />, [name, role, imageUrl]);
 

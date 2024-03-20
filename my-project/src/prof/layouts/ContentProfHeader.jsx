@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useBranchesContext, useProfsContext } from '../../context/Prof-Context';
 import { useGetLabRoomByBranch } from '../../api/Profs_API';
 import { IconData } from '../data/IconData';
@@ -22,14 +22,17 @@ const HeaderSelect = ({ colStart, defaultSelect, options = [], value, handleChan
 
 const MemoizedHeaderSelect = React.memo(HeaderSelect);
 
-export default function ContentProfHeader(props) {
-    const { page, branch, branchYear, profName, labRoom, onBranchChange, onBranchYearChange, onProfChange, onLabRoomChange } = props;
+export default function ContentProfHeader({ page, sharedState, onBranchChange, onBranchYearChange, onProfChange, onLabRoomChange }) {
+    const icon = IconData[page];
+    const { currentBranch, currentBranchYear, currentProfName, currentProfRole, currentLabRoom } = sharedState;
 
     const { branches = [] } = useBranchesContext();
-    const { profsBranch } = useProfsContext();
-    const { data: labRoomData } = useGetLabRoomByBranch(branch);
+    const { profsBranch = [] } = useProfsContext();
+    const { data: labRoomData = [] } = useGetLabRoomByBranch(currentBranch);
 
-    const icon = IconData[page];
+    const yearOptions = useMemo(() => (
+        Array.from({ length: 4 }, (_, i) => ({ value: `${currentBranch}/${i + 1}`, label: `${currentBranch}/${i + 1}`, disabled: false }))
+    ), [currentBranch]);
 
     return (
         <div className='overflow-auto grid grid-cols-10 items-center bg-light_blue p-4'>
@@ -40,8 +43,8 @@ export default function ContentProfHeader(props) {
 
             <MemoizedHeaderSelect
                 colStart='col-start-3'
-                options={branches.map(branch => ({ value: branch.branch_tag, label: branch.branch_tag, disabled: props.profRole === 'prof' }))}
-                value={branch}
+                options={branches.map(branch => ({ value: branch.branch_tag, label: branch.branch_tag, disabled: currentProfRole === 'prof' }))}
+                value={currentBranch}
                 handleChange={onBranchChange}
             />
 
@@ -49,8 +52,8 @@ export default function ContentProfHeader(props) {
                 <MemoizedHeaderSelect
                     colStart='col-start-5'
                     defaultSelect='select year'
-                    options={Array.from({ length: 4 }, (_, i) => ({ value: `${branch}/${i + 1}`, label: `${branch}/${i + 1}`, disabled: false }))}
-                    value={branchYear}
+                    options={yearOptions}
+                    value={currentBranchYear}
                     handleChange={onBranchYearChange}
                 />
             )}
@@ -59,7 +62,7 @@ export default function ContentProfHeader(props) {
                     colStart='col-start-7'
                     defaultSelect='select prof'
                     options={profsBranch.map(prof => ({ value: prof.name, label: prof.name, disabled: false }))}
-                    value={profName}
+                    value={currentProfName}
                     handleChange={onProfChange}
                 />
             ) : (
@@ -67,8 +70,8 @@ export default function ContentProfHeader(props) {
                     <MemoizedHeaderSelect
                         colStart='col-start-5'
                         defaultSelect='select lab'
-                        options={labRoomData && labRoomData.map(lab => ({ value: lab, label: lab, disabled: false }))}
-                        value={labRoom}
+                        options={labRoomData.map(lab => ({ value: lab, label: lab, disabled: false }))}
+                        value={currentLabRoom}
                         handleChange={onLabRoomChange}
                     />
                 )
