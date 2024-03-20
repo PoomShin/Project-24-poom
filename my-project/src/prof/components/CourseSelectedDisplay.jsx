@@ -1,16 +1,36 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Select from 'react-select';
 
+const CourseSelect = ({ value, placeholder, options, onChange }) => (
+    <Select
+        className='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500 w-48'
+        value={value ? { value, label: value } : null}
+        onChange={selectedOption => onChange(selectedOption?.value || '')}
+        options={options}
+        placeholder={placeholder}
+    />
+);
+
+const ReadOnlyInput = ({ placeholder, value, width }) => (
+    <input className={`rounded-lg bg-blue-100 mx-2 p-1 ${width}`}
+        placeholder={placeholder}
+        value={value}
+        readOnly
+    />
+);
+
 export default function CourseSelectedDisplay({ coursesBranch, courseInfo, onCourseChange }) {
-    const selectOptions = coursesBranch.map(option => ({
-        value: option.combined_code_curriculum,
-        label: option.combined_code_curriculum
-    }));
+    const selectOptions = useMemo(() => (
+        coursesBranch.map(option => ({
+            value: option.combined_code_curriculum,
+            label: option.combined_code_curriculum
+        }))
+    ), [coursesBranch]);
 
     return (
         <>
             <div className='flex'>
-                <SelectCourse
+                <CourseSelect
                     value={courseInfo.selectedCourse}
                     placeholder='Select a course'
                     options={selectOptions}
@@ -26,22 +46,3 @@ export default function CourseSelectedDisplay({ coursesBranch, courseInfo, onCou
         </>
     );
 }
-
-const SelectCourse = ({ value, placeholder, options, onChange }) => (
-    <Select
-        className='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500 w-48'
-        value={value ? { value, label: value } : null}
-        onChange={selectedOption => onChange(selectedOption?.value || '')}
-        options={options}
-        placeholder={placeholder}
-    />
-);
-
-const ReadOnlyInput = ({ placeholder, value, width }) => (
-    <input
-        className={`rounded-lg bg-blue-100 mx-2 p-1 ${width}`}
-        placeholder={placeholder}
-        value={value}
-        readOnly
-    />
-);

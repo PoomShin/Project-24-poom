@@ -17,7 +17,6 @@ export default function ContentProf({ userData, currentPage }) {
         currentProfRole: role,
         currentLabRoom: '',
     });
-    const { currentBranch, currentBranchYear, currentProfName, currentLabRoom } = sharedState;
 
     const handleBranchChange = selectedBranch => {
         setSharedState(prevState => ({
@@ -41,10 +40,10 @@ export default function ContentProf({ userData, currentPage }) {
         setIsModalOpen(prev => !prev)
     }, []);
 
-    const { data: groupsBranchStatus, refetch: refetchGroupBranchStatus } = getGroupsStatusByBranch(currentBranch);
+    const { data: groupsBranchStatus, refetch: refetchGroupBranchStatus } = getGroupsStatusByBranch(sharedState.currentBranch);
     useEffect(() => {
         refetchGroupBranchStatus();
-    }, [currentBranch]);
+    }, [sharedState.currentBranch]);
 
     return (
         <ContentProfStateContext.Provider value={sharedState}>
@@ -60,10 +59,7 @@ export default function ContentProf({ userData, currentPage }) {
 
                 <Scheduler
                     selectedPage={currentPage}
-                    selectedBranch={currentBranch}
-                    selectedBranchYear={currentBranchYear}
-                    selectedProf={currentProfName}
-                    selectedLabRoom={currentLabRoom}
+                    sharedState={sharedState}
                     groupsStatus={groupsBranchStatus}
                 />
 

@@ -6,7 +6,9 @@ import GroupsNotification from './GroupsNotification';
 import TimeRows from '../components/TimeRows';
 import DayRows from "./DayRows";
 
-export default function Scheduler({ selectedPage, selectedBranch, selectedBranchYear, selectedProf, selectedLabRoom, groupsStatus = [] }) {
+export default function Scheduler({ selectedPage, sharedState, groupsStatus = [] }) {
+    const { currentBranch: selectedBranch, currentBranchYear: selectedBranchYear, currentProfName: selectedProfName, currentLabRoom: selectedLabRoom } = sharedState
+
     const { data: allBranchGroups, refetch: refetchAllBranchGroups } = useAllGroupsByBranch(selectedBranch);
 
     const [seeCourseName, setSeeCourseName] = useState(true);
@@ -14,10 +16,10 @@ export default function Scheduler({ selectedPage, selectedBranch, selectedBranch
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
-            group.branch_year === selectedBranchYear && (selectedPage !== 'Prof' || group.profs.includes(selectedProf)) && group.group_status !== 'reject';
+            group.branch_year === selectedBranchYear && (selectedPage !== 'Prof' || group.profs.includes(selectedProfName)) && group.group_status !== 'reject';
 
         return groupsStatus.filter(filterFunction);
-    }, [groupsStatus, selectedBranchYear, selectedPage, selectedProf]);
+    }, [groupsStatus, selectedBranchYear, selectedPage, selectedProfName]);
 
     const statusCounts = useMemo(() => {
         const counts = { waiting: 0, accept: 0, reject: 0 };
@@ -43,7 +45,7 @@ export default function Scheduler({ selectedPage, selectedBranch, selectedBranch
                 <TimeRows />
                 <DayRows
                     page={selectedPage}
-                    curProf={selectedProf}
+                    curProf={selectedProfName}
                     curLab={selectedLabRoom}
                     branchYear={selectedBranchYear}
                     seeCourseName={seeCourseName}

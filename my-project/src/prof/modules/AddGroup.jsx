@@ -133,38 +133,33 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
     );
 }
 
-const TextInput = ({ spanText, inputClass, name, value, onChange, ...prop }) => {
-    return (
-        <div className='flex items-center gap-x-0.5 mt-3'>
-            <span>{spanText}</span>
-            <input
-                className={`text-black border rounded-sm mr-2 p-1 ${inputClass}`}
-                type='text'
-                required
-                name={name}
-                value={value}
-                onChange={onChange}
-                {...prop}
-            />
-        </div>
-    );
-};
+const TextInput = ({ spanText, inputClass, name, value, onChange, ...prop }) => (
+    <div className='flex items-center gap-x-0.5 mt-3'>
+        <span>{spanText}</span>
+        <input className={`text-black border rounded-sm mr-2 p-1 ${inputClass}`}
+            type='text'
+            required
+            name={name}
+            value={value}
+            onChange={onChange}
+            {...prop}
+        />
+    </div>
+);
 
-const SelectInput = ({ spanText, inputClass, name, value, onChange, options }) => {
-    return (
-        <div className='flex items-center gap-0.5 mt-3'>
-            <span>{spanText}</span>
-            <select className={`text-black border border-solid rounded-sm border-cyan-500 mr-2 p-1 appearance-none leading-none ${inputClass}`}
-                name={name}
-                value={value}
-                onChange={onChange}
-                required
-            >
-                <option value='' disabled>{spanText}</option>
-                {options.map((option, index) => (
-                    <option key={index} value={option}>{option}</option>
-                ))}
-            </select>
-        </div>
-    );
-};
+const SelectInput = ({ spanText, inputClass, name, value, onChange, options }) => (
+    <div className='flex items-center gap-0.5 mt-3'>
+        <span>{spanText}</span>
+        <select className={`text-black border border-solid rounded-sm border-cyan-500 mr-2 p-1 appearance-none leading-none ${inputClass}`}
+            name={name}
+            value={value}
+            onChange={onChange}
+            required
+        >
+            <option value='' disabled>{spanText}</option>
+            {options.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+            ))}
+        </select>
+    </div>
+);
