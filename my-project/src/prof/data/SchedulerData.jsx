@@ -1,12 +1,16 @@
+import { generateTimeOptions } from "./functions";
+
 export const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-export const PRIORITY_VALUES = {
+export const Time_Options = generateTimeOptions();
+
+export const PRIORITY_VALUES = Object.freeze({
     'เฉพาะบังคับ': 5,
     'เฉพาะเลือก': 4,
     'เฉพาะทั่วไป': 3,
     'อื่นๆ': 2,
     'บริการ': 1,
-};
+});
 
 export const COLOR_MAP = {
     'Mon': 'bg-yellow-400',

@@ -1,6 +1,6 @@
-export default function ButtonCom({ text, type, onClick, style, isDisable }) {
+export default function ButtonCom({ text, type, onClick, style, isDisable = false }) {
     return (
-        <button className={style}
+        <button className={`rounded-sm shadow-md shadow-gray-700 ${style}`}
             type={type}
             onClick={onClick}
             disabled={isDisable}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useAllGroupsByBranch } from '../../api/Profs_API';
+import { calculateOverlappingCount } from '../data/functions';
 import ViewCourseButton from '../components/viewCourseButton';
-import GroupsStatusBar from '../components/GroupsStatusBar';
 import GroupsNotification from './GroupsNotification';
 import TimeRows from '../components/TimeRows';
 import DayRows from "./DayRows";
@@ -34,8 +34,8 @@ export default function Scheduler({ userData, groupsStatus = [], curPage, curBra
         <>
             <div className='col-span-8 flex flex-wrap items-center justify-start my-4 ml-1 gap-2'>
                 <ViewCourseButton onClick={toggleSeeCourseName} seeCourseName={seeCourseName} />
-                <GroupsNotification isDisable={curBranch !== profBranchTag} allGroupsStatus={groupsStatus} />
-                {curPage !== 'Lab' && <GroupsStatusBar waiting={statusCounts.waiting} accept={statusCounts.accept} reject={statusCounts.reject} overlap={overlappingCount} />}
+                <GroupsNotification branch={curBranch} allGroupsStatus={groupsStatus} />
+                {curPage !== 'Lab' && <GroupsStatusBar statusCounts={statusCounts} overlap={overlappingCount} />}
             </div>
 
             <div className='border bg-light_blue mx-1' onContextMenu={e => e.preventDefault()}>
@@ -57,44 +57,11 @@ export default function Scheduler({ userData, groupsStatus = [], curPage, curBra
     );
 };
 
-const calculateOverlappingCount = (filteredGroupsStatus) => {
-    let overlappingCount = 0;
-
-    const groupedByDay = filteredGroupsStatus.reduce((acc, group) => {
-        acc[group.day_of_week] = acc[group.day_of_week] || [];
-        acc[group.day_of_week].push(group);
-        return acc;
-    }, {});
-
-    Object.values(groupedByDay).forEach(groups => {
-        groups.sort((a, b) => {
-            const getTime = time => {
-                const [hours, minutes] = time.split(':').map(Number);
-                return hours * 60 + minutes;
-            };
-
-            return getTime(a.start_time) - getTime(b.start_time);
-        });
-
-        for (let i = 0; i < groups.length - 1; i++) {
-            const { start_time: startTimeGroup1, end_time: endTimeGroup1 } = groups[i];
-            const { start_time: startTimeGroup2, end_time: endTimeGroup2 } = groups[i + 1];
-
-            const getTime = time => {
-                const [hours, minutes] = time.split(':').map(Number);
-                return hours * 60 + minutes;
-            };
-
-            const start1 = getTime(startTimeGroup1);
-            const end1 = getTime(endTimeGroup1);
-            const start2 = getTime(startTimeGroup2);
-            const end2 = getTime(endTimeGroup2);
-
-            if (start1 < end2 && end1 > start2) {
-                overlappingCount++;
-            }
-        }
-    });
-
-    return overlappingCount;
-};
+const GroupsStatusBar = ({ statusCounts, overlap }) => (
+    <div className='pt-2 leading-none flex gap-2 items-center text-lg font-bold'>
+        <p className='text-yellow-900 underline decoration-yellow-600 rounded-sm'>Waiting: {statusCounts.waiting}</p>
+        <p className='text-green-900 underline decoration-green-600 rounded-sm'>Accept: {statusCounts.accept}</p>
+        <p className='text-red-900 underline decoration-red-600 rounded-sm'>Reject: {statusCounts.reject}</p>
+        <p className='text-neutral-900  underline decoration-neutral-600 rounded-sm'>Overlapping: {overlap}</p>
+    </div>
+)

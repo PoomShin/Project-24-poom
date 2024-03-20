@@ -5,19 +5,19 @@ import { useAddGroupMutation } from '../../api/Profs_API';
 import { useMergedGroups } from '../CustomHook/useMergedGroups';
 //Components
 import AlertModal from '../../public/AlertModal';
-import InputSection from '../components/InputSelect';
+import CourseSelectedDisplay from '../components/CourseSelectedDisplay';
+import InsertGroupsCards from './InsertGroupsCards';
 import ButtonCom from '../components/ButtonCom';
-import InsertGroups from './InsertGroups';
 //data
-import { initialCourseInfoState } from '../data/initialData';
+import { initialCourseInfoState, initialCreditHour } from '../data/initialData';
 import { parseCredits } from '../data/functions';
 
-export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }) {
+export default function InsertCourseModal({ ownerProfBranch, isVisible, onClose }) {
     const { coursesBranch } = useCoursesContext(); //for checking if this prop have ovelappign course with yourself
     const addGroupMutation = useAddGroupMutation();
 
     const [courseInfo, setCourseInfo] = useState(initialCourseInfoState);
-    const [creditHours, setCreditHours] = useState({ lectureHours: 0, labHours: 0, selfStudyHours: 0 });
+    const [creditHours, setCreditHours] = useState(initialCreditHour);
 
     const [lectureGroups, setLectureGroups] = useState([]);
     const [labGroups, setLabGroups] = useState([]);
@@ -37,6 +37,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
     const resetFormData = () => {
         setLectureGroups([]);
         setLabGroups([]);
+        setCreditHours(initialCreditHour);
         setCourseInfo(initialCourseInfoState);
     };
     const handleSubmit = async () => {
@@ -45,7 +46,7 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
                 mergedGroups,
                 course_id: courseInfo.id,
                 group_status: 'waiting',
-                owner_branch_tag: ownerBranchTag
+                owner_branch_tag: ownerProfBranch
             };
             await addGroupMutation.mutateAsync(groupData);
             resetFormData();
@@ -81,47 +82,37 @@ export default function InsertCourseModal({ ownerBranchTag, isVisible, onClose }
         } else setCourseInfo(initialCourseInfoState);
     }, [courseInfo.selectedCourse, courseInfo.credit]);
 
-    return isVisible ? (
+    return isVisible &&
         createPortal(
             <>
                 <AlertModal isOpen={openAlert} onClose={closeAlert} message={alertMessage} />
                 <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-800 bg-opacity-50 z-50'>
+
                     <div className='absolute top-0 left-1/2 transform -translate-x-1/2 font-semibold p-4'>
-                        <div className='flex'>
-                            <InputSection style='appearance-none border border-gray-400 p-1 rounded-md focus:outline-none focus:border-blue-500 w-48'
-                                value={courseInfo.selectedCourse}
-                                onChange={handleCourseChange}
-                                placeholder='Select a course'
-                                options={coursesBranch}
-                                optionKey='combined_code_curriculum'
-                            />
-                            <input className='w-72 rounded-lg bg-blue-100 mx-2 p-1' placeholder='thname' value={courseInfo.th_name} readOnly />
-                            <input className='w-72 rounded-lg bg-blue-100 mx-2 p-1' placeholder='engname' value={courseInfo.eng_name} readOnly />
-                        </div>
-                        <div className='flex my-4'>
-                            <input className='w-20 rounded-lg bg-blue-100 mx-2 p-1' placeholder='credit' value={courseInfo.credit} readOnly />
-                            <input className='w-24 rounded-lg bg-blue-100 mx-2 p-1' placeholder='course type' value={courseInfo.course_type} readOnly />
-                        </div>
+                        <CourseSelectedDisplay coursesBranch={coursesBranch} courseInfo={courseInfo} onCourseChange={handleCourseChange} />
                     </div>
 
-                    <InsertGroups
-                        creditHours={creditHours}
-                        lectureGroups={lectureGroups} labGroups={labGroups} mergedGroups={mergedGroups}
-                        setLectureGroups={setLectureGroups} setLabGroups={setLabGroups}
-                        setDisableSubmit={setDisableSubmit}
-                    />
+                    <div className='overflow-x-scroll flex flex-col gap-y-2 w-10/12'>
+                        <InsertGroupsCards
+                            creditHours={creditHours}
+                            lectureGroups={lectureGroups} labGroups={labGroups} mergedGroups={mergedGroups}
+                            setLectureGroups={setLectureGroups} setLabGroups={setLabGroups}
+                            setDisableSubmit={setDisableSubmit}
+                        />
+                    </div>
 
                     <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>
-                        <ButtonCom style='rounded bg-green-500 hover:bg-green-700 text-white font-bold mr-4 py-2 px-4'
-                            text='Submit' type='button' onClick={handleSubmit}
+                        <ButtonCom style=' mr-4 py-2 px-4 text-white font-bold bg-green-500 hover:bg-green-700'
+                            text='Submit' type='button'
+                            onClick={handleSubmit}
                             isDisable={disableSubmit || courseInfo.selectedCourse === ''}
                         />
-                        <ButtonCom style='rounded bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4'
-                            text='Close' type='button' onClick={closeModal}
+                        <ButtonCom style='py-2 px-4 text-white font-bold bg-red-500 hover:bg-red-700'
+                            text='Close' type='button'
+                            onClick={closeModal}
                         />
                     </div>
                 </div>
             </>, document.getElementById('root-modal')
         )
-    ) : null;
 }

@@ -6,3 +6,5 @@ export const initialCourseInfoState = {
     credit: '',
     course_type: '',
 };
+
+export const initialCreditHour = { lectureHours: 0, labHours: 0, selfStudyHours: 0 };

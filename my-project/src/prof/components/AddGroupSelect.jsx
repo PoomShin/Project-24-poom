@@ -1,55 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
-
-export const TextInput = ({ spanText, spanClass, inputClass, name, value, onChange, ...prop }) => {
-    return (
-        <div className='flex self-center mt-3'>
-            <span className={spanClass}>{spanText}</span>
-            <input
-                className={`text-black border rounded-sm mr-2 p-1 ${inputClass}`}
-                type='text'
-                required
-                name={name}
-                value={value}
-                onChange={onChange}
-                {...prop}
-            />
-        </div>
-    );
-};
-
-export const SelectInput = ({ spanText, spanClass, inputClass, name, value, onChange, options }) => {
-    return (
-        <div className='flex self-center mt-3'>
-            <span className={spanClass}>{spanText}</span>
-            <select
-                className={`text-black border border-solid rounded-sm border-cyan-500 mr-2 p-1 appearance-none leading-none ${inputClass}`}
-                name={name}
-                value={value}
-                onChange={onChange}
-                required
-            >
-                <option value='' disabled>{spanText}</option>
-                {options.map((option, index) => (
-                    <option key={index} value={option}>{option}</option>
-                ))}
-            </select>
-        </div>
-    );
-};
+import { useState, useCallback, useEffect } from 'react';
+import { FaPlus } from 'react-icons/fa';
 
 export const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
-
-    useEffect(() => {
-        const profOptions = profsBranchTag
-            .filter(prof => !selectedOptions.includes(prof.name))
-            .map(prof => ({
-                value: prof.name,
-                label: prof.name
-            }));
-        setOptions(profOptions);
-    }, [profsBranchTag, selectedOptions]);
 
     const handleAdd = useCallback(() => {
         if (formData.prof_name.length < profsBranchTag.length) {
@@ -63,7 +17,6 @@ export const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
             }));
         }
     }, [formData.prof_name, profsBranchTag.length, selectedOptions, setFormData]);
-
     const handleChange = useCallback((e, index) => {
         const value = e.target.value;
         const updatedData = formData.prof_name.map((item, i) => (i === index ? value : item));
@@ -72,7 +25,6 @@ export const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
             prof_name: updatedData
         }));
     }, [formData.prof_name, setFormData]);
-
     const handleRemove = useCallback((index) => {
         const removedOption = formData.prof_name[index];
         setSelectedOptions(prevOptions => prevOptions.filter(option => option !== removedOption));
@@ -81,6 +33,16 @@ export const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
             prof_name: prevData.prof_name.filter((_, i) => i !== index)
         }));
     }, [formData.prof_name, setFormData]);
+
+    useEffect(() => {
+        const profOptions = profsBranchTag
+            .filter(prof => !selectedOptions.includes(prof.name))
+            .map(prof => ({
+                value: prof.name,
+                label: prof.name
+            }));
+        setOptions(profOptions);
+    }, [profsBranchTag, selectedOptions]);
 
     useEffect(() => {
         if (formData.prof_name.length === 0) {
@@ -92,14 +54,12 @@ export const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
     }, []);
 
     return (
-        <div className='w-72 flex items-center text-xs text-black'>
-            <span className='ml-2 mr-4 text-white'>อาจารย์</span>
+        <div className='w-72 flex items-center gap-x-1 text-black'>
+            <span className='text-white'>อาจารย์</span>
             <div className='overflow-x-auto flex items-center'>
                 {formData.prof_name.map((item, index) => (
-                    <div key={index} className='relative inline-block mr-2'>
-                        {item &&
-                            <p className='bg-white p-0'>{item}</p>
-                        }
+                    <div key={index} className='relative mr-2'>
+                        {item && <p className='bg-white p-0'>{item}</p>}
                         {!item &&
                             <select
                                 value=''
@@ -113,29 +73,20 @@ export const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
                             </select>
                         }
                         {index !== formData.prof_name.length - 1 && (
-                            <button type='button' className='absolute top-[-5px] right-[-3px] text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
+                            <button type='button' className='absolute top-[-5px] right-[-3px] text-xs font-bold text-red-500' onClick={() => handleRemove(index)}>X</button>
                         )}
                     </div>
                 ))}
-                {formData.prof_name.length < profsBranchTag.length && (
-                    <button type='button' onClick={handleAdd} className='text-white text-xl'>+</button>
-                )}
+                <button type='button' onClick={handleAdd} className='text-white'>
+                    <FaPlus />
+                </button>
             </div>
         </div>
     );
 };
 
-export const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, inputType, data }) => {
+export const SelectBranchYear = ({ formData, setFormData, inputType, data }) => {
     const [options, setOptions] = useState([]);
-
-    useEffect(() => {
-        const availableOptions = data.filter(branchYear => !formData[inputType].includes(branchYear));
-        const branchYearOptions = availableOptions.map(item => ({
-            value: item,
-            label: item
-        }));
-        setOptions(branchYearOptions);
-    }, [data, formData, inputType]);
 
     const handleAdd = useCallback(() => {
         if (formData[inputType].length < data.length) {
@@ -168,6 +119,16 @@ export const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, i
     }, [formData, inputType, setFormData]);
 
     useEffect(() => {
+        const availableOptions = data.filter(branchYear => !formData[inputType].includes(branchYear));
+        const branchYearOptions = availableOptions.map(item => ({
+            value: item,
+            label: item
+        }));
+        setOptions(branchYearOptions);
+    }, [data, formData, inputType]);
+
+
+    useEffect(() => {
         if (formData.branch_year.length === 0) {
             setFormData(prevData => ({
                 ...prevData,
@@ -177,31 +138,32 @@ export const SelectBranchYear = ({ spanText, spanClass, formData, setFormData, i
     }, []);
 
     return (
-        <div className='w-72 flex items-center text-xs text-black'>
-            <span className={spanClass + ' text-white'}>{spanText}</span>
+        <div className='w-72 flex items-center gap-x-1 text-black'>
+            <span className='text-white'>สาขา</span>
             <div className='overflow-x-auto flex items-center'>
                 {formData[inputType].map((item, index) => (
-                    <div key={index} className='relative inline-block mr-2'>
-                        {item ? (
-                            <p className='bg-white p-0'>{item}</p>
-                        ) : (
-                            <select
-                                value=''
-                                onChange={(e) => handleChange(e, index)}
-                                required
-                            >
-                                <option value='' disabled>Select</option>
-                                {options.map(option => (
-                                    <option key={option.value} value={option.value}>{option.label}</option>
-                                ))}
-                            </select>
-                        )}
+                    <div key={index} className='relative mr-2'>
+                        {item ? (<p className='bg-white p-0'>{item}</p>) :
+                            (
+                                <select
+                                    value=''
+                                    onChange={(e) => handleChange(e, index)}
+                                    required
+                                >
+                                    <option value='' disabled>Select</option>
+                                    {options.map(option => (
+                                        <option key={option.value} value={option.value}>{option.label}</option>
+                                    ))}
+                                </select>
+                            )}
                         {index !== formData[inputType].length - 1 && (
-                            <button type='button' className='absolute top-[-6px] right-[-3px] text-xs text-red-500 font-bold' onClick={() => handleRemove(index)}>X</button>
+                            <button type='button' className='absolute top-[-6px] right-[-3px] text-xs font-bold text-red-500' onClick={() => handleRemove(index)}>X</button>
                         )}
                     </div>
                 ))}
-                <button type='button' onClick={handleAdd} className='text-white text-xl'>+</button>
+                <button type='button' onClick={handleAdd} className='text-white'>
+                    <FaPlus />
+                </button>
             </div >
         </div >
     );

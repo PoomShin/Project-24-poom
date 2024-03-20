@@ -16,12 +16,12 @@ export const BranchProvider = ({ children }) => {
         return branch_year;
     };
 
-    const branch_year = useMemo(() => generateBranchesWithYears(branches || []), [branches]);
+    const branchYear = useMemo(() => generateBranchesWithYears(branches || []), [branches]);
 
     const contextValue = useMemo(() => ({
         branches,
-        branch_year,
-    }), [branches, branch_year]);
+        branchYear,
+    }), [branches, branchYear]);
 
     return (
         <BranchContext.Provider value={contextValue}>

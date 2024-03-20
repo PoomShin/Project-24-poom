@@ -287,7 +287,7 @@ router.get('/groupsStatus/:branch', async (req, res) => {
             LEFT JOIN 
                 group_profs gp ON g.id = gp.group_id
             WHERE
-                gy.owner_branch_tag = $1
+                LEFT(gy.branch_year, 3) = $1
             GROUP BY
                 g.id, g.day_of_week, g.start_time, g.end_time, g.group_status, gy.branch_year, gy.owner_branch_tag;
         `;

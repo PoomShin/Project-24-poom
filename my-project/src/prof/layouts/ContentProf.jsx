@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { getGroupsStatusByBranch } from '../../api/Profs_API';
 import ContentProfHeader from './ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
@@ -6,10 +6,10 @@ import InsertCourseModal from '../modules/InsertCourseModal';
 import ButtonCom from '../components/ButtonCom';
 
 export default function ContentProf({ userData, currentPage }) {
-    const { name: initialProfName, role, branch_tag: initialBranch } = userData;
+    const { name: initialProfName, role, branch_tag: initialProfBranch } = userData;
 
     const [profState, setProfState] = useState({
-        currentBranch: initialBranch,
+        currentBranch: initialProfBranch,
         currentBranchYear: '',
         profName: initialProfName,
         profRole: role,
@@ -36,7 +36,10 @@ export default function ContentProf({ userData, currentPage }) {
         setIsModalOpen(prev => !prev)
     }, []);
 
-    const { data: groupsBranchStatus } = getGroupsStatusByBranch(currentBranch);
+    const { data: groupsBranchStatus, refetch: refetchGroupBranchStatus } = getGroupsStatusByBranch(currentBranch);
+    useEffect(() => {
+        refetchGroupBranchStatus();
+    }, [currentBranch]);
 
     return (
         <div className='col-start-3 col-span-15 border-2 border-b-0 border-solid border-black bg-white'>
@@ -59,9 +62,10 @@ export default function ContentProf({ userData, currentPage }) {
                 curLab={labRoom}
             />
 
-            <InsertCourseModal ownerBranchTag={currentBranch} isVisible={isModalOpen} onClose={toggleModal} />
+            <InsertCourseModal ownerProfBranch={initialProfBranch} isVisible={isModalOpen} onClose={toggleModal} />
             <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold mb-4 py-2 px-4'
-                text='Add Course' type='button' onClick={toggleModal}
+                text='Add Course' type='button'
+                onClick={toggleModal}
             />
         </div>
     );
