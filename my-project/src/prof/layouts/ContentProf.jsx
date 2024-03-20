@@ -11,11 +11,11 @@ export default function ContentProf({ userData, currentPage }) {
     const [profState, setProfState] = useState({
         currentBranch: initialProfBranch,
         currentBranchYear: '',
-        profName: initialProfName,
-        profRole: role,
-        labRoom: '',
+        currentProfName: initialProfName,
+        currentProfRole: role,
+        currentLabRoom: '',
     });
-    const { currentBranch, currentBranchYear, profName, profRole, labRoom } = profState;
+    const { currentBranch, currentBranchYear, currentProfName, currentProfRole, currentLabRoom } = profState;
 
     const handleBranchChange = selectedBranch => {
         setProfState(prevState => ({ ...prevState, currentBranch: selectedBranch }));
@@ -25,10 +25,10 @@ export default function ContentProf({ userData, currentPage }) {
         setProfState(prevState => ({ ...prevState, currentBranchYear: selectedBranchYear }));
     };
     const handleProfChange = selectedProf => {
-        setProfState(prevState => ({ ...prevState, profName: selectedProf }));
+        setProfState(prevState => ({ ...prevState, currentProfName: selectedProf }));
     };
     const handleLabRoomChange = selectedLab => {
-        setProfState(prevState => ({ ...prevState, labRoom: selectedLab }));
+        setProfState(prevState => ({ ...prevState, currentLabRoom: selectedLab }));
     }
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,18 +47,18 @@ export default function ContentProf({ userData, currentPage }) {
                 page={currentPage}
                 branch={currentBranch} onBranchChange={handleBranchChange}
                 branchYear={currentBranchYear} onBranchYearChange={handleBranchYearChange}
-                profName={profName} onProfChange={handleProfChange}
-                profRole={profRole}
-                labRoom={labRoom} onLabRoomChange={handleLabRoomChange}
+                profName={currentProfName} onProfChange={handleProfChange}
+                profRole={currentProfRole}
+                labRoom={currentLabRoom} onLabRoomChange={handleLabRoomChange}
             />
 
             <Scheduler
+                selectedPage={currentPage}
+                selectedBranch={currentBranch}
+                selectedBranchYear={currentBranchYear}
+                selectedProf={currentProfName}
+                selectedLabRoom={currentLabRoom}
                 groupsStatus={groupsBranchStatus}
-                curPage={currentPage}
-                curBranch={currentBranch}
-                curBranchYear={currentBranchYear}
-                curProf={profName}
-                curLab={labRoom}
             />
 
             <InsertCourseModal ownerProfBranch={initialProfBranch} isVisible={isModalOpen} onClose={toggleModal} />

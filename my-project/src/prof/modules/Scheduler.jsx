@@ -6,18 +6,18 @@ import GroupsNotification from './GroupsNotification';
 import TimeRows from '../components/TimeRows';
 import DayRows from "./DayRows";
 
-export default function Scheduler({ groupsStatus = [], curPage, curBranch, curBranchYear, curProf, curLab }) {
-    const { data: allBranchGroups, refetch: refetchAllBranchGroups } = useAllGroupsByBranch(curBranch);
+export default function Scheduler({ selectedPage, selectedBranch, selectedBranchYear, selectedProf, selectedLabRoom, groupsStatus = [] }) {
+    const { data: allBranchGroups, refetch: refetchAllBranchGroups } = useAllGroupsByBranch(selectedBranch);
 
     const [seeCourseName, setSeeCourseName] = useState(true);
     const toggleSeeCourseName = () => setSeeCourseName(prevState => !prevState);
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
-            group.branch_year === curBranchYear && (curPage !== 'Prof' || group.profs.includes(curProf)) && group.group_status !== 'reject';
+            group.branch_year === selectedBranchYear && (selectedPage !== 'Prof' || group.profs.includes(selectedProf)) && group.group_status !== 'reject';
 
         return groupsStatus.filter(filterFunction);
-    }, [groupsStatus, curBranchYear, curPage, curProf]);
+    }, [groupsStatus, selectedBranchYear, selectedPage, selectedProf]);
 
     const statusCounts = useMemo(() => {
         const counts = { waiting: 0, accept: 0, reject: 0 };
@@ -29,23 +29,23 @@ export default function Scheduler({ groupsStatus = [], curPage, curBranch, curBr
 
     useEffect(() => {
         refetchAllBranchGroups();
-    }, [curPage, curLab]);
+    }, [selectedPage, selectedLabRoom]);
 
     return (
         <>
             <div className='col-span-8 flex flex-wrap items-center justify-start my-4 ml-1 gap-2'>
                 <ViewCourseButton onClick={toggleSeeCourseName} seeCourseName={seeCourseName} />
-                <GroupsNotification branch={curBranch} allGroupsStatus={groupsStatus} />
-                {curPage !== 'Lab' && <GroupsStatusBar statusCounts={statusCounts} overlap={overlappingCount} />}
+                <GroupsNotification branch={selectedBranch} allGroupsStatus={groupsStatus} />
+                {selectedPage !== 'Lab' && <GroupsStatusBar statusCounts={statusCounts} overlap={overlappingCount} />}
             </div>
 
             <div className='border bg-light_blue mx-1' onContextMenu={e => e.preventDefault()}>
                 <TimeRows />
                 <DayRows
-                    page={curPage}
-                    curProf={curProf}
-                    curLab={curLab}
-                    branchYear={curBranchYear}
+                    page={selectedPage}
+                    curProf={selectedProf}
+                    curLab={selectedLabRoom}
+                    branchYear={selectedBranchYear}
                     seeCourseName={seeCourseName}
                     groupsByBranch={allBranchGroups}
                 />

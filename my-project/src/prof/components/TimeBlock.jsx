@@ -1,34 +1,25 @@
 import { useState, useMemo } from 'react';
+import { useUserContext } from '../../context/User-Context';
 import { GRID_COL_DATA } from '../data/SchedulerData';
 import TimeBlockContentMenu from '../ContextMenu/TimeBlockContextMenu';
 
 const getColumnClass = (time, type) => GRID_COL_DATA[type][parseFloat(time)] || '';
 
-export default function TimeBlock({
-    bgStyle,
-    group,
-    myProfName,
-    profRole,
-    profBranch,
-    branchYear,
-    seeCourseName,
-    onContextMenu,
-    isOpenContextMenu,
-    onCloseContextMenu,
-}) {
+export default function TimeBlock({ bgStyle, group, branchYear, seeCourseName, onContextMenu, isOpenContextMenu, onCloseContextMenu }) {
+    const { name: thisProfName, role: thisProfRole, branch_tag: thisProfBranch } = useUserContext().userContextValues;
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
     const groupBranchYear = useMemo(() => branchYear.substring(0, 3), [branchYear]);
-    const canOpenContextMenu = useMemo(() => profRole === 'prof(SM)' && groupBranchYear === profBranch, [profRole, groupBranchYear, profBranch]);
+    const canOpenContextMenu = useMemo(() => thisProfRole === 'prof(SM)' && groupBranchYear === thisProfBranch, [thisProfRole, groupBranchYear, thisProfBranch]);
 
     const displayNames = useMemo(() => {
         if (!Array.isArray(group.prof_names)) return group.prof_names;
         if (group.prof_names.length === 1) {
-            return group.prof_names[0] === myProfName ? `${myProfName.split(' ')[0].slice(0, 25)}${myProfName.length > 25 ? '...' : ''}` : group.prof_names[0].split(' ')[0];
+            return group.prof_names[0] === thisProfName ? `${thisProfName.split(' ')[0].slice(0, 25)}${thisProfName.length > 25 ? '...' : ''}` : group.prof_names[0].split(' ')[0];
         }
-        const otherProfNames = group.prof_names.filter(name => name !== myProfName).map(name => name.split(' ')[0]).join(', ');
-        return `${myProfName.split(' ')[0]}, ${otherProfNames.slice(0, 25 - myProfName.length)}${otherProfNames.length > 25 ? '...' : ''}`;
-    }, [group.prof_names, myProfName]);
+        const otherProfNames = group.prof_names.filter(name => name !== thisProfName).map(name => name.split(' ')[0]).join(', ');
+        return `${thisProfName.split(' ')[0]}, ${otherProfNames.slice(0, 25 - thisProfName.length)}${otherProfNames.length > 25 ? '...' : ''}`;
+    }, [group.prof_names, thisProfName]);
 
     const getBorderColorClass = useMemo(() => {
         const borderClass = 'border-2 rounded-sm border-solid border-opacity-100 ';

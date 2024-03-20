@@ -1,5 +1,4 @@
 import { useMemo, useState, useRef, useEffect } from "react";
-import { useUserContext } from "../../context/User-Context";
 import { useGroupsByBranchYear } from "../../api/Profs_API";
 import { DAYS_OF_WEEK, PRIORITY_VALUES, COURSE_TYPE_COLOR_MAP, Days_COLOR_MAP } from "../data/SchedulerData";
 import TimeBlock from "../components/TimeBlock";
@@ -7,8 +6,6 @@ import TimeBlock from "../components/TimeBlock";
 const getColorForCourseType = (courseType) => COURSE_TYPE_COLOR_MAP[courseType] || 'bg-green-200';
 
 export default function DayRows({ page, curProf, curLab, branchYear, seeCourseName, groupsByBranch }) {
-    const { name: myProfName, role: profRole, branch_tag: profBranch } = useUserContext().userContextValues;
-
     const { data: groupsByBranchYear, refetch: refetchGroupsByBranchYear } = useGroupsByBranchYear(branchYear);
     const contextMenuRef = useRef(null);
     const [fullDayBlock, setFullDayBlock] = useState('');
@@ -81,9 +78,6 @@ export default function DayRows({ page, curProf, curLab, branchYear, seeCourseNa
                     <TimeBlock key={`${day}-${groupIndex}`}
                         bgStyle={getBgStyle(group, day)}
                         group={group}
-                        myProfName={myProfName}
-                        profRole={profRole}
-                        profBranch={profBranch}
                         branchYear={branchYear}
                         seeCourseName={seeCourseName}
                         onContextMenu={(event) => handleContextMenu(event, group)}

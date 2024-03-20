@@ -24,9 +24,11 @@ const MemoizedHeaderSelect = React.memo(HeaderSelect);
 
 export default function ContentProfHeader(props) {
     const { page, branch, branchYear, profName, labRoom, onBranchChange, onBranchYearChange, onProfChange, onLabRoomChange } = props;
+
     const { branches = [] } = useBranchesContext();
     const { profsBranch } = useProfsContext();
     const { data: labRoomData } = useGetLabRoomByBranch(branch);
+
     const icon = IconData[page];
 
     return (
