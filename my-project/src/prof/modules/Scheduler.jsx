@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { calculateOverlappingCount } from '../data/functions';
 import DayRows from "./DayRows";
-import GroupsNotification from './GroupsNotification';
 import TimeRows from '../components/TimeRows';
+import GroupsNotification from './GroupsNotification';
 import ViewCourseButton from '../components/viewCourseButton';
 
 export default function Scheduler({ selectedPage, sharedState, groupsStatus = [] }) {

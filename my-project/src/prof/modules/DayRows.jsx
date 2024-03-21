@@ -3,8 +3,6 @@ import { DAYS_OF_WEEK, PRIORITY_VALUES, COURSE_TYPE_COLOR_MAP, Days_COLOR_MAP } 
 import useSortedGroups from "../CustomHook/useSortedGroups";
 import TimeBlock from "../components/TimeBlock";
 
-const getColorForCourseType = (courseType) => COURSE_TYPE_COLOR_MAP[courseType] || 'bg-green-200';
-
 export default function DayRows({ page, sharedState, isSeeCourseName }) {
     const { currentBranch, currentBranchYear, currentProfName, currentLabRoom } = sharedState;
     const sortedGroups = useSortedGroups({ page, currentBranch, currentBranchYear, currentProfName, currentLabRoom });
@@ -15,22 +13,6 @@ export default function DayRows({ page, sharedState, isSeeCourseName }) {
 
     const toggleFullDayBlock = (day) => setFullDayBlock(prevDay => prevDay === day ? '' : day);
     const handleCloseContextMenu = () => setOpenContextMenu(null);
-
-    const getBgStyle = (group, day) => {
-        const allGroupsForDay = sortedGroups[day];
-        if (group.group_status === 'accept') return 'bg-emerald-800';
-        const overlappingGroups = allGroupsForDay.filter(otherGroup =>
-            (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
-            (group.end_time > otherGroup.start_time && group.end_time <= otherGroup.end_time) ||
-            (group.start_time <= otherGroup.start_time && group.end_time >= otherGroup.end_time)
-        );
-        if (overlappingGroups.length > 1) {
-            const highestPriority = Math.max(...overlappingGroups.map(g => PRIORITY_VALUES[g.course_type]));
-            const highestPriorityCourseType = Object.keys(PRIORITY_VALUES).find(key => PRIORITY_VALUES[key] === highestPriority);
-            return getColorForCourseType(highestPriorityCourseType);
-        }
-        return 'bg-slate-300';
-    };
 
     const handleContextMenu = (event, group) => {
         event.preventDefault();
@@ -52,7 +34,7 @@ export default function DayRows({ page, sharedState, isSeeCourseName }) {
             <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
             {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
                 <TimeBlock key={`${day}-${groupIndex}`}
-                    bgStyle={getBgStyle(group, day)}
+                    bgStyle={getBgStyle(group, day, sortedGroups)}
                     group={group}
                     branchYear={currentBranchYear}
                     isSeeCourseName={isSeeCourseName}
@@ -72,3 +54,21 @@ const DayBlock = ({ day, onClick, isActive }) => (
         <span className=' font-semibold text-black'>{day}</span>
     </div>
 );
+
+const getColorForCourseType = (courseType) => COURSE_TYPE_COLOR_MAP[courseType] || 'bg-green-200';
+
+const getBgStyle = (group, day, sortedGroups) => {
+    const allGroupsForDay = sortedGroups[day];
+    if (group.group_status === 'accept') return 'bg-emerald-800';
+    const overlappingGroups = allGroupsForDay.filter(otherGroup =>
+        (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
+        (group.end_time > otherGroup.start_time && group.end_time <= otherGroup.end_time) ||
+        (group.start_time <= otherGroup.start_time && group.end_time >= otherGroup.end_time)
+    );
+    if (overlappingGroups.length > 1) {
+        const highestPriority = Math.max(...overlappingGroups.map(g => PRIORITY_VALUES[g.course_type]));
+        const highestPriorityCourseType = Object.keys(PRIORITY_VALUES).find(key => PRIORITY_VALUES[key] === highestPriority);
+        return getColorForCourseType(highestPriorityCourseType);
+    }
+    return 'bg-slate-300';
+};

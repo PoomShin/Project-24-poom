@@ -23,12 +23,7 @@ export default function TimeBlock({ bgStyle, group, branchYear, isSeeCourseName,
 
     const getBorderColorClass = useMemo(() => {
         const borderClass = 'border-2 rounded-sm border-solid border-opacity-100 ';
-        switch (group.group_status) {
-            case 'waiting':
-                return borderClass + 'border-orange-500';
-            default:
-                return borderClass + 'border-transparent';
-        }
+        return borderClass + (group.group_status === 'waiting' ? 'border-orange-500' : 'border-transparent');
     }, [group.group_status]);
 
     const handleContextMenu = (event) => {
@@ -55,12 +50,10 @@ export default function TimeBlock({ bgStyle, group, branchYear, isSeeCourseName,
                     <span>SEC: {group.group_num}</span>
                 </p>
                 <div className={`flex justify-between underline ${(group.group_status === 'accept' || group.group_status === 'reject') ? 'text-gray-200' : 'text-gray-700'}`}>
-                    {isSeeCourseName ? (
-                        <>
-                            <div>{displayNames}</div>
-                            <div className='text-right'>{group.lab_room}</div>
-                        </>
-                    ) : <div className='overflow-hidden whitespace-nowrap'>{group.eng_name}</div>}
+                    {isSeeCourseName
+                        ? <><div>{displayNames}</div><div className='text-right'>{group.lab_room}</div></>
+                        : <div className='overflow-hidden whitespace-nowrap'>{group.eng_name}</div>
+                    }
                 </div>
             </div>
         </>
