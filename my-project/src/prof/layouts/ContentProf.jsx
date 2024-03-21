@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, createContext, useContext } from 'react';
+import { useState, useCallback, createContext, useContext } from 'react';
 import { getGroupsStatusByBranch } from '../../api/Profs_API';
 import ContentProfHeader from './ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
@@ -9,7 +9,6 @@ const ContentProfStateContext = createContext();
 
 export default function ContentProf({ userData, currentPage }) {
     const { name: initialProfName, role, branch_tag: initialProfBranch } = userData;
-
     const [sharedState, setSharedState] = useState({
         currentBranch: initialProfBranch,
         currentBranchYear: '',
@@ -17,6 +16,9 @@ export default function ContentProf({ userData, currentPage }) {
         currentProfRole: role,
         currentLabRoom: '',
     });
+    const { data: groupsBranchStatus } = getGroupsStatusByBranch(sharedState.currentBranch);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleBranchChange = selectedBranch => {
         setSharedState(prevState => ({
@@ -35,15 +37,9 @@ export default function ContentProf({ userData, currentPage }) {
         setSharedState(prevState => ({ ...prevState, currentLabRoom: selectedLab }));
     }
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const toggleModal = useCallback(() => {
         setIsModalOpen(prev => !prev)
     }, []);
-
-    const { data: groupsBranchStatus, refetch: refetchGroupBranchStatus } = getGroupsStatusByBranch(sharedState.currentBranch);
-    useEffect(() => {
-        refetchGroupBranchStatus();
-    }, [sharedState.currentBranch]);
 
     return (
         <ContentProfStateContext.Provider value={sharedState}>

@@ -5,7 +5,7 @@ import TimeBlockContentMenu from '../ContextMenu/TimeBlockContextMenu';
 
 const getColumnClass = (time, type) => GRID_COL_DATA[type][parseFloat(time)] || '';
 
-export default function TimeBlock({ bgStyle, group, branchYear, seeCourseName, onContextMenu, isOpenContextMenu, onCloseContextMenu }) {
+export default function TimeBlock({ bgStyle, group, branchYear, isSeeCourseName, onContextMenu, isOpenContextMenu, onCloseContextMenu }) {
     const { name: thisProfName, role: thisProfRole, branch_tag: thisProfBranch } = useUserContext().userContextValues;
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
@@ -46,8 +46,7 @@ export default function TimeBlock({ bgStyle, group, branchYear, seeCourseName, o
                 handleCloseContextMenu={onCloseContextMenu}
                 group={group}
             />
-            <div
-                className={`relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer p-2 
+            <div className={`relative inline-flex flex-col justify-between text-xs tracking-tight leading-tight hover:bg-opacity-70 cursor-pointer p-2 
                 ${getColumnClass(group.start_time, 'start')} ${getColumnClass(group.end_time, 'end')} ${bgStyle} ${getBorderColorClass}`}
                 onContextMenu={canOpenContextMenu ? handleContextMenu : (event) => event.preventDefault()}
             >
@@ -56,7 +55,7 @@ export default function TimeBlock({ bgStyle, group, branchYear, seeCourseName, o
                     <span>SEC: {group.group_num}</span>
                 </p>
                 <div className={`flex justify-between underline ${(group.group_status === 'accept' || group.group_status === 'reject') ? 'text-gray-200' : 'text-gray-700'}`}>
-                    {seeCourseName ? (
+                    {isSeeCourseName ? (
                         <>
                             <div>{displayNames}</div>
                             <div className='text-right'>{group.lab_room}</div>

@@ -1,39 +1,20 @@
-import { useMemo, useState, useRef, useEffect } from "react";
-import { useGroupsByBranchYear } from "../../api/Profs_API";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { DAYS_OF_WEEK, PRIORITY_VALUES, COURSE_TYPE_COLOR_MAP, Days_COLOR_MAP } from "../data/SchedulerData";
+import useSortedGroups from "../CustomHook/useSortedGroups";
 import TimeBlock from "../components/TimeBlock";
 
 const getColorForCourseType = (courseType) => COURSE_TYPE_COLOR_MAP[courseType] || 'bg-green-200';
 
-export default function DayRows({ page, curProf, curLab, branchYear, seeCourseName, groupsByBranch }) {
-    const { data: groupsByBranchYear, refetch: refetchGroupsByBranchYear } = useGroupsByBranchYear(branchYear);
+export default function DayRows({ page, sharedState, isSeeCourseName }) {
+    const { currentBranch, currentBranchYear, currentProfName, currentLabRoom } = sharedState;
+    const sortedGroups = useSortedGroups({ page, currentBranch, currentBranchYear, currentProfName, currentLabRoom });
+
     const contextMenuRef = useRef(null);
     const [fullDayBlock, setFullDayBlock] = useState('');
     const [openContextMenu, setOpenContextMenu] = useState(null);
 
     const toggleFullDayBlock = (day) => setFullDayBlock(prevDay => prevDay === day ? '' : day);
     const handleCloseContextMenu = () => setOpenContextMenu(null);
-
-    const filterGroupsByPage = (groups) => {
-        if (page === 'Prof') {
-            return groups.filter(group => Array.isArray(group.prof_names) && group.prof_names.includes(curProf));
-        } else if (page === 'Lab') {
-            return curLab === "" ? groups.filter(group => group.lab_room !== "") : groups.filter(group => group.lab_room === curLab);
-        }
-        return groups;
-    };
-
-    const sortedGroups = useMemo(() => {
-        const groupsToSort = page === 'Lab' ? groupsByBranch : groupsByBranchYear;
-        if (!groupsToSort) return {};
-
-        return DAYS_OF_WEEK.reduce((acc, day) => {
-            const filteredGroups = filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day && group.group_status !== 'reject'))
-                .sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
-            acc[day] = filteredGroups;
-            return acc;
-        }, {});
-    }, [groupsByBranch, groupsByBranchYear, page, curProf, curLab]);
 
     const getBgStyle = (group, day) => {
         const allGroupsForDay = sortedGroups[day];
@@ -51,6 +32,11 @@ export default function DayRows({ page, curProf, curLab, branchYear, seeCourseNa
         return 'bg-slate-300';
     };
 
+    const handleContextMenu = (event, group) => {
+        event.preventDefault();
+        setOpenContextMenu({ group, x: event.clientX, y: event.clientY });
+    };
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
@@ -61,33 +47,22 @@ export default function DayRows({ page, curProf, curLab, branchYear, seeCourseNa
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    useEffect(() => {
-        refetchGroupsByBranchYear();
-    }, [branchYear]);
-
-    const handleContextMenu = (event, group) => {
-        event.preventDefault();
-        setOpenContextMenu({ group, x: event.clientX, y: event.clientY });
-    };
-
-    return (
-        DAYS_OF_WEEK.map((day, index) => (
-            <div key={index} className={`grid grid-cols-34 grid-flow-dense gap-y-2 border border-stone-500 bg-stone-800 overflow-y-auto ${fullDayBlock === day ? 'max-h-72' : 'max-h-16'}`}>
-                <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
-                {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
-                    <TimeBlock key={`${day}-${groupIndex}`}
-                        bgStyle={getBgStyle(group, day)}
-                        group={group}
-                        branchYear={branchYear}
-                        seeCourseName={seeCourseName}
-                        onContextMenu={(event) => handleContextMenu(event, group)}
-                        isOpenContextMenu={openContextMenu && openContextMenu.group === group}
-                        onCloseContextMenu={handleCloseContextMenu}
-                    />
-                ))}
-            </div>
-        ))
-    );
+    return useMemo(() => DAYS_OF_WEEK.map((day, index) => (
+        <div key={index} className={`grid grid-cols-34 grid-flow-dense gap-y-2 border border-stone-500 bg-stone-800 overflow-y-auto ${fullDayBlock === day ? 'max-h-72' : 'max-h-16'}`}>
+            <DayBlock day={day} onClick={() => toggleFullDayBlock(day)} isActive={fullDayBlock === day} />
+            {sortedGroups[day] && sortedGroups[day].map((group, groupIndex) => (
+                <TimeBlock key={`${day}-${groupIndex}`}
+                    bgStyle={getBgStyle(group, day)}
+                    group={group}
+                    branchYear={currentBranchYear}
+                    isSeeCourseName={isSeeCourseName}
+                    onContextMenu={(event) => handleContextMenu(event, group)}
+                    isOpenContextMenu={openContextMenu && openContextMenu.group === group}
+                    onCloseContextMenu={handleCloseContextMenu}
+                />
+            ))}
+        </div>
+    )), [DAYS_OF_WEEK, sortedGroups, fullDayBlock, isSeeCourseName, currentBranchYear, openContextMenu]);
 }
 
 const DayBlock = ({ day, onClick, isActive }) => (

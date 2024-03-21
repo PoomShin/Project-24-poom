@@ -3,10 +3,10 @@ import { getStatusCounts } from '../data/functions';
 import view from '../../assets/view.png';
 import hide from '../../assets/hide.png';
 
-export default function GroupsNotification({ branch, allGroupsStatus }) {
+export default function GroupsNotification({ branch, groupsStatus }) {
     const [notificationPosition, setNotificationPosition] = useState({ x: 0, y: 0 });
     const [showNotification, setShowNotification] = useState(false);
-    const statusCounts = getStatusCounts(allGroupsStatus);
+    const statusCounts = getStatusCounts(groupsStatus);
 
     const handleClick = (event) => {
         const { clientX, clientY } = event;

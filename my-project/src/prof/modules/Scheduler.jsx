@@ -1,18 +1,16 @@
-import { useMemo, useState, useEffect } from 'react';
-import { useAllGroupsByBranch } from '../../api/Profs_API';
+import { useMemo, useState } from 'react';
 import { calculateOverlappingCount } from '../data/functions';
-import ViewCourseButton from '../components/viewCourseButton';
+import DayRows from "./DayRows";
 import GroupsNotification from './GroupsNotification';
 import TimeRows from '../components/TimeRows';
-import DayRows from "./DayRows";
+import ViewCourseButton from '../components/viewCourseButton';
 
 export default function Scheduler({ selectedPage, sharedState, groupsStatus = [] }) {
-    const { currentBranch: selectedBranch, currentBranchYear: selectedBranchYear, currentProfName: selectedProfName, currentLabRoom: selectedLabRoom } = sharedState
+    const { currentBranch: selectedBranch, currentBranchYear: selectedBranchYear, currentProfName: selectedProfName } = sharedState
 
-    const { data: allBranchGroups, refetch: refetchAllBranchGroups } = useAllGroupsByBranch(selectedBranch);
+    const [isSeeCourseName, setIsSeeCourseName] = useState(true);
 
-    const [seeCourseName, setSeeCourseName] = useState(true);
-    const toggleSeeCourseName = () => setSeeCourseName(prevState => !prevState);
+    const toggleSeeCourseName = () => setIsSeeCourseName(prevState => !prevState);
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
@@ -29,15 +27,11 @@ export default function Scheduler({ selectedPage, sharedState, groupsStatus = []
 
     const overlappingCount = useMemo(() => calculateOverlappingCount(filteredGroupsStatus), [filteredGroupsStatus]);
 
-    useEffect(() => {
-        refetchAllBranchGroups();
-    }, [selectedPage, selectedLabRoom]);
-
     return (
         <>
             <div className='col-span-8 flex flex-wrap items-center justify-start my-4 ml-1 gap-2'>
-                <ViewCourseButton onClick={toggleSeeCourseName} seeCourseName={seeCourseName} />
-                <GroupsNotification branch={selectedBranch} allGroupsStatus={groupsStatus} />
+                <ViewCourseButton onClick={toggleSeeCourseName} isSeeCourseName={isSeeCourseName} />
+                <GroupsNotification branch={selectedBranch} groupsStatus={groupsStatus} />
                 {selectedPage !== 'Lab' && <GroupsStatusBar statusCounts={statusCounts} overlap={overlappingCount} />}
             </div>
 
@@ -45,11 +39,8 @@ export default function Scheduler({ selectedPage, sharedState, groupsStatus = []
                 <TimeRows />
                 <DayRows
                     page={selectedPage}
-                    curProf={selectedProfName}
-                    curLab={selectedLabRoom}
-                    branchYear={selectedBranchYear}
-                    seeCourseName={seeCourseName}
-                    groupsByBranch={allBranchGroups}
+                    sharedState={sharedState}
+                    isSeeCourseName={isSeeCourseName}
                 />
             </div>
         </>
