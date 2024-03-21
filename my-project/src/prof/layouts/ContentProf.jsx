@@ -41,6 +41,7 @@ export default function ContentProf({ userData, currentPage }) {
 
     return (
         <div className='col-start-3 col-span-15 border-2 border-b-0 border-solid border-black bg-white'>
+            <InsertCourseModal ownerProfBranch={initialProfBranch} isVisible={isModalOpen} onClose={toggleModal} />
             <ContentProfHeader
                 page={currentPage}
                 sharedState={sharedState}
@@ -56,11 +57,12 @@ export default function ContentProf({ userData, currentPage }) {
                 groupsStatus={groupsBranchStatus}
             />
 
-            <InsertCourseModal ownerProfBranch={initialProfBranch} isVisible={isModalOpen} onClose={toggleModal} />
-            <ButtonCom style='rounded bg-blue-500 hover:bg-blue-700 text-white font-bold mb-4 py-2 px-4'
-                text='Add Course' type='button'
-                onClick={toggleModal}
-            />
+            <div className='flex gap-x-4 rounded-sm bg-sky-600 shadow-sm shadow-sky-500 mt-2 mx-2 pt-2 pb-4'>
+                <ButtonCom style='rounded bg-blue-300 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2'
+                    text='Add Course' type='button'
+                    onClick={toggleModal}
+                />
+            </div>
         </div>
     );
 }
