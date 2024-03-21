@@ -161,18 +161,16 @@ export default function SideBarRight() {
 
             <div className='flex justify-evenly shadow-md shadow-gray-950 bg-burnt_sienna/40 text-xs py-1'>
                 <img src={filterIcon} alt='filter icon' className='h-6 ml-2' />
-                <FilterButton filterName='Course' filterCriteria={filterCriteria.courseCodeToggle} onClick={() => handleFilterToggle('courseCodeToggle')} />
-                <FilterButton filterName='Curriculum' filterCriteria={filterCriteria.curriculumToggle} onClick={() => handleFilterToggle('curriculumToggle')} />
-                <FilterButton filterName='Type' filterCriteria={filterCriteria.typeToggle} onClick={() => handleFilterToggle('typeToggle')} />
+                <FilterButton filterName='Course' filterCriteria={filterCriteria.courseCodeToggle} onFilter={handleFilterToggle('courseCodeToggle')} />
+                <FilterButton filterName='Curriculum' filterCriteria={filterCriteria.curriculumToggle} onFilter={handleFilterToggle('curriculumToggle')} />
+                <FilterButton filterName='Type' filterCriteria={filterCriteria.typeToggle} onFilter={handleFilterToggle('typeToggle')} />
             </div>
 
-            {profCourses && (
-                <div className={`overflow-y-auto flex flex-col transition-all ease-in-out duration-300 custom-scrollbar ${isMyGroupsOpen ? 'h-dvh' : 'h-0'}`}>
-                    {filteredCourses.map(course => (
-                        <CourseGroups key={course.id} {...course} onContextMenuOpen={handleOpenCourseContextMenu} isContextMenuOpen={openContextMenuId === course.id} />
-                    ))}
-                </div>
-            )}
+            <div className={`overflow-y-auto flex flex-col transition-all ease-in-out duration-300 custom-scrollbar ${isMyGroupsOpen ? 'h-dvh' : 'h-0'}`}>
+                {filteredCourses && filteredCourses.map(course => (
+                    <CourseGroups key={course.id} {...course} onContextMenuOpen={handleOpenCourseContextMenu} isContextMenuOpen={openContextMenuId === course.id} />
+                ))}
+            </div>
         </div >
     );
 };
