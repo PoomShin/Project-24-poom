@@ -410,4 +410,26 @@ router.put('/updateGroup/:groupId', async (req, res) => {
     }
 });
 
+router.put('/updateGroupStatus/:groupId', async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        const { groupStatus } = req.body; 
+
+        const query = `
+            UPDATE groups
+            SET 
+                group_status = $1
+            WHERE
+                id = $2
+        `;
+
+        await pool.query(query, [groupStatus, groupId]);
+
+        res.json({ success: true, message: `Group status with ID ${groupId} has been updated successfully` });
+    } catch (error) {
+        console.error('Error updating group status:', error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+
 module.exports = router;

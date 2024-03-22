@@ -215,3 +215,25 @@ export const useUpdateGroupById = () => {
         },
     });
 };
+export const useUpdateGroupStatusById = () => {
+    const queryClient = useQueryClient();
+
+    const updateGroupStatusByIdMutation = async ({ groupId, groupStatus }) => {
+        try {
+            const response = await axios.put(`/profs/updateGroupStatus/${groupId}`, { groupStatus });
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to update group status. Please try again later.');
+        }
+    };
+
+    return useMutation(updateGroupStatusByIdMutation, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('groups');
+            queryClient.invalidateQueries('groupsStatus');
+            queryClient.invalidateQueries('allGroupsByBranch');
+            queryClient.invalidateQueries('CoursesByProf');
+            queryClient.invalidateQueries('labRooms');
+        },
+    });
+};

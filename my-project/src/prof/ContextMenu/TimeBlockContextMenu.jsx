@@ -1,6 +1,17 @@
+import { useUpdateGroupStatusById } from '../../api/Profs_API';
 import { FaTimes } from 'react-icons/fa';
 
 export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContextMenu, contextMenuPosition, handleCloseContextMenu, group }) {
+    const mutation = useUpdateGroupStatusById();
+
+    const handleStatusChange = async (newStatus) => {
+        try {
+            await mutation.mutateAsync({ groupId: group.group_id, groupStatus: newStatus });
+        } catch (error) {
+            console.error(`Failed to update group status to ${newStatus}:`, error.message);
+        }
+    };
+
     return (
         isOpenContextMenu && canOpenContextMenu && (
             <div className='absolute z-40 bg-stone-600 border rounded shadow-md shadow-stone-600 text-white font-semibold'
@@ -15,11 +26,11 @@ export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContext
                     </button>
                     {group.group_status === 'waiting' ? (
                         <>
-                            <button className='block w-full py-1 px-2 text-left hover:bg-green-700' onClick={() => handleAcceptGroup(group)}>Accept Group</button>
-                            <button className='block w-full py-1 px-2 text-left hover:bg-red-700' onClick={() => handleRejectGroup(group)}>Reject Group</button>
+                            <button className='block w-full py-1 px-2 text-left hover:bg-green-700' onClick={() => handleStatusChange('accept')}>Accept Group</button>
+                            <button className='block w-full py-1 px-2 text-left hover:bg-red-700' onClick={() => handleStatusChange('reject')}>Reject Group</button>
                         </>
                     ) : group.group_status === 'accept' ? (
-                        <button className='block w-full py-1 px-2 text-left hover:bg-gray-200' onClick={() => handleResetGroup(group)}>Reset Group</button>
+                        <button className='block w-full py-1 px-2 text-left hover:bg-gray-200' onClick={() => handleStatusChange('waiting')}>Reset Group</button>
                     ) : null}
                 </div>
             </div>
