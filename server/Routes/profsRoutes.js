@@ -350,4 +350,64 @@ router.delete('/delCourse/:courseId/:profName', async (req, res) => {
     }
 });
 
+router.delete('/delGroup/:groupId', async (req, res) => {
+    try {
+        const { groupId } = req.params;
+
+        // Delete the group with the specified ID
+        const query = 'DELETE FROM groups WHERE id = $1';
+        await pool.query(query, [groupId]);
+
+        res.json({ success: true, message: `Group with ID ${groupId} has been deleted successfully` });
+    } catch (error) {
+        console.error('Error deleting group:', error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+
+router.put('/updateGroup/:groupId', async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        const { groupData } = req.body;
+
+        const {
+            group_num,
+            quantity,
+            day_of_week,
+            start_time,
+            end_time,
+            lab_room
+        } = groupData;
+
+        // Update the specified fields of the group
+        const query = `
+            UPDATE groups
+            SET 
+                group_num = $1,
+                quantity = $2,
+                day_of_week = $3,
+                start_time = $4,
+                end_time = $5,
+                lab_room = $6
+            WHERE
+                id = $7
+        `;
+
+        await pool.query(query, [
+            group_num,
+            quantity,
+            day_of_week,
+            start_time,
+            end_time,
+            lab_room.toLowerCase(),
+            groupId
+        ]);
+
+        res.json({ success: true, message: `Group with ID ${groupId} has been updated successfully` });
+    } catch (error) {
+        console.error('Error updating group:', error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+
 module.exports = router;

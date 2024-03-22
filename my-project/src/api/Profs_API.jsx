@@ -171,3 +171,47 @@ export const useDelCourseByName = () => {
         },
     });
 };
+export const useDelGroupById = () => {
+    const queryClient = useQueryClient();
+
+    const delGroupByIdMutation = async (groupId) => {
+        try {
+            const response = await axios.delete(`/profs/delGroup/${groupId}`);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to delete group. Please try again later.');
+        }
+    };
+
+    return useMutation(delGroupByIdMutation, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('groups');
+            queryClient.invalidateQueries('groupsStatus');
+            queryClient.invalidateQueries('allGroupsByBranch');
+            queryClient.invalidateQueries('CoursesByProf');
+            queryClient.invalidateQueries('labRooms');
+        },
+    });
+};
+export const useUpdateGroupById = () => {
+    const queryClient = useQueryClient();
+
+    const updateGroupByIdMutation = async ({ groupId, groupData }) => {
+        try {
+            const response = await axios.put(`/profs/updateGroup/${groupId}`, { groupData });
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data.error || 'Failed to update group. Please try again later.');
+        }
+    };
+
+    return useMutation(updateGroupByIdMutation, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('groups');
+            queryClient.invalidateQueries('groupsStatus');
+            queryClient.invalidateQueries('allGroupsByBranch');
+            queryClient.invalidateQueries('CoursesByProf');
+            queryClient.invalidateQueries('labRooms');
+        },
+    });
+};

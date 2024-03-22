@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { useCoursesContext } from '../../context/Prof-Context';
 import { PRIORITY_VALUES } from '../data/SchedulerData';
 import { statusMappings } from '../data/SidebarRightData';
-import FilterButton from '../components/FilterButton';
 import CourseGroupContextMenu from '../ContextMenu/CourseGroupContextMenu';
 import ProfGroupContextMenu from '../ContextMenu/ProfGroupContextMenu';
 import filterIcon from '../../assets/filter.png';
@@ -93,6 +92,7 @@ const ProfGroup = React.memo(({ group, onContextMenuOpen, isContextMenuOpen }) =
             </div>
             {isContextMenuOpen && (
                 <ProfGroupContextMenu
+                    group={group}
                     position={contextMenuPosition}
                     onClose={() => onContextMenuOpen(null)}
                 />
@@ -101,11 +101,19 @@ const ProfGroup = React.memo(({ group, onContextMenuOpen, isContextMenuOpen }) =
     );
 });
 
+const FilterButton = ({ filterName, filterCriteria, onFilter }) => (
+    <button className={`px-1 border border-gray-600 shadow-sm shadow-black text-white bg-gray-700 ${filterCriteria === 'min' ? 'bg-gradient-to-b from-blue-600 to-gray-600' : 'bg-gradient-to-t from-blue-600 to-gray-600'}`}
+        onClick={onFilter}
+    >
+        {filterName}
+    </button>
+);
+
 export default function SideBarRight() {
     const { profCourses } = useCoursesContext();
 
     const [openContextMenuId, setOpenContextMenuId] = useState(null);
-    const [isMyGroupsOpen, setIsMyGroupsOpen] = useState(false);
+    const [isMyGroupsOpen, setIsMyGroupsOpen] = useState(true);
     const [sortType, setSortType] = useState(null);
     const [filterCriteria, setFilterCriteria] = useState({
         courseCodeToggle: 'min',

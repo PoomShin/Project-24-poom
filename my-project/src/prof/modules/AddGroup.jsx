@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useProfsContext, useBranchesContext, useGroupContext } from '../../context/Prof-Context';
 import { SelectBranchYear, SelectProf } from '../components/AddGroupSelect';
 import { DAYS_OF_WEEK, Time_Options } from '../data/SchedulerData';
-import { simplifyTime } from '../data/functions';
+import { checkOverlapWithYourself } from '../data/functions';
 import AlertModal from '../../public/AlertModal';
 import plusIcon from '../../assets/plus.png';
 
@@ -57,13 +57,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
         const isDuplicateDayAndTime = mergedGroups.some(section =>
             section.day_of_week === formData.day_of_week && (section.start_time === formData.start_time || section.end_time === formData.end_time)
         );
-        const overlapWithYourself = groupsByBranch.find(group =>
-            group.prof_names.some(profName => formData.prof_name.includes(profName)) &&
-            group.day_of_week === formData.day_of_week &&
-            ((simplifyTime(group.start_time) >= formData.start_time && simplifyTime(group.start_time) < formData.end_time) ||
-                (simplifyTime(group.end_time) > formData.start_time && simplifyTime(group.end_time) <= formData.end_time)
-            )
-        );
+        const overlapWithYourself = checkOverlapWithYourself(groupsByBranch, formData);
 
         if (isDuplicateGroup) {
             setAlertMessage(`${formData.group_num} is used for this course`);
