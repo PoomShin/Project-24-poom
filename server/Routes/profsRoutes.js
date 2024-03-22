@@ -449,7 +449,7 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 g.end_time, 
                 g.lab_room, 
                 ARRAY_AGG(DISTINCT gy.branch_year) AS branch_years,
-                ARRAY_AGG(gp.prof_name) AS profs
+                ARRAY_AGG(DISTINCT gp.prof_name) AS profs
             FROM 
                 groups g
             JOIN 
