@@ -413,7 +413,7 @@ router.put('/updateGroup/:groupId', async (req, res) => {
 router.put('/updateGroupStatus/:groupId', async (req, res) => {
     try {
         const { groupId } = req.params;
-        const { groupStatus } = req.body; 
+        const { groupStatus } = req.body;
 
         const query = `
             UPDATE groups
@@ -429,6 +429,88 @@ router.put('/updateGroupStatus/:groupId', async (req, res) => {
     } catch (error) {
         console.error('Error updating group status:', error);
         res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+
+router.get('/exportMyBranch/:branch', async (req, res) => {
+    try {
+        const { branch } = req.params;
+
+        const query = `
+            SELECT 
+                c.course_code , 
+                c.combined_code_curriculum, 
+                c.eng_name, 
+                c.credit, 
+                g.unit, 
+                g.hours, 
+                g.day_of_week, 
+                g.start_time, 
+                g.end_time, 
+                g.lab_room, 
+                ARRAY_AGG(DISTINCT gy.branch_year) AS branch_years,
+                ARRAY_AGG(gp.prof_name) AS profs
+            FROM 
+                groups g
+            JOIN 
+                courses c ON g.course_id = c.id
+            LEFT JOIN 
+                group_profs gp ON g.id = gp.group_id
+            LEFT JOIN 
+                group_branch_year gy ON g.id = gy.group_id
+            WHERE 
+                gy.owner_branch_tag = $1
+            GROUP BY 
+                c.course_code, 
+                c.combined_code_curriculum, 
+                c.eng_name, 
+                c.credit,
+                g.unit, 
+                g.hours, 
+                g.day_of_week, 
+                g.start_time, 
+                g.end_time, 
+                g.lab_room;
+        `;
+
+        const { rows } = await pool.query(query, [branch]);
+
+        // Organize the data by grouping groups belonging to the same course
+        const courses = {};
+        rows.forEach(row => {
+            const courseKey = `${row.course_code}-${row.combined_code_curriculum}-${row.eng_name}`;
+            if (!courses[courseKey]) {
+                courses[courseKey] = [];
+            }
+            courses[courseKey].push(row);
+        });
+
+        // Format the data
+        const formattedData = Object.keys(courses).map(courseKey => {
+            const courseGroups = courses[courseKey].map(group => ({
+                unit: group.unit,
+                hours: group.hours,
+                day_of_week: group.day_of_week,
+                start_time: group.start_time,
+                end_time: group.end_time,
+                lab_room: group.lab_room,
+                profs: group.profs.join(', '),
+                branch_years: group.branch_years.join(', ')
+            }));
+
+            return {
+                course_code: courses[courseKey][0].course_code,
+                combined_code_curriculum: courses[courseKey][0].combined_code_curriculum,
+                eng_name: courses[courseKey][0].eng_name,
+                credit: courses[courseKey][0].credit,
+                groups: courseGroups
+            };
+        });
+
+        res.json(formattedData);
+    } catch (err) {
+        console.error('Error exporting branch data:', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
     }
 });
 

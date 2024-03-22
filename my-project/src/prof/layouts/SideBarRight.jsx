@@ -4,7 +4,6 @@ import { PRIORITY_VALUES } from '../data/SchedulerData';
 import CourseGroups from '../modules/CourseGroups';
 import filterIcon from '../../assets/filter.png';
 
-
 const FilterButton = ({ filterName, filterCriteria, onFilter }) => (
     <button className={`px-1 border border-gray-600 shadow-sm shadow-black text-white bg-gray-700 ${filterCriteria === 'min' ? 'bg-gradient-to-b from-blue-600 to-gray-600' : 'bg-gradient-to-t from-blue-600 to-gray-600'}`}
         onClick={onFilter}

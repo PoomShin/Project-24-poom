@@ -146,6 +146,7 @@ export const useAddGroupMutation = () => {
             queryClient.invalidateQueries('groupsStatus');
             queryClient.invalidateQueries('allGroupsByBranch');
             queryClient.invalidateQueries('labRooms');
+            queryClient.invalidateQueries('exportDataByBranch');
         },
     });
 };
@@ -168,6 +169,7 @@ export const useDelCourseByName = () => {
             queryClient.invalidateQueries('groupsStatus');
             queryClient.invalidateQueries('allGroupsByBranch');
             queryClient.invalidateQueries('labRooms');
+            queryClient.invalidateQueries('exportDataByBranch');
         },
     });
 };
@@ -190,6 +192,7 @@ export const useDelGroupById = () => {
             queryClient.invalidateQueries('allGroupsByBranch');
             queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('labRooms');
+            queryClient.invalidateQueries('exportDataByBranch');
         },
     });
 };
@@ -212,6 +215,7 @@ export const useUpdateGroupById = () => {
             queryClient.invalidateQueries('allGroupsByBranch');
             queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('labRooms');
+            queryClient.invalidateQueries('exportDataByBranch');
         },
     });
 };
@@ -234,6 +238,22 @@ export const useUpdateGroupStatusById = () => {
             queryClient.invalidateQueries('allGroupsByBranch');
             queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('labRooms');
+            queryClient.invalidateQueries('exportDataByBranch');
         },
     });
+};
+
+//Export Groups API
+export const getExportDataByBranch = (branch) => {
+    return useQuery(
+        ['exportDataByBranch', branch],
+        async () => {
+            try {
+                const response = await axios.get(`/profs/exportMyBranch/${branch}`);
+                return response.data;
+            } catch (error) {
+                throw new Error(`Failed to fetch export data: ${error.message}`);
+            }
+        }
+    );
 };

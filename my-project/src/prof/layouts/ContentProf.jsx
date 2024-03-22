@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
-import { getGroupsStatusByBranch } from '../../api/Profs_API';
+import { getGroupsStatusByBranch, getExportDataByBranch } from '../../api/Profs_API';
 import ContentProfHeader from './ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
 import ButtonCom from '../components/ButtonCom';
+import ExportButton from '../modules/ExportButton';
 
 export default function ContentProf({ userData, currentPage }) {
     const { name: initialProfName, role, branch_tag: initialProfBranch } = userData;
@@ -15,6 +16,7 @@ export default function ContentProf({ userData, currentPage }) {
         currentLabRoom: '',
     });
     const { data: groupsBranchStatus } = getGroupsStatusByBranch(sharedState.currentBranch);
+    const { data: exportDataByBranch } = getExportDataByBranch(sharedState.currentBranch);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -58,10 +60,11 @@ export default function ContentProf({ userData, currentPage }) {
             />
 
             <div className='flex gap-x-4 rounded-sm bg-sky-600 shadow-sm shadow-sky-500 mt-2 mx-2 pt-2 pb-4'>
-                <ButtonCom style='rounded bg-blue-300 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2'
+                <ButtonCom style='bg-blue-300 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2'
                     text='Add Course' type='button'
                     onClick={toggleModal}
                 />
+                <ExportButton currentBranch={sharedState.currentBranch} exportDataByBranch={exportDataByBranch} />
             </div>
         </div>
     );
