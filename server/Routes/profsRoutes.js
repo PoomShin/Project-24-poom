@@ -88,7 +88,6 @@ router.get('/myCourse/:name', async (req, res) => {
     }
 });
 
-
 router.get('/allCourse', async (req, res) => {
     try {
         // Fetch unique courses for all professors
