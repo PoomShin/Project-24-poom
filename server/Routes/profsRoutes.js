@@ -4,27 +4,33 @@ router.post('/addGroups', async (req, res) => {
     const { mergedGroups, course_id, group_status, owner_branch_tag } = req.body;
 
     try {
+        const groupInsertPromises = [];
+
         for (const groupData of mergedGroups) {
             const { group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, prof_name, branch_year } = groupData;
 
-            const groupResult = await pool.query(
+            const groupResult = pool.query(
                 'INSERT INTO groups (course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room, group_status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
                 [course_id, group_num, quantity, unit, hours, day_of_week, start_time, end_time, lab_room.toLowerCase(), group_status]
             );
 
-            const groupId = groupResult.rows[0].id;
+            const groupId = (await groupResult).rows[0].id;
 
-            // Add data to group_profs table
-            for (const prof of prof_name) {
-                await pool.query('INSERT INTO group_profs (group_id, prof_name) VALUES ($1, $2)', [groupId, prof]);
-            }
+            const profInsertPromises = prof_name.map(async (name) => {
+                const profQuery = 'SELECT id FROM profs WHERE name = $1';
+                const profResult = await pool.query(profQuery, [name]);
+                const profId = profResult.rows[0].id;
+                await pool.query('INSERT INTO group_profs (group_id, prof_id) VALUES ($1, $2)', [groupId, profId]);
+            });
 
-            // Add data to group_branches table
-            for (const branch of branch_year) {
-                const branch_tag = branch.substring(0, 3);
+            const branchInsertPromises = branch_year.map(async (branch) => {
                 await pool.query('INSERT INTO group_branch_year (group_id, branch_year, owner_branch_tag) VALUES ($1, $2, $3)', [groupId, branch, owner_branch_tag]);
-            }
+            });
+
+            groupInsertPromises.push(...profInsertPromises, ...branchInsertPromises);
         }
+
+        await Promise.all(groupInsertPromises);
 
         res.json({ success: true, message: 'Data added successfully' });
     } catch (error) {
@@ -42,7 +48,9 @@ router.get('/myCourse/:name', async (req, res) => {
             FROM courses c
             JOIN groups g ON c.id = g.course_id
             JOIN group_profs gp ON g.id = gp.group_id
-            WHERE gp.prof_name = $1
+            WHERE gp.prof_id IN (
+                SELECT id FROM profs WHERE name = $1
+            )
         `;
 
         const { rows: courseRows } = await pool.query(courseQuery, [name]);
@@ -52,9 +60,12 @@ router.get('/myCourse/:name', async (req, res) => {
             FROM groups g
             JOIN group_branch_year gy ON g.id = gy.group_id
             JOIN group_profs gp ON g.id = gp.group_id
-            WHERE gp.prof_name = $1
+            WHERE gp.prof_id IN (
+                SELECT id FROM profs WHERE name = $1
+            )
             GROUP BY g.id
         `;
+
         const { rows: groupRows } = await pool.query(groupQuery, [name]);
 
         const groupsByCourse = {};
@@ -77,6 +88,7 @@ router.get('/myCourse/:name', async (req, res) => {
     }
 });
 
+
 router.get('/allCourse', async (req, res) => {
     try {
         // Fetch unique courses for all professors
@@ -92,12 +104,14 @@ router.get('/allCourse', async (req, res) => {
         // Extract course IDs
         const courseIds = courseRows.map(row => row.id);
 
-        // Fetch all groups and branch_years for each course
+        // Fetch all groups and branch_years for each course along with professors
         const courseDataPromises = courseIds.map(async courseId => {
             const groupQuery = `
-                SELECT g.*, ARRAY_AGG(gy.branch_year) AS branch_years
+                SELECT g.*, ARRAY_AGG(gy.branch_year) AS branch_years, ARRAY_AGG(p.name) AS professors
                 FROM groups g
                 JOIN group_branch_year gy ON g.id = gy.group_id
+                JOIN group_profs gp ON g.id = gp.group_id
+                JOIN profs p ON gp.prof_id = p.id
                 WHERE g.course_id = $1
                 GROUP BY g.id
             `;
@@ -139,7 +153,7 @@ router.get('/groupsB/:branch', async (req, res) => {
                 c.eng_name,
                 c.combined_code_curriculum,
                 c.course_type,
-                ARRAY_AGG(gp.prof_name) AS prof_names,
+                ARRAY_AGG(p.name) AS prof_names,
                 ARRAY_AGG(gy.branch_year) AS branch_years
             FROM 
                 groups g
@@ -147,6 +161,8 @@ router.get('/groupsB/:branch', async (req, res) => {
                 group_branch_year gy ON g.Id = gy.group_id
             JOIN 
                 group_profs gp ON g.Id = gp.group_id
+            JOIN 
+                profs p ON gp.prof_id = p.id
             JOIN 
                 courses c ON g.course_id = c.Id
             WHERE
@@ -190,13 +206,15 @@ router.get('/groupsBY/:branchYear', async (req, res) => {
                 c.combined_code_curriculum,
                 c.course_type,
                 gy.owner_branch_tag,
-                ARRAY_AGG(gp.prof_name) AS prof_names
+                ARRAY_AGG(p.name) AS prof_names
             FROM 
                 groups g
             JOIN 
                 group_branch_year gy ON g.Id = gy.group_id
             JOIN 
                 group_profs gp ON g.Id = gp.group_id
+            JOIN 
+                profs p ON gp.prof_id = p.id
             JOIN 
                 courses c ON g.course_id = c.Id
             WHERE 
@@ -238,13 +256,15 @@ router.get('/allGroups/:branch', async (req, res) => {
                 c.combined_code_curriculum,
                 c.course_type,
                 gy.owner_branch_tag,
-                ARRAY_AGG(gp.prof_name) AS prof_names
+                ARRAY_AGG(p.name) AS prof_names
             FROM 
                 groups g
             JOIN 
                 group_branch_year gy ON g.Id = gy.group_id
             JOIN 
                 group_profs gp ON g.Id = gp.group_id
+            JOIN 
+                profs p ON gp.prof_id = p.id
             JOIN 
                 courses c ON g.course_id = c.Id
             WHERE 
@@ -279,13 +299,15 @@ router.get('/groupsStatus/:branch', async (req, res) => {
                 g.group_status,
                 gy.branch_year,
                 gy.owner_branch_tag,
-                ARRAY_AGG(gp.prof_name) as profs
+                ARRAY_AGG(p.name) as profs
             FROM 
                 groups g
             JOIN 
                 group_branch_year gy ON g.id = gy.group_id
             LEFT JOIN 
                 group_profs gp ON g.id = gp.group_id
+            LEFT JOIN 
+                profs p ON gp.prof_id = p.id
             WHERE
                 LEFT(gy.branch_year, 3) = $1
             GROUP BY
@@ -334,11 +356,12 @@ router.delete('/delCourse/:courseId/:profName', async (req, res) => {
         const query = `
             DELETE FROM groups 
             WHERE course_id = $1 
-            AND EXISTS (
-                SELECT 1 
-                FROM group_profs 
-                WHERE group_id = groups.Id
-                AND prof_name = $2
+            AND Id IN (
+                SELECT gp.group_id 
+                FROM group_profs gp
+                JOIN profs p ON gp.prof_id = p.id
+                WHERE gp.group_id = groups.Id
+                AND p.name = $2
             )
         `;
         await pool.query(query, [courseId, profName]);
@@ -449,13 +472,15 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 g.end_time, 
                 g.lab_room, 
                 ARRAY_AGG(DISTINCT gy.branch_year) AS branch_years,
-                ARRAY_AGG(DISTINCT gp.prof_name) AS profs
+                ARRAY_AGG(DISTINCT p.name) AS profs
             FROM 
                 groups g
             JOIN 
                 courses c ON g.course_id = c.id
             LEFT JOIN 
                 group_profs gp ON g.id = gp.group_id
+            LEFT JOIN 
+                profs p ON gp.prof_id = p.id
             LEFT JOIN 
                 group_branch_year gy ON g.id = gy.group_id
             WHERE 
