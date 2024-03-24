@@ -1,17 +1,22 @@
-import { useState } from 'react';
-import { useDeleteProfMutation, useUpdateProfMutation } from '../../api/admin_api';
-import ConfirmationModal from '../../public/ConfirmationModal';
-import DataTable from 'react-data-table-component';
+import { useState } from "react";
+import {
+  useDeleteProfMutation,
+  useUpdateProfMutation,
+} from "../../api/admin_api";
+import ConfirmationModal from "../../public/ConfirmationModal";
+import DataTable from "react-data-table-component";
 
 export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [editToggle, setEditToggle] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
 
   const updateProfMutation = useUpdateProfMutation();
   const deleteProfMutation = useDeleteProfMutation();
 
-  const filteredData = profs.filter(prof => prof.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredData = profs.filter((prof) =>
+    prof.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -32,14 +37,14 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
       setDeleteUserId(null);
     } catch (error) {
       console.error(error);
-      alert('An error occurred during delete');
+      alert("An error occurred during delete");
     }
   };
 
   const submitEdit = async (id) => {
     showEdit();
 
-    let roleSelect = document.getElementById('role-select-' + id);
+    let roleSelect = document.getElementById("role-select-" + id);
     let changeRoleValue = roleSelect.value;
     let name = document.getElementById(`input-name-${id}`).value;
     let email = document.getElementById(`input-email-${id}`).value;
@@ -54,76 +59,84 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
       refetchProfs();
     } catch (error) {
       console.error(error);
-      alert('An error occurred during update');
+      alert("An error occurred during update");
     }
   };
 
   const columns = [
     {
-      name: 'ID',
+      name: "ID",
       sortable: true,
       selector: (row) => row.id,
       cell: (row) => <p>{row.id}</p>,
     },
 
     {
-      name: 'Name',
+      name: "Name",
       sortable: true,
-      width: '300px',
       selector: (row) => row.name,
       cell: (row) => (
         <>
-          <p id={`name-${row.id}`}>{row.name}</p>
-          <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
-            id={`input-name-${row.id}`}
-            type='text'
-            defaultValue={row.name}
-          />
+          <div className="flex flex-col overflow-hidden">
+            <p id={`name-${row.id}`}>{row.name}</p>
+            <input
+              className={`mt-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${
+                !editToggle && "hidden"
+              }`}
+              id={`input-name-${row.id}`}
+              type="text"
+              defaultValue={row.name}
+            />
+          </div>
         </>
       ),
     },
 
     {
-      name: 'Email',
+      name: "Email",
       sortable: true,
-      width: '400px',
       selector: (row) => row.email,
       cell: (row) => (
         <>
-          <p id={`email-${row.id}`}>{row.email}</p>
-          <input className={`ms-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${!editToggle && 'hidden'}`}
-            id={`input-email-${row.id}`}
-            type="text"
-            defaultValue={row.email}
-          />
+          <div className="flex flex-col overflow-hidden">
+            <p id={`email-${row.id}`}>{row.email}</p>
+            <input
+              className={`mt-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${
+                !editToggle && "hidden"
+              }`}
+              id={`input-email-${row.id}`}
+              type="text"
+              defaultValue={row.email}
+            />
+          </div>
         </>
       ),
     },
 
     {
-      name: 'BranchTag',
+      name: "BranchTag",
       sortable: true,
       selector: (row) => row.branch_tag,
     },
 
     {
-      name: 'Role',
+      name: "Role",
       sortable: true,
-      width: '250px',
       selector: (row) => row.role,
       cell: (row) => (
         <>
-          <div className='flex justify-start items-center'>
-            <div className='flex'>
-              <p className='me-3'>{row.role}</p>
+          <div className="flex flex-col justify-start items-center">
+            <div className="flex">
+              <p className="me-3">{row.role}</p>
             </div>
 
             {/* change role dropdown */}
-            <form action='' className={`flex ${!editToggle && 'invisible'}`}>
-              <select className='px-2 border rounded-2xl border-solid border-black hover:bg-slate-300'
+            <form action="" className={`flex ${!editToggle && "hidden"}`}>
+              <select
+                className="px-2 border rounded-2xl border-solid border-black hover:bg-slate-300"
                 id={`role-select-${row.id}`}>
-                <option value='prof'>prof</option>
-                <option value='prof(SM)'>prof(SM)</option>
+                <option value="prof">prof</option>
+                <option value="prof(SM)">prof(SM)</option>
               </select>
             </form>
           </div>
@@ -132,17 +145,20 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
     },
 
     {
-      name: 'Action',
-      width: '200px',
+      name: "Action",
       cell: (row) => (
         <>
-          <button className='text-green-500 me-2' onClick={(e) => showEdit()}>
-            Edit
-          </button>
-          <button className='text-red-500 me-2' onClick={(e) => deleteUser(row.id, e)}>
+          <button
+            className="text-red-500 me-2"
+            onClick={(e) => deleteUser(row.id, e)}>
             Delete
           </button>
-          <button className={`me-2 text-blue-500 ${!editToggle && 'hidden'}`} onClick={(e) => submitEdit(row.id)}>
+          <button className="text-green-500 me-2" onClick={(e) => showEdit()}>
+            Edit
+          </button>
+          <button
+            className={`me-2 text-blue-500 ${!editToggle && "hidden"}`}
+            onClick={(e) => submitEdit(row.id)}>
             Submit
           </button>
           <ConfirmationModal
@@ -158,22 +174,27 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
 
   return (
     <>
-      <button className='col-span-8 rounded font-bold text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 ms-10' onClick={onShowBranches}>
+      <button
+        className="col-span-8 rounded font-bold text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 ms-10"
+        onClick={onShowBranches}>
         <span>Return to Branch</span>
       </button>
       <br />
 
       {/* Search input */}
-      <input className='rounded border mt-5 mb-4 ms-10 px-2 py-1'
-        type='text'
-        placeholder='Search by name'
+      <input
+        className="rounded border mt-5 mb-4 ms-10 px-2 py-1"
+        type="text"
+        placeholder="Search by name"
         value={searchTerm}
         onChange={handleSearch}
       />
 
-      <div className='w-[90%] ms-10'>
-        <DataTable columns={columns}
+      <div className="w-[90%] ms-10">
+        <DataTable
+          columns={columns}
           data={filteredData}
+          defaultSortFieldId={1}
           highlightOnHover
           striped
           responsive
