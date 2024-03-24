@@ -62,7 +62,6 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
   const handleFileLoad = (e) => {
     const text = e.target.result;
     const result = Papa.parse(text, { header: true }); // Parsing CSV data with headers
-    console.log(result)
 
     const dataWithTags = result.data.map((item) => ({
       ...item,
@@ -102,8 +101,21 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
 
   const handleTransfer = (rowData) => {
     setFilteredData((prevFilteredData) => [...prevFilteredData, rowData]);
+  
     setImportedData((prevImportedData) =>
-      prevImportedData.filter((item) => item === rowData)
+      prevImportedData.filter((item) => {
+        // Check if all properties of the objects are equal
+        return (
+          item.course_code !== rowData.course_code ||
+          item.curriculum !== rowData.curriculum ||
+          item.th_name !== rowData.th_name ||
+          item.eng_name !== rowData.eng_name ||
+          item.credit !== rowData.credit ||
+          item.course_type !== rowData.course_type ||
+          item.branch_tag !== rowData.branch_tag ||
+          item.course_tag !== rowData.course_tag
+        );
+      })
     );
   };
 
