@@ -29,7 +29,7 @@ export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContext
                             <button className='block w-full py-1 px-2 text-left hover:bg-green-700' onClick={() => handleStatusChange('accept')}>Accept Group</button>
                             <button className='block w-full py-1 px-2 text-left hover:bg-red-700' onClick={() => handleStatusChange('reject')}>Reject Group</button>
                         </>
-                    ) : group.group_status === 'accept' ? (
+                    ) : group.group_status === 'accept' || group.group_status === 'reject' ? (
                         <button className='block w-full py-1 px-2 text-left hover:bg-gray-200' onClick={() => handleStatusChange('waiting')}>Reset Group</button>
                     ) : null}
                 </div>

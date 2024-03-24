@@ -3,8 +3,8 @@ import { useGroupsByBranchYear, useAllGroupsByBranch } from '../../api/Profs_API
 import { DAYS_OF_WEEK } from '../data/SchedulerData';
 
 const useSortedGroups = ({ page, currentBranch, currentBranchYear, currentProfName, currentLabRoom }) => {
-    const { data: groupsByBranch } = useAllGroupsByBranch(currentBranch);
-    const { data: groupsByBranchYear } = useGroupsByBranchYear(currentBranchYear);
+    const { data: groupsByBranch } = useAllGroupsByBranch(currentBranch) || {};
+    const { data: groupsByBranchYear } = useGroupsByBranchYear(currentBranchYear) || {};
 
     const filterGroupsByPage = (groups) => {
         if (page === 'Prof') {
@@ -13,7 +13,8 @@ const useSortedGroups = ({ page, currentBranch, currentBranchYear, currentProfNa
         if (page === 'Lab') {
             return currentLabRoom === "" ? groups.filter(group => group.lab_room !== "") : groups.filter(group => group.lab_room === currentLabRoom);
         }
-        return groups;
+        // Default condition: Exclude groups with status 'reject'
+        return groups.filter(group => group.group_status !== 'reject');
     };
 
     const sortGroups = (groups) => groups.sort((a, b) => a.start_time.localeCompare(b.start_time) || a.end_time.localeCompare(b.end_time));
@@ -21,7 +22,7 @@ const useSortedGroups = ({ page, currentBranch, currentBranchYear, currentProfNa
     const sortedGroups = useMemo(() => {
         const groupsToSort = page === 'Lab' ? groupsByBranch : groupsByBranchYear || [];
         const filteredAndSortedGroups = DAYS_OF_WEEK.reduce((acc, day) => {
-            const filteredGroups = filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day && group.group_status !== 'reject'));
+            const filteredGroups = Array.isArray(groupsToSort) ? filterGroupsByPage(groupsToSort.filter(group => group.day_of_week === day)) : [];
             acc[day] = sortGroups(filteredGroups);
             return acc;
         }, {});

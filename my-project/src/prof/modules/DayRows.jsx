@@ -8,6 +8,7 @@ const getColorForCourseType = (courseType) => COURSE_TYPE_COLOR_MAP[courseType] 
 const getBgStyle = (group, day, sortedGroups) => {
     const allGroupsForDay = sortedGroups[day];
     if (group.group_status === 'accept') return 'bg-emerald-800';
+    if (group.group_status === 'reject') return 'bg-rose-800';
     const overlappingGroups = allGroupsForDay.filter(otherGroup =>
         (group.start_time >= otherGroup.start_time && group.start_time < otherGroup.end_time) ||
         (group.end_time > otherGroup.start_time && group.end_time <= otherGroup.end_time) ||

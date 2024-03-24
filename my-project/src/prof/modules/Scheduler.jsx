@@ -14,10 +14,12 @@ export default function Scheduler({ selectedPage, sharedState, groupsStatus = []
 
     const filteredGroupsStatus = useMemo(() => {
         const filterFunction = group =>
-            group.branch_year === selectedBranchYear && (selectedPage !== 'Prof' || group.profs.includes(selectedProfName)) && group.group_status !== 'reject';
+            group.branch_year === selectedBranchYear &&
+            (selectedPage !== 'Prof' ? group.group_status !== 'reject' : group.profs.includes(selectedProfName));
 
         return groupsStatus.filter(filterFunction);
     }, [groupsStatus, selectedBranchYear, selectedPage, selectedProfName]);
+
 
     const statusCounts = useMemo(() => {
         const counts = { waiting: 0, accept: 0, reject: 0 };
