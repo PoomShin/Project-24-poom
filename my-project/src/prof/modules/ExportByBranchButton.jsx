@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 
-export default function ExportButton({ currentBranch, exportDataByBranch }) {
+export default function ExportByBranchButton({ currentBranch, exportDataByBranch }) {
     const handleClick = async () => {
         try {
             const wb = XLSX.utils.book_new();

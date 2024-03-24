@@ -1,30 +1,9 @@
 import React, { useMemo, useCallback, useReducer } from 'react';
 import { useCoursesContext } from '../../context/Prof-Context';
 import { PRIORITY_VALUES } from '../data/SchedulerData';
+import { sideBarRightInitialState } from '../data/initialData';
+import { IconData } from '../data/IconData';
 import CourseGroups from '../modules/CourseGroups';
-import filterIcon from '../../assets/filter.png';
-
-const FilterButton = React.memo(({ filterName, filterCriteria, onFilter }) => {
-    return (
-        <button
-            className={`px-1 border border-gray-600 shadow-sm shadow-black text-white bg-gray-700 ${filterCriteria === 'min' ? 'bg-gradient-to-b from-blue-600 to-gray-600' : 'bg-gradient-to-t from-blue-600 to-gray-600'}`}
-            onClick={onFilter}
-        >
-            {filterName}
-        </button>
-    );
-});
-
-const initialState = {
-    openContextMenuId: null,
-    isMyGroupsOpen: true,
-    sortType: null,
-    filterCriteria: {
-        courseCodeToggle: 'min',
-        curriculumToggle: 'min',
-        typeToggle: 'min',
-    }
-};
 
 const toggleMyGroups = (state) => ({
     ...state,
@@ -58,10 +37,21 @@ const reducer = (state, action) => {
     }
 };
 
+const FilterButton = React.memo(({ filterName, filterCriteria, onFilter }) => {
+    return (
+        <button
+            className={`px-1 border border-gray-600 shadow-sm shadow-black text-white bg-gray-700 ${filterCriteria === 'min' ? 'bg-gradient-to-b from-blue-600 to-gray-600' : 'bg-gradient-to-t from-blue-600 to-gray-600'}`}
+            onClick={onFilter}
+        >
+            {filterName}
+        </button>
+    );
+});
+
 export default function SideBarRight() {
     const { profCourses } = useCoursesContext();
 
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(reducer, sideBarRightInitialState);
 
     const handleToggleMyGroups = useCallback(() => {
         dispatch({ type: 'TOGGLE_MY_GROUPS' });
@@ -103,7 +93,7 @@ export default function SideBarRight() {
             </div>
 
             <div className='flex justify-evenly shadow-md shadow-gray-950 bg-burnt_sienna/40 text-xs py-1'>
-                <img src={filterIcon} alt='filter icon' className='h-6 ml-2' />
+                <img src={IconData['Filter']} alt='filter icon' className='h-6 ml-2' />
                 <FilterButton filterName='Course' filterCriteria={state.filterCriteria.courseCodeToggle} onFilter={handleFilterToggle('courseCodeToggle')} />
                 <FilterButton filterName='Curriculum' filterCriteria={state.filterCriteria.curriculumToggle} onFilter={handleFilterToggle('curriculumToggle')} />
                 <FilterButton filterName='Type' filterCriteria={state.filterCriteria.typeToggle} onFilter={handleFilterToggle('typeToggle')} />

@@ -3,8 +3,8 @@ import { getGroupsStatusByBranch, getExportDataByBranch } from '../../api/Profs_
 import ContentProfHeader from './ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
+import ExportByBranchButton from '../modules/ExportByBranchButton';
 import ButtonCom from '../components/ButtonCom';
-import ExportButton from '../modules/ExportButton';
 
 export default function ContentProf({ userData, currentPage }) {
     const { name: initialProfName, role, branch_tag: initialProfBranch } = userData;
@@ -15,10 +15,10 @@ export default function ContentProf({ userData, currentPage }) {
         currentProfRole: role,
         currentLabRoom: '',
     });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const { data: groupsBranchStatus } = getGroupsStatusByBranch(sharedState.currentBranch);
     const { data: exportDataByBranch } = getExportDataByBranch(sharedState.currentBranch);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleBranchChange = selectedBranch => {
         setSharedState(prevState => ({
@@ -64,7 +64,7 @@ export default function ContentProf({ userData, currentPage }) {
                     text='Add Course' type='button'
                     onClick={toggleModal}
                 />
-                <ExportButton currentBranch={sharedState.currentBranch} exportDataByBranch={exportDataByBranch} />
+                <ExportByBranchButton currentBranch={sharedState.currentBranch} exportDataByBranch={exportDataByBranch} />
             </div>
         </div>
     );

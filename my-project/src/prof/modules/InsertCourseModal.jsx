@@ -40,6 +40,7 @@ export default function InsertCourseModal({ ownerProfBranch, isVisible, onClose 
         setCreditHours(initialCreditHour);
         setCourseInfo(initialCourseInfoState);
     };
+
     const handleSubmit = async () => {
         try {
             const groupData = {
@@ -63,7 +64,7 @@ export default function InsertCourseModal({ ownerProfBranch, isVisible, onClose 
         onClose();
     }
     const closeAlert = () => {
-        setOpenAlert(false)
+        setOpenAlert(false);
         onClose();
     }
 
