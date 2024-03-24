@@ -147,6 +147,7 @@ export const useAddGroupMutation = () => {
             queryClient.invalidateQueries('allGroupsByBranch');
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
+            queryClient.invalidateQueries('groupsByBranch');
         },
     });
 };
@@ -170,6 +171,7 @@ export const useDelCourseByName = () => {
             queryClient.invalidateQueries('allGroupsByBranch');
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
+            queryClient.invalidateQueries('groupsByBranch');
         },
     });
 };
@@ -193,6 +195,7 @@ export const useDelGroupById = () => {
             queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
+            queryClient.invalidateQueries('groupsByBranch');
         },
     });
 };
@@ -216,6 +219,7 @@ export const useUpdateGroupById = () => {
             queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
+            queryClient.invalidateQueries('groupsByBranch');
         },
     });
 };
@@ -239,6 +243,7 @@ export const useUpdateGroupStatusById = () => {
             queryClient.invalidateQueries('CoursesByProf');
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
+            queryClient.invalidateQueries('groupsByBranch');
         },
     });
 };

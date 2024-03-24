@@ -1,21 +1,18 @@
-import React, { useState } from "react";
-import { statusMappings } from "../data/SidebarRightData";
-import CourseGroupContextMenu from "../ContextMenu/CourseGroupContextMenu";
-import ProfGroupContextMenu from "../ContextMenu/ProfGroupContextMenu";
+import React, { useState } from 'react';
+import { statusMappings } from '../data/SidebarRightData';
+import { useContextMenuPosition } from '../CustomHook/useContextMenuPosition';
+import CourseGroupContextMenu from '../ContextMenu/CourseGroupContextMenu';
+import ProfGroupContextMenu from '../ContextMenu/ProfGroupContextMenu';
 
 export default function CourseGroups({ onContextMenuOpen, isContextMenuOpen, id, combined_code_curriculum, course_type, groups }) {
-    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+    const { contextMenuPosition, calculatePosition } = useContextMenuPosition();
     const handleGroupContextMenu = (groupID) => {
         setOpenGroupContextMenuID(groupID);
-    }
+    };
 
     const [openGroupContextMenuID, setOpenGroupContextMenuID] = useState(null);
     const handleContextMenu = (e) => {
-        e.preventDefault();
-        const rect = e.currentTarget.getBoundingClientRect();
-        const offsetX = rect.width / 2 - 40;
-        const offsetY = rect.height / 2;
-        setContextMenuPosition({ x: offsetX, y: offsetY });
+        calculatePosition(e);
         onContextMenuOpen(id);
     };
 
@@ -52,17 +49,13 @@ export default function CourseGroups({ onContextMenuOpen, isContextMenuOpen, id,
             </div>
         </div>
     );
-};
+}
 
 const ProfGroup = React.memo(({ group, onContextMenuOpen, isContextMenuOpen }) => {
-    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+    const { contextMenuPosition, calculatePosition } = useContextMenuPosition();
 
     const handleContextMenu = (e) => {
-        e.preventDefault();
-        const rect = e.currentTarget.getBoundingClientRect();
-        const offsetX = rect.width / 2 - 40;
-        const offsetY = rect.height / 2 - 60;
-        setContextMenuPosition({ x: offsetX, y: offsetY });
+        calculatePosition(e);
         onContextMenuOpen(group.id);
     };
 
@@ -81,7 +74,7 @@ const ProfGroup = React.memo(({ group, onContextMenuOpen, isContextMenuOpen }) =
                 <p>Sec:{group.group_num}</p>
             </div>
             <div className='flex overflow-x-auto mt-1'>
-                {group.branch_years.length > 0 && group.branch_years.map((branchYear, index) => (
+                {group.branch_years?.map((branchYear, index) => (
                     <p key={index} className='rounded-sm bg-indigo-900 text-yellow-200 text-xs ml-2 p-1'>
                         {branchYear}
                     </p>
