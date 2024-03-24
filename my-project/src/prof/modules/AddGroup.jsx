@@ -3,8 +3,9 @@ import { useProfsContext, useBranchesContext, useGroupContext } from '../../cont
 import { SelectBranchYear, SelectProf } from '../components/AddGroupSelect';
 import { DAYS_OF_WEEK, Time_Options } from '../data/SchedulerData';
 import { checkOverlapWithYourself } from '../data/functions';
+import { initialAddGroupFormState } from '../data/initialData';
+import { IconData } from '../data/IconData';
 import AlertModal from '../../public/AlertModal';
-import plusIcon from '../../assets/plus.png';
 
 export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit }) {
     const { profsBranch } = useProfsContext();
@@ -16,18 +17,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
     const [isDuplicate, setIsDuplicate] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
 
-    const [formData, setFormData] = useState({
-        group_num: '',
-        quantity: '',
-        unit: '',
-        hours: '',
-        day_of_week: '',
-        start_time: '',
-        end_time: '',
-        prof_name: [],
-        branch_year: [],
-        lab_room: ''
-    });
+    const [formData, setFormData] = useState(initialAddGroupFormState);
 
     const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -121,7 +111,7 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
                             {isLab && <TextInput spanText='ห้องแลป' inputClass='w-30 h-5' name='lab_room' value={formData.lab_room} onChange={handleInputChange} />}
                         </div>
                     </form>
-                ) : <img src={plusIcon} alt='Add Section' className='h-24 self-center' onClick={handleFormToggle} />}
+                ) : <img src={IconData['Plus']} alt='Add Section' className='h-24 self-center' onClick={handleFormToggle} />}
             </div>
         </>
     );

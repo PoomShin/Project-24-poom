@@ -18,3 +18,16 @@ export const sideBarRightInitialState = {
         typeToggle: 'min',
     }
 };
+
+export const initialAddGroupFormState = {
+    group_num: '',
+    quantity: '',
+    unit: '',
+    hours: '',
+    day_of_week: '',
+    start_time: '',
+    end_time: '',
+    prof_name: [],
+    branch_year: [],
+    lab_room: ''
+}
