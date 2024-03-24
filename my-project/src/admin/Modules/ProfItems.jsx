@@ -8,7 +8,7 @@ import DataTable from "react-data-table-component";
 
 export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [editToggle, setEditToggle] = useState(false);
+  //const [editToggle, setEditToggle] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
 
   const updateProfMutation = useUpdateProfMutation();
@@ -22,8 +22,16 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
     setSearchTerm(e.target.value);
   };
 
-  const showEdit = () => {
-    setEditToggle((prevState) => !prevState);
+  const showEdit = (id) => {
+    //setEditToggle((prevState) => !prevState);
+    let name = document.getElementById(`input-name-${id}`);
+    let email = document.getElementById(`input-email-${id}`);
+    let role = document.getElementById(`role-${id}`);
+    let submit = document.getElementById(`submit-${id}`);
+    name.classList.toggle("hidden");
+    email.classList.toggle("hidden");
+    role.classList.toggle("hidden");
+    submit.classList.toggle("hidden");
   };
 
   const deleteUser = async (id) => {
@@ -42,7 +50,7 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
   };
 
   const submitEdit = async (id) => {
-    showEdit();
+    showEdit(id);
 
     let roleSelect = document.getElementById("role-select-" + id);
     let changeRoleValue = roleSelect.value;
@@ -80,9 +88,7 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
           <div className="flex flex-col overflow-hidden">
             <p id={`name-${row.id}`}>{row.name}</p>
             <input
-              className={`mt-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${
-                !editToggle && "hidden"
-              }`}
+              className={`mt-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 hidden`}
               id={`input-name-${row.id}`}
               type="text"
               defaultValue={row.name}
@@ -101,9 +107,7 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
           <div className="flex flex-col overflow-hidden">
             <p id={`email-${row.id}`}>{row.email}</p>
             <input
-              className={`mt-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 ${
-                !editToggle && "hidden"
-              }`}
+              className={`mt-2 px-2 py-1 border rounded-full border-solid border-black bg-gray-200 hidden`}
               id={`input-email-${row.id}`}
               type="text"
               defaultValue={row.email}
@@ -125,13 +129,10 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
       selector: (row) => row.role,
       cell: (row) => (
         <>
-          <div className="flex flex-col justify-start items-center">
-            <div className="flex">
-              <p className="me-3">{row.role}</p>
-            </div>
-
+          <div className="flex flex-col justify-center items-center">
+            <p className="me-3 ">{row.role}</p>
             {/* change role dropdown */}
-            <form action="" className={`flex ${!editToggle && "hidden"}`}>
+            <form action="" className={`hidden`} id={`role-${row.id}`}>
               <select
                 className="px-2 border rounded-2xl border-solid border-black hover:bg-slate-300"
                 id={`role-select-${row.id}`}>
@@ -146,18 +147,23 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
 
     {
       name: "Action",
+      selector: (row) => [row.id],
       cell: (row) => (
-        <>
+        <div>
           <button
-            className="text-red-500 me-2"
+            className="text-nowrap text-black hover:text-white bg-red-400  hover:bg-red-600 px-3 py-1 rounded-md border-solid border-2 border-black me-2"
             onClick={(e) => deleteUser(row.id, e)}>
             Delete
           </button>
-          <button className="text-green-500 me-2" onClick={(e) => showEdit()}>
+          <button
+            className=" text-nowrap text-black hover:text-white bg-green-400  hover:bg-green-600 px-3 py-1 rounded-md border-solid border-2 border-black me-2"
+            onClick={(e) => showEdit(row.id)}>
             Edit
           </button>
           <button
-            className={`me-2 text-blue-500 ${!editToggle && "hidden"}`}
+            className={`me-2 text-black hover:text-white bg-blue-400  hover:bg-blue-600 px-3 py-1 rounded-md border-solid border-2 border-black  
+              hidden`}
+            id={`submit-${row.id}`}
             onClick={(e) => submitEdit(row.id)}>
             Submit
           </button>
@@ -167,7 +173,7 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
             onConfirm={confirmDelete}
             onCancel={() => setDeleteUserId(null)}
           />
-        </>
+        </div>
       ),
     },
   ];
