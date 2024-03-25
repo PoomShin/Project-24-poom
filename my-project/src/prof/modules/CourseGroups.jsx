@@ -4,25 +4,26 @@ import { useContextMenuPosition } from '../CustomHook/useContextMenuPosition';
 import CourseGroupContextMenu from '../ContextMenu/CourseGroupContextMenu';
 import ProfGroupContextMenu from '../ContextMenu/ProfGroupContextMenu';
 
-export default function CourseGroups({ onContextMenuOpen, isContextMenuOpen, id, combined_code_curriculum, course_type, groups }) {
+export default function CourseGroups({ onContextMenuOpen, isContextMenuOpen, course }) {
     const { contextMenuPosition, calculatePosition } = useContextMenuPosition();
+    const [openGroupContextMenuID, setOpenGroupContextMenuID] = useState(null);
+
+    const [isOpenGroups, setIsOpenGroups] = useState(false);
+
     const handleGroupContextMenu = (groupID) => {
         setOpenGroupContextMenuID(groupID);
     };
-
-    const [openGroupContextMenuID, setOpenGroupContextMenuID] = useState(null);
     const handleContextMenu = (e) => {
         calculatePosition(e);
-        onContextMenuOpen(id);
+        onContextMenuOpen(course.id);
     };
 
-    const [isOpenGroups, setIsOpenGroups] = useState(false);
     const handleToggleGroup = (e) => {
         e.preventDefault();
         setIsOpenGroups(prev => !prev);
     };
 
-    const allAccepted = groups?.every(group => group.group_status === 'accept');
+    const allAccepted = course.groups?.every(group => group.group_status === 'accept');
     const bgColorClass = allAccepted ? 'bg-green-200' : 'bg-orange-200';
     const hoverColorClass = allAccepted ? 'hover:bg-green-300' : 'hover:bg-orange-300';
 
@@ -30,7 +31,7 @@ export default function CourseGroups({ onContextMenuOpen, isContextMenuOpen, id,
         <div className='relative'>
             {isContextMenuOpen && (
                 <CourseGroupContextMenu
-                    courseId={id}
+                    courseId={course.id}
                     position={contextMenuPosition}
                     onClose={() => onContextMenuOpen(null)}
                 />
@@ -39,11 +40,11 @@ export default function CourseGroups({ onContextMenuOpen, isContextMenuOpen, id,
                 onClickCapture={handleToggleGroup}
                 onContextMenu={handleContextMenu}
             >
-                <p className='ml-2'>{combined_code_curriculum}</p>
-                <p className='mx-2'>{course_type}</p>
+                <p className='ml-2'>{course.combined_code_curriculum}</p>
+                <p className='mx-2'>{course.course_type}</p>
             </div>
             <div className={`overflow-hidden ${isOpenGroups ? 'h-fit' : 'h-0'}`}>
-                {groups?.map(group => (
+                {course.groups?.map(group => (
                     <ProfGroup key={group.id} group={group} onContextMenuOpen={handleGroupContextMenu} isContextMenuOpen={openGroupContextMenuID === group.id} />
                 ))}
             </div>

@@ -6,7 +6,7 @@ export default function CourseGroupContextMenu({ courseId, position, onClose }) 
     const { name: profName } = userContextValues;
     const { x, y } = position;
 
-    const { mutate: delCourseByName } = useDelCourseByName();
+    const { mutateAsync: delCourseByName } = useDelCourseByName();
 
     const handleDeleteCourse = async () => {
         try {
@@ -18,10 +18,7 @@ export default function CourseGroupContextMenu({ courseId, position, onClose }) 
     };
 
     return (
-        <div className='absolute z-50 bg-gray-800 border border-gray-700 rounded shadow-md font-semibold text-white' style={{
-            top: y + 10,
-            left: x,
-        }}>
+        <div className='absolute z-50 bg-gray-800 border border-gray-700 rounded shadow-md font-semibold text-white' style={{ top: y + 10, left: x, }}>
             <div className='p-2 flex flex-col items-center'>
                 <button className='block w-full py-2 px-4 text-left hover:bg-gray-700' onClick={handleDeleteCourse}>Delete Course</button>
                 <button className='block w-full py-2 px-4 text-left hover:bg-red-700' onClick={onClose}>Close Menu</button>

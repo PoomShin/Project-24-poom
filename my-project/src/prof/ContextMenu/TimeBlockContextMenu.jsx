@@ -21,8 +21,8 @@ export default function TimeBlockContentMenu({ isOpenContextMenu, canOpenContext
                 }}
             >
                 <div className='p-2 flex flex-col items-center'>
-                    <button className='absolute top-0 right-0 focus:outline-none' onClick={handleCloseContextMenu}>
-                        <FaTimes />
+                    <button className='absolute top-1 right-1 focus:outline-none' onClick={handleCloseContextMenu}>
+                        <FaTimes size={14} />
                     </button>
                     {group.group_status === 'waiting' ? (
                         <>

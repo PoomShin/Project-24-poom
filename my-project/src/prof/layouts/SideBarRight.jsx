@@ -5,48 +5,45 @@ import { sideBarRightInitialState } from '../data/initialData';
 import { IconData } from '../data/IconData';
 import CourseGroups from '../modules/CourseGroups';
 
-const toggleMyGroups = (state) => ({
-    ...state,
-    isMyGroupsOpen: !state.isMyGroupsOpen
-});
-
-const toggleFilter = (state, filterType) => ({
-    ...state,
-    sortType: filterType,
-    filterCriteria: {
-        ...state.filterCriteria,
-        [filterType]: state.filterCriteria[filterType] === 'min' ? 'max' : 'min'
-    }
-});
-
-const openContextMenu = (state, courseID) => ({
-    ...state,
-    openContextMenuId: courseID
-});
-
 const reducer = (state, action) => {
+    const toggleMyGroups = () => ({
+        ...state,
+        isMyGroupsOpen: !state.isMyGroupsOpen
+    });
+
+    const toggleFilter = (filterType) => ({
+        ...state,
+        sortType: filterType,
+        filterCriteria: {
+            ...state.filterCriteria,
+            [filterType]: state.filterCriteria[filterType] === 'min' ? 'max' : 'min'
+        }
+    });
+
+    const openContextMenu = (courseID) => ({
+        ...state,
+        openContextMenuId: courseID
+    });
+
     switch (action.type) {
         case 'TOGGLE_MY_GROUPS':
-            return toggleMyGroups(state);
+            return toggleMyGroups();
         case 'TOGGLE_FILTER':
-            return toggleFilter(state, action.payload.filterType);
+            return toggleFilter(action.payload.filterType);
         case 'OPEN_CONTEXT_MENU':
-            return openContextMenu(state, action.payload.courseID);
+            return openContextMenu(action.payload.courseID);
         default:
             return state;
     }
 };
 
-const FilterButton = React.memo(({ filterName, filterCriteria, onFilter }) => {
-    return (
-        <button
-            className={`px-1 border border-gray-600 shadow-sm shadow-black text-white bg-gray-700 ${filterCriteria === 'min' ? 'bg-gradient-to-b from-blue-600 to-gray-600' : 'bg-gradient-to-t from-blue-600 to-gray-600'}`}
-            onClick={onFilter}
-        >
-            {filterName}
-        </button>
-    );
-});
+const FilterButton = React.memo(({ filterName, filterCriteria, onFilter }) => (
+    <button className={`px-1 border border-gray-600 shadow-sm shadow-black text-white bg-gray-700 ${filterCriteria === 'min' ? 'bg-gradient-to-b from-blue-600 to-gray-600' : 'bg-gradient-to-t from-blue-600 to-gray-600'}`}
+        onClick={onFilter}
+    >
+        {filterName}
+    </button>
+));
 
 export default function SideBarRight() {
     const { profCourses } = useCoursesContext();
@@ -78,12 +75,14 @@ export default function SideBarRight() {
                 PRIORITY_VALUES[a.course_type] - PRIORITY_VALUES[b.course_type] :
                 PRIORITY_VALUES[b.course_type] - PRIORITY_VALUES[a.course_type];
         } else {
-            return profCourses;
+            return 0; // Return 0 if no sorting is applied
         }
-    }, [state.sortType, state.filterCriteria, profCourses]);
+    }, [state.sortType, state.filterCriteria]);
 
     const filteredProfCourses = useMemo(() => {
-        return profCourses?.slice().sort(sortCourses) || [];
+        if (!profCourses) return [];
+
+        return [...profCourses].sort(sortCourses);
     }, [profCourses, sortCourses]);
 
     return (
@@ -101,7 +100,7 @@ export default function SideBarRight() {
 
             <div className={`overflow-y-auto flex flex-col transition-all ease-in-out duration-300 custom-scrollbar ${state.isMyGroupsOpen ? 'h-dvh' : 'h-0'}`}>
                 {filteredProfCourses.map(course => (
-                    <CourseGroups key={course.id} {...course} onContextMenuOpen={handleOpenCourseContextMenu} isContextMenuOpen={state.openContextMenuId === course.id} />
+                    <CourseGroups key={course.id} course={course} onContextMenuOpen={handleOpenCourseContextMenu} isContextMenuOpen={state.openContextMenuId === course.id} />
                 ))}
             </div>
         </div >
