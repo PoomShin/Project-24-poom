@@ -5,6 +5,15 @@ import TimeRows from '../components/TimeRows';
 import GroupsNotification from './GroupsNotification';
 import ViewCourseButton from '../components/viewCourseButton';
 
+const GroupsStatusBar = ({ statusCounts, overlap }) => (
+    <div className='pt-2 leading-none flex gap-2 items-center text-lg font-bold'>
+        <p className='text-yellow-900 underline decoration-yellow-600 rounded-sm'>Waiting: {statusCounts.waiting}</p>
+        <p className='text-green-900 underline decoration-green-600 rounded-sm'>Accept: {statusCounts.accept}</p>
+        <p className='text-red-900 underline decoration-red-600 rounded-sm'>Reject: {statusCounts.reject}</p>
+        <p className='text-neutral-900  underline decoration-neutral-600 rounded-sm'>Overlapping: {overlap}</p>
+    </div>
+)
+
 export default function Scheduler({ selectedPage, sharedState, groupsStatus = [] }) {
     const { currentBranch: selectedBranch, currentBranchYear: selectedBranchYear, currentProfName: selectedProfName } = sharedState
 
@@ -19,7 +28,6 @@ export default function Scheduler({ selectedPage, sharedState, groupsStatus = []
 
         return groupsStatus.filter(filterFunction);
     }, [groupsStatus, selectedBranchYear, selectedPage, selectedProfName]);
-
 
     const statusCounts = useMemo(() => {
         const counts = { waiting: 0, accept: 0, reject: 0 };
@@ -48,12 +56,3 @@ export default function Scheduler({ selectedPage, sharedState, groupsStatus = []
         </>
     );
 };
-
-const GroupsStatusBar = ({ statusCounts, overlap }) => (
-    <div className='pt-2 leading-none flex gap-2 items-center text-lg font-bold'>
-        <p className='text-yellow-900 underline decoration-yellow-600 rounded-sm'>Waiting: {statusCounts.waiting}</p>
-        <p className='text-green-900 underline decoration-green-600 rounded-sm'>Accept: {statusCounts.accept}</p>
-        <p className='text-red-900 underline decoration-red-600 rounded-sm'>Reject: {statusCounts.reject}</p>
-        <p className='text-neutral-900  underline decoration-neutral-600 rounded-sm'>Overlapping: {overlap}</p>
-    </div>
-)

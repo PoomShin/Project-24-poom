@@ -8,6 +8,7 @@ import AlertModal from "../../public/AlertModal";
 export default function EditGroupForm({ closeEdit, isLab, handleUpdateGroup, group }) {
     const { name: profName } = useUserContext()?.userContextValues || {};
     const { groupsByBranch } = useGroupContext();
+
     const [updatedGroupData, setUpdatedGroupData] = useState({
         group_num: group.group_num,
         quantity: group.quantity,
@@ -26,7 +27,6 @@ export default function EditGroupForm({ closeEdit, isLab, handleUpdateGroup, gro
             [name]: value
         }));
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         const overlapWithYourself = checkOverlapWithProf(groupsByBranch, updatedGroupData, profName);

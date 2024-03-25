@@ -3,29 +3,6 @@ import { getStatusCounts } from '../data_functions/functions';
 import view from '../../assets/view.png';
 import hide from '../../assets/hide.png';
 
-export default function GroupsNotification({ branch, groupsStatus }) {
-    const [notificationPosition, setNotificationPosition] = useState({ x: 0, y: 0 });
-    const [showNotification, setShowNotification] = useState(false);
-    const statusCounts = getStatusCounts(groupsStatus);
-
-    const handleClick = (event) => {
-        const { clientX, clientY } = event;
-        setNotificationPosition({ x: clientX, y: clientY });
-        setShowNotification(true);
-    };
-
-    const handleClose = () => {
-        setShowNotification(false);
-    };
-
-    return (
-        <div>
-            <Button activeColor={showNotification ? 'bg-orange-500' : ''} onClick={handleClick} showNotification={showNotification} />
-            {showNotification && <Modal groupStatusBranch={branch} onClose={handleClose} notificationPosition={notificationPosition} statusCounts={statusCounts} />}
-        </div>
-    );
-};
-
 const Button = ({ activeColor, onClick, showNotification }) => (
     <button className={`p-1 flex items-center rounded-md text-sm font-bold text-white bg-zinc-600 ${activeColor}`}
         onClick={onClick}
@@ -55,3 +32,26 @@ const Modal = ({ groupStatusBranch, onClose, notificationPosition, statusCounts 
         </div>
     </div>
 );
+
+export default function GroupsNotification({ branch, groupsStatus }) {
+    const [notificationPosition, setNotificationPosition] = useState({ x: 0, y: 0 });
+    const [showNotification, setShowNotification] = useState(false);
+    const statusCounts = getStatusCounts(groupsStatus);
+
+    const handleClick = (event) => {
+        const { clientX, clientY } = event;
+        setNotificationPosition({ x: clientX, y: clientY });
+        setShowNotification(true);
+    };
+
+    const handleClose = () => {
+        setShowNotification(false);
+    };
+
+    return (
+        <div>
+            <Button activeColor={showNotification ? 'bg-orange-500' : ''} onClick={handleClick} showNotification={showNotification} />
+            {showNotification && <Modal groupStatusBranch={branch} onClose={handleClose} notificationPosition={notificationPosition} statusCounts={statusCounts} />}
+        </div>
+    );
+};
