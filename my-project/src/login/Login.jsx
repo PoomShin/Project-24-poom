@@ -1,18 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//Context
 import { useUserContext } from '../context/User-Context';
-//API
 import useLoginMutation from '../api/Login_API';
-//Components
 import LoginHeader from './components/LoginHeader';
 import GoogleButton from './components/GoogleButton';
 import AdminForm from './components/AdminForm';
 
 export default function Login() {
-    const [formData, setFormData] = useState({ username: '', password: '' });
-    const { setUserContextValues } = useUserContext();
     const navigate = useNavigate();
+    const { setUserContextValues } = useUserContext();
+    const [formData, setFormData] = useState({ username: '', password: '' });
 
     const handleAdminLogin = useLoginMutation('/login/admin', ({ name, role, message }) => {
         const userData = { name, role };

@@ -4,8 +4,20 @@ import { gapi } from 'gapi-script';
 
 const clientId = "902199029700-1pv3edc1p4oqe8kj2k77ltqapea1ooa2.apps.googleusercontent.com";
 
-export default function GoogleButton({ handleLogin }) {
+const GoogleButton = ({ handleLogin }) => {
     const [profile, setProfile] = useState(null);
+
+    const handleGoogleLoginSuccess = (res) => {
+        const { email, imageUrl } = res.profileObj;
+        setProfile(res.profileObj);
+        handleLogin(email, imageUrl);
+    };
+
+    const handleGoogleLoginFailure = (res) => {
+        if (res.error !== 'Cross-Origin-Opener-Policy') {
+            console.error('Google login failure:', res);
+        }
+    };
 
     useEffect(() => {
         const initializeGoogleApi = async () => {
@@ -29,18 +41,6 @@ export default function GoogleButton({ handleLogin }) {
         initializeGoogleApi();
     }, []);
 
-    const handleGoogleLoginSuccess = (res) => {
-        const { email, imageUrl } = res.profileObj;
-        setProfile(res.profileObj);
-        handleLogin(email, imageUrl);
-    };
-
-    const handleGoogleLoginFailure = (res) => {
-        if (res.error !== 'Cross-Origin-Opener-Policy') {
-            console.error('Google login failure:', res);
-        }
-    };
-
     return (
         <div className='flex flex-col items-center border border-solid rounded-tl-lg rounded-tr-lg border-black bg-emerald-600 px-12 pt-3 pb-6'>
             <h1 className='font-bold text-white'>For Professor</h1>
@@ -57,4 +57,6 @@ export default function GoogleButton({ handleLogin }) {
             )}
         </div>
     );
-}
+};
+
+export default GoogleButton;
