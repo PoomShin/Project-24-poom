@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { IconData } from '../data/IconData';
+import { IconData } from '../data_functions/IconData';
 
 const menuItems = [
     { key: 'Home', label: 'Home', icon: IconData['Home'] },

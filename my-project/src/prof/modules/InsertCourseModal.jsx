@@ -9,8 +9,8 @@ import CourseSelectedDisplay from '../components/CourseSelectedDisplay';
 import InsertGroupsCards from './InsertGroupsCards';
 import ButtonCom from '../components/ButtonCom';
 //data
-import { initialCourseInfoState, initialCreditHour } from '../data/initialData';
-import { parseCredits } from '../data/functions';
+import { initialCourseInfoState, initialCreditHour } from '../data_functions/initialData';
+import { parseCredits } from '../data_functions/functions';
 
 export default function InsertCourseModal({ ownerProfBranch, isVisible, onClose }) {
     const { coursesBranch } = useCoursesContext(); //for checking if this prop have ovelappign course with yourself

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useBranchesContext, useProfsContext } from '../../context/Prof-Context';
 import { useGetLabRoomByBranch } from '../../api/Profs_API';
-import { IconData } from '../data/IconData';
+import { IconData } from '../data_functions/IconData';
 
 const HeaderSelect = ({ colStart, defaultSelect, options = [], value, handleChange }) => (
     <div className={`relative ${colStart} flex`}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Time_Slots } from '../data/SchedulerData';
+import { Time_Slots } from '../data_functions/SchedulerData';
 
 const TimeRows = () => {
     return (

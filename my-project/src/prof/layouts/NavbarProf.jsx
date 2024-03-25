@@ -1,4 +1,4 @@
-import { IconData } from '../data/IconData';
+import { IconData } from '../data_functions/IconData';
 
 export default function NavbarProf({ name, role, img }) {
     return (

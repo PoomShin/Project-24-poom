@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useUserContext } from "../../context/User-Context";
 import { useGroupContext } from "../../context/Prof-Context";
-import { simplifyTime, checkOverlapWithProf } from "../data/functions";
-import { DAYS_OF_WEEK, Time_Options } from "../data/SchedulerData";
+import { simplifyTime, checkOverlapWithProf } from "../data_functions/functions";
+import { DAYS_OF_WEEK, Time_Options } from "../data_functions/SchedulerData";
 import AlertModal from "../../public/AlertModal";
 
 export default function EditGroupForm({ closeEdit, isLab, handleUpdateGroup, group }) {

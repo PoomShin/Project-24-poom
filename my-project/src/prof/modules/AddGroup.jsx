@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useProfsContext, useBranchesContext, useGroupContext } from '../../context/Prof-Context';
 import { SelectBranchYear, SelectProf } from '../components/AddGroupSelect';
-import { DAYS_OF_WEEK, Time_Options } from '../data/SchedulerData';
-import { checkOverlapWithYourself } from '../data/functions';
-import { initialAddGroupFormState } from '../data/initialData';
-import { IconData } from '../data/IconData';
+import { DAYS_OF_WEEK, Time_Options } from '../data_functions/SchedulerData';
+import { checkOverlapWithYourself } from '../data_functions/functions';
+import { initialAddGroupFormState } from '../data_functions/initialData';
+import { IconData } from '../data_functions/IconData';
 import AlertModal from '../../public/AlertModal';
 
 export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLab, setDisableSubmit }) {

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useUserContext } from '../../context/User-Context';
-import { GRID_COL_DATA } from '../data/SchedulerData';
+import { GRID_COL_DATA } from '../data_functions/SchedulerData';
 import TimeBlockContentMenu from '../ContextMenu/TimeBlockContextMenu';
 
 const getColumnClass = (time, type) => GRID_COL_DATA[type][parseFloat(time)] || '';

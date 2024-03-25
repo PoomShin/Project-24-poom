@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useGroupsByBranchYear, useAllGroupsByBranch } from '../../api/Profs_API';
-import { DAYS_OF_WEEK } from '../data/SchedulerData';
+import { DAYS_OF_WEEK } from '../data_functions/SchedulerData';
 
 const useSortedGroups = ({ page, currentBranch, currentBranchYear, currentProfName, currentLabRoom }) => {
     const { data: groupsByBranch } = useAllGroupsByBranch(currentBranch) || {};

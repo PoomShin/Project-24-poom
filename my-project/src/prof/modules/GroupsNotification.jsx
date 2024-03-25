@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getStatusCounts } from '../data/functions';
+import { getStatusCounts } from '../data_functions/functions';
 import view from '../../assets/view.png';
 import hide from '../../assets/hide.png';
 

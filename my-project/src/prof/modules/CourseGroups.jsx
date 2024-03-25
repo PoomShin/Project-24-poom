@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { statusMappings } from '../data/SidebarRightData';
+import { statusMappings } from '../data_functions/SidebarRightData';
 import { useContextMenuPosition } from '../CustomHook/useContextMenuPosition';
 import CourseGroupContextMenu from '../ContextMenu/CourseGroupContextMenu';
 import ProfGroupContextMenu from '../ContextMenu/ProfGroupContextMenu';

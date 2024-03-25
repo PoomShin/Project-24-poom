@@ -1,8 +1,8 @@
 import React, { useMemo, useCallback, useReducer } from 'react';
 import { useCoursesContext } from '../../context/Prof-Context';
-import { PRIORITY_VALUES } from '../data/SchedulerData';
-import { sideBarRightInitialState } from '../data/initialData';
-import { IconData } from '../data/IconData';
+import { PRIORITY_VALUES } from '../data_functions/SchedulerData';
+import { sideBarRightInitialState } from '../data_functions/initialData';
+import { IconData } from '../data_functions/IconData';
 import CourseGroups from '../modules/CourseGroups';
 
 const reducer = (state, action) => {

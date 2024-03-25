@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { calculateOverlappingCount } from '../data/functions';
+import { calculateOverlappingCount } from '../data_functions/functions';
 import DayRows from "./DayRows";
 import TimeRows from '../components/TimeRows';
 import GroupsNotification from './GroupsNotification';

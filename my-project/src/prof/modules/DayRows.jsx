@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { DAYS_OF_WEEK, PRIORITY_VALUES, COURSE_TYPE_COLOR_MAP, Days_COLOR_MAP } from "../data/SchedulerData";
+import { DAYS_OF_WEEK, PRIORITY_VALUES, COURSE_TYPE_COLOR_MAP, Days_COLOR_MAP } from "../data_functions/SchedulerData";
 import useSortedGroups from "../CustomHook/useSortedGroups";
 import TimeBlock from "../components/TimeBlock";
 
