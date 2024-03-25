@@ -9,7 +9,12 @@ export default function ExportByBranchButton({ currentBranch, exportDataByBranch
                 ['รหัสวิชา', 'รหัสวิชา-พ.ศ.หลักสูตร', 'ชื่อวิชา', 'หน่วยกิต', 'หน่วย', 'จำนวน ชม.', 'วัน', 'เริ่ม', 'สิ้นสุด', 'ห้อง', 'สาขา', 'อาจารย์']
             ]);
 
-            exportDataByBranch.forEach(course => {
+            // Filter out only the groups that are in 'accept' status
+            const acceptedGroups = exportDataByBranch.filter(course => {
+                return course.groups.some(group => group.group_status === 'accept');
+            });
+
+            acceptedGroups.forEach(course => {
                 const { course_code, combined_code_curriculum, eng_name, credit, groups } = course;
 
                 groups.sort((a, b) => {
@@ -63,8 +68,7 @@ export default function ExportByBranchButton({ currentBranch, exportDataByBranch
     };
 
     return (
-        <button
-            className='rounded-sm shadow-md shadow-gray-700 bg-green-300 hover:bg-green-700 text-white font-bold py-2 px-4 ml-2'
+        <button className='rounded-sm shadow-md shadow-gray-700 bg-green-300 hover:bg-green-700 text-white font-bold py-2 px-4 ml-2'
             type='button'
             onClick={handleClick}
         >

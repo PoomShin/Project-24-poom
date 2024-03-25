@@ -470,6 +470,7 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 g.start_time, 
                 g.end_time, 
                 g.lab_room, 
+                g.group_status,
                 ARRAY_AGG(DISTINCT gy.branch_year) AS branch_years,
                 ARRAY_AGG(DISTINCT p.name) AS profs
             FROM 
@@ -494,7 +495,8 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 g.day_of_week, 
                 g.start_time, 
                 g.end_time, 
-                g.lab_room;
+                g.lab_room,
+                g.group_status;
         `;
 
         const { rows } = await pool.query(query, [branch]);
@@ -519,7 +521,8 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 end_time: group.end_time,
                 lab_room: group.lab_room,
                 profs: group.profs.join(', '),
-                branch_years: group.branch_years.join(', ')
+                branch_years: group.branch_years.join(', '),
+                group_status: group.group_status
             }));
 
             return {
@@ -529,6 +532,84 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 credit: courses[courseKey][0].credit,
                 groups: courseGroups
             };
+        });
+
+        res.json(formattedData);
+    } catch (err) {
+        console.error('Error exporting branch data:', err);
+        res.status(500).json({ success: false, error: 'An error occurred' });
+    }
+});
+
+router.get('/exportAllBranch', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                c.course_code , 
+                c.combined_code_curriculum, 
+                c.eng_name, 
+                c.credit, 
+                gy.owner_branch_tag, -- Use owner_branch_tag instead of branch_tag
+                g.unit, 
+                g.hours, 
+                g.day_of_week, 
+                g.start_time, 
+                g.end_time, 
+                g.lab_room, 
+                g.group_status,
+                ARRAY_AGG(DISTINCT gy.branch_year) AS branch_years,
+                ARRAY_AGG(DISTINCT p.name) AS profs
+            FROM 
+                groups g
+            JOIN 
+                courses c ON g.course_id = c.id
+            LEFT JOIN 
+                group_profs gp ON g.id = gp.group_id
+            LEFT JOIN 
+                profs p ON gp.prof_id = p.id
+            LEFT JOIN 
+                group_branch_year gy ON g.id = gy.group_id
+            GROUP BY 
+                c.course_code, 
+                c.combined_code_curriculum, 
+                c.eng_name, 
+                c.credit,
+                gy.owner_branch_tag, -- Group by owner_branch_tag
+                g.unit, 
+                g.hours, 
+                g.day_of_week, 
+                g.start_time, 
+                g.end_time, 
+                g.lab_room,
+                g.group_status;
+        `;
+
+        const { rows } = await pool.query(query);
+
+        // Organize the data by grouping courses belonging to the same branch
+        const formattedData = {};
+        rows.forEach(row => {
+            const branchTag = row.owner_branch_tag;
+            if (!formattedData[branchTag]) {
+                formattedData[branchTag] = [];
+            }
+            formattedData[branchTag].push({
+                course_code: row.course_code,
+                combined_code_curriculum: row.combined_code_curriculum,
+                eng_name: row.eng_name,
+                credit: row.credit,
+                groups: [{
+                    unit: row.unit,
+                    hours: row.hours,
+                    day_of_week: row.day_of_week,
+                    start_time: row.start_time,
+                    end_time: row.end_time,
+                    lab_room: row.lab_room,
+                    profs: row.profs.join(', '),
+                    branch_years: row.branch_years.join(', '),
+                    group_status: row.group_status
+                }]
+            });
         });
 
         res.json(formattedData);

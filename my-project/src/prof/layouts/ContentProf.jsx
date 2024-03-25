@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
-import { getGroupsStatusByBranch, getExportDataByBranch } from '../../api/Profs_API';
+import { getGroupsStatusByBranch, getExportDataByBranch, getExportDataAllBranch } from '../../api/Profs_API';
+import ExportByBranchButton from '../modules/ExportByBranchButton';
+import ExportAllBranchButton from '../modules/ExportAllBranchButton';
 import ContentProfHeader from './ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
-import ExportByBranchButton from '../modules/ExportByBranchButton';
 import ButtonCom from '../components/ButtonCom';
 
 export default function ContentProf({ userData, currentPage }) {
@@ -19,6 +20,7 @@ export default function ContentProf({ userData, currentPage }) {
 
     const { data: groupsBranchStatus } = getGroupsStatusByBranch(sharedState.currentBranch);
     const { data: exportDataByBranch } = getExportDataByBranch(sharedState.currentBranch);
+    const { data: exportDataAllBranch } = getExportDataAllBranch();
 
     const handleBranchChange = selectedBranch => {
         setSharedState(prevState => ({
@@ -65,6 +67,7 @@ export default function ContentProf({ userData, currentPage }) {
                     onClick={toggleModal}
                 />
                 <ExportByBranchButton currentBranch={sharedState.currentBranch} exportDataByBranch={exportDataByBranch} />
+                <ExportAllBranchButton exportDataAllBranch={exportDataAllBranch} />
             </div>
         </div>
     );

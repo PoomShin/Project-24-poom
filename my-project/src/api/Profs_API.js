@@ -148,6 +148,7 @@ export const useAddGroupMutation = () => {
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
             queryClient.invalidateQueries('groupsByBranch');
+            queryClient.invalidateQueries('exportDataAllBranch');
         },
     });
 };
@@ -172,6 +173,7 @@ export const useDelCourseByName = () => {
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
             queryClient.invalidateQueries('groupsByBranch');
+            queryClient.invalidateQueries('exportDataAllBranch');
         },
     });
 };
@@ -196,6 +198,7 @@ export const useDelGroupById = () => {
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
             queryClient.invalidateQueries('groupsByBranch');
+            queryClient.invalidateQueries('exportDataAllBranch');
         },
     });
 };
@@ -220,6 +223,7 @@ export const useUpdateGroupById = () => {
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
             queryClient.invalidateQueries('groupsByBranch');
+            queryClient.invalidateQueries('exportDataAllBranch');
         },
     });
 };
@@ -244,6 +248,7 @@ export const useUpdateGroupStatusById = () => {
             queryClient.invalidateQueries('labRooms');
             queryClient.invalidateQueries('exportDataByBranch');
             queryClient.invalidateQueries('groupsByBranch');
+            queryClient.invalidateQueries('exportDataAllBranch');
         },
     });
 };
@@ -255,6 +260,19 @@ export const getExportDataByBranch = (branch) => {
         async () => {
             try {
                 const response = await axios.get(`/profs/exportMyBranch/${branch}`);
+                return response.data;
+            } catch (error) {
+                throw new Error(`Failed to fetch export data: ${error.message}`);
+            }
+        }
+    );
+};
+export const getExportDataAllBranch = () => {
+    return useQuery(
+        ['exportDataAllBranch'],
+        async () => {
+            try {
+                const response = await axios.get(`/profs/exportAllBranch`);
                 return response.data;
             } catch (error) {
                 throw new Error(`Failed to fetch export data: ${error.message}`);
