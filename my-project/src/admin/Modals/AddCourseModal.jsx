@@ -33,24 +33,6 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
   const [filteredData, setFilteredData] = useState([]);
   const options = generateOptions();
 
-  const handleImportDatabase = () => {
-    importCourseMutation.mutate(
-      filteredData,
-      {
-        onSuccess: (res) => {
-          alert(res.message);
-          setFilteredData([]);
-        },
-        onError: (error) => {
-          alert(error.response.data.error);
-          const duplicates = error.response.data.duplicates.map((duplicate) => duplicate.combined_code_curriculum);
-          const updatedFilteredData = filteredData.filter((item) => !duplicates.includes(`${item.course_code}-${item.curriculum}`));
-          setFilteredData(updatedFilteredData);
-        }
-      }
-    );
-  };
-
   const handleImport = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -67,7 +49,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
       ...item,
       branch_tag: branchTag,
       course_tag: courseTag,
-      curriculum: selectedCurriculum,
+      curriculum: item.curriculum !== '' ? item.curriculum : selectedCurriculum,
     }));
 
     setImportedData(dataWithTags);
@@ -101,7 +83,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
 
   const handleTransfer = (rowData) => {
     setFilteredData((prevFilteredData) => [...prevFilteredData, rowData]);
-  
+
     setImportedData((prevImportedData) =>
       prevImportedData.filter((item) => {
         // Check if all properties of the objects are equal
@@ -135,6 +117,24 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     }));
 
     setImportedData(updatedData);
+  };
+
+  const handleImportDatabase = () => {
+    importCourseMutation.mutate(
+      filteredData,
+      {
+        onSuccess: (res) => {
+          alert(res.message);
+          setFilteredData([]);
+        },
+        onError: (error) => {
+          alert(error.response.data.error);
+          const duplicates = error.response.data.duplicates.map((duplicate) => duplicate.combined_code_curriculum);
+          const updatedFilteredData = filteredData.filter((item) => !duplicates.includes(`${item.course_code}-${item.curriculum}`));
+          setFilteredData(updatedFilteredData);
+        }
+      }
+    );
   };
 
   return (
