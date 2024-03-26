@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useUserContext } from '../context/User-Context';
 import { AdminProvider } from '../context/Admin-Context';
 import Navbar from './Layouts/Navbar';
@@ -6,17 +6,12 @@ import Sidebar from './Layouts/Sidebar';
 import Content from './Layouts/Content';
 
 export default function Admin() {
-  const { userContextValues } = useUserContext();
-  const { name } = userContextValues || '';
+  const { name } = useUserContext().userContextValues || {};
 
-  const [branchTag, setBranchTag] = useState(null);
   const [page, setPage] = useState('Branch');
+  const [branchTag, setBranchTag] = useState(null);
 
   const memoizedNavbar = useMemo(() => <Navbar name={name} />, [name]);
-
-  useEffect(() => {
-    localStorage.setItem('currentPage', page);
-  }, [page]);
 
   return (
     <AdminProvider selectedBranchTag={branchTag}>

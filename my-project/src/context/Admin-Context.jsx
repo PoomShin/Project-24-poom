@@ -20,9 +20,9 @@ export const AdminProvider = ({ children, selectedBranchTag }) => {
         profsError,
         courses,
         coursesError,
-        refetchBranches, // Expose the refetch function for branches
-        refetchProfs, // Expose the refetch function for profs
-        refetchCourses, // Expose the refetch function for courses
+        refetchBranches,
+        refetchProfs,
+        refetchCourses,
     }), [branches, branchError, profs, profsError, courses, coursesError, refetchBranches, refetchProfs, refetchCourses]);
 
     return (

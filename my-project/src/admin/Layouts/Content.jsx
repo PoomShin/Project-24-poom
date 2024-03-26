@@ -1,5 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useAdminContext } from '../../context/Admin-Context';
+//assets
+import { contentIconMap } from '../data_functions/constantData';
 //components
 import TabBar from '../components/TabBar';
 import BranchItems from '../Modules/BranchItems';
@@ -9,20 +11,10 @@ import CourseItems from '../Modules/CourseItems';
 import AddBranchModal from '../Modals/AddBranchModal';
 import AddProfModal from '../Modals/AddProfModal';
 import AddCourseModal from '../Modals/AddCourseModal';
-//assets
-import branchIcon from '../../assets/branch.png';
-import curriculumIcon from '../../assets/course.png';
-import profIcon from '../../assets/user.png';
-
-const iconMap = {
-    'Branch': branchIcon,
-    'Prof': profIcon,
-    'Curriculum': curriculumIcon,
-    'Course': curriculumIcon
-};
 
 export default function Content({ currentPage, setCurrentPage, selectedBranchTag, setSelectedBranchTag }) {
     const { branches, refetchBranches, profs, refetchProfs, courses, refetchCourses } = useAdminContext();
+    const icon = useMemo(() => contentIconMap[currentPage], [currentPage]);
 
     const [courseTag, setCourseTag] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +34,6 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
         setIsModalOpen(prevState => !prevState);
     }, []);
 
-    const icon = useMemo(() => iconMap[currentPage], [currentPage]);
     const modals = {
         Branch: { component: AddBranchModal, props: { isVisible: isModalOpen, onClose: toggleModal, refetchBranches: refetchBranches } },
         Prof: { component: AddProfModal, props: { branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal, refetchProfs: refetchProfs } },
