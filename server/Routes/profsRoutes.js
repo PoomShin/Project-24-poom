@@ -586,29 +586,33 @@ router.get('/exportAllBranch', async (req, res) => {
 
         const { rows } = await pool.query(query);
 
-        // Organize the data by grouping courses belonging to the same branch
+        // Organize the data by grouping branches, courses, and groups
         const formattedData = {};
         rows.forEach(row => {
             const branchTag = row.owner_branch_tag;
+            const courseKey = `${row.combined_code_curriculum}`;
             if (!formattedData[branchTag]) {
-                formattedData[branchTag] = [];
+                formattedData[branchTag] = {};
             }
-            formattedData[branchTag].push({
-                course_code: row.course_code,
-                combined_code_curriculum: row.combined_code_curriculum,
-                eng_name: row.eng_name,
-                credit: row.credit,
-                groups: [{
-                    unit: row.unit,
-                    hours: row.hours,
-                    day_of_week: row.day_of_week,
-                    start_time: row.start_time,
-                    end_time: row.end_time,
-                    lab_room: row.lab_room,
-                    profs: row.profs.join(', '),
-                    branch_years: row.branch_years.join(', '),
-                    group_status: row.group_status
-                }]
+            if (!formattedData[branchTag][courseKey]) {
+                formattedData[branchTag][courseKey] = {
+                    course_code: row.course_code,
+                    combined_code_curriculum: row.combined_code_curriculum,
+                    eng_name: row.eng_name,
+                    credit: row.credit,
+                    groups: []
+                };
+            }
+            formattedData[branchTag][courseKey].groups.push({
+                unit: row.unit,
+                hours: row.hours,
+                day_of_week: row.day_of_week,
+                start_time: row.start_time,
+                end_time: row.end_time,
+                lab_room: row.lab_room,
+                profs: row.profs.join(', '),
+                branch_years: row.branch_years.join(', '),
+                group_status: row.group_status
             });
         });
 
