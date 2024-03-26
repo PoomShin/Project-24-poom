@@ -1,6 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
-import { useQuery } from 'react-query';
-import axios from 'axios';
+import useAdminApi from '../api/Admin_API';
 
 const AdminContext = createContext();
 
@@ -8,19 +7,11 @@ export const useAdminContext = () => {
     return useContext(AdminContext);
 };
 
-const useFetchData = (url) => {
-    const { data, error, refetch } = useQuery(url, async () => {
-        const response = await axios.get(url);
-        if (!response.data) throw new Error(`Failed to fetch data from ${url}`);
-        return response.data;
-    });
-    return { data, error, refetch };
-};
-
 export const AdminProvider = ({ children, selectedBranchTag }) => {
-    const { data: branches, error: branchError, refetch: refetchBranches } = useFetchData('/api/branches');
-    const { data: profs, error: profsError, refetch: refetchProfs } = useFetchData(`/api/profs/${selectedBranchTag}`);
-    const { data: courses, error: coursesError, refetch: refetchCourses } = useFetchData(`/api/courses/${selectedBranchTag}`);
+    const { getBranches, getCoursesByBranchTag, getProfsByBranchTag } = useAdminApi();
+    const { data: branches, error: branchError, refetch: refetchBranches } = getBranches();
+    const { data: profs, error: profsError, refetch: refetchProfs } = getProfsByBranchTag(selectedBranchTag);
+    const { data: courses, error: coursesError, refetch: refetchCourses } = getCoursesByBranchTag(selectedBranchTag);
 
     const value = useMemo(() => ({
         branches,

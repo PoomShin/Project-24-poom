@@ -3,18 +3,20 @@ import axios from 'axios';
 
 //get branches API
 export const getAllBranches = () => {
-    const fetchBranches = async () => {
-        try {
-            const response = await axios.get('/api/branches');
-            return response.data;
-        } catch (error) {
-            console.error(`Failed to fetch branches: ${error.message}`);
-            throw new Error('Failed to fetch branches. Please try again later.');
+    return useQuery(
+        'branchTags',
+        async () => {
+            try {
+                const response = await axios.get('/api/branches');
+                return response.data;
+            } catch (error) {
+                console.error(`Failed to fetch branches: ${error.message}`);
+                throw new Error('Failed to fetch branches. Please try again later.');
+            }
         }
-    };
-
-    return useQuery('branchTags', fetchBranches);
+    );
 };
+
 //get profs API
 export const getProfsByBranchTag = (branch_tag) => {
     return useQuery(
@@ -29,6 +31,7 @@ export const getProfsByBranchTag = (branch_tag) => {
         }
     );
 };
+
 //get courses API
 export const getCoursesByBranchTag = (branch_tag) => {
     return useQuery(
@@ -39,7 +42,6 @@ export const getCoursesByBranchTag = (branch_tag) => {
         }
     );
 };
-
 export const getCoursesByProf = (name) => {
     return useQuery(
         'CoursesByProf',
@@ -49,7 +51,6 @@ export const getCoursesByProf = (name) => {
         }
     );
 };
-
 export const getAllCourses = () => {
     return useQuery(
         'allCoursesData',
@@ -59,6 +60,7 @@ export const getAllCourses = () => {
         }
     );
 };
+
 //get groups API
 export const getGroupsByBranch = (branch) => {
     return useQuery(
@@ -70,26 +72,16 @@ export const getGroupsByBranch = (branch) => {
     );
 };
 export const useGroupsByBranchYear = (branchYear) => {
-    const queryKey = ['groups', branchYear];
-
-    const fetchGroupsByBranchYear = async () => {
+    return useQuery(['groups', branchYear], async () => {
         try {
             const response = await axios.get(`/profs/groupsBY/${encodeURIComponent(branchYear)}`);
-            const data = response.data.map(group => ({
-                ...group,
-                prof_names: group.prof_names || [] // Ensure prof_names is an array even if it's null
-            }));
-            return data;
+            return response.data.map(group => ({ ...group, prof_names: group.prof_names || [] }));
         } catch (error) {
-            if (error.response && error.response.status === 404) {
-                console.error(`No groups found for the selected branch and year.`);
-            } else {
-                console.error(`Failed to fetch groups: ${error.message}`);
-            }
+            console.error(error.response && error.response.status === 404
+                ? `No groups found for the selected branch and year.`
+                : `Failed to fetch groups: ${error.message}`);
         }
-    };
-
-    return useQuery(queryKey, fetchGroupsByBranchYear);
+    });
 };
 export const useAllGroupsByBranch = (branch) => {
     return useQuery(
@@ -126,6 +118,7 @@ export const getGroupsStatusByBranch = (branch) => {
         }
     );
 };
+
 //groups other API
 export const useAddGroupMutation = () => {
     const queryClient = useQueryClient();

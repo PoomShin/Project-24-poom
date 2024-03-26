@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  useDeleteProfMutation,
-  useUpdateProfMutation,
-} from "../../api/admin_api";
+import useAdminApi from "../../api/Admin_API";
 import ConfirmationModal from "../../public/ConfirmationModal";
 import DataTable from "react-data-table-component";
 
@@ -11,8 +8,8 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
   //const [editToggle, setEditToggle] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
 
-  const updateProfMutation = useUpdateProfMutation();
-  const deleteProfMutation = useDeleteProfMutation();
+  const updateProfMutation = useAdminApi().useUpdateProfMutation();
+  const deleteProfMutation = useAdminApi().useDeleteProfMutation();
 
   const filteredData = profs.filter((prof) =>
     prof.name.toLowerCase().includes(searchTerm.toLowerCase())

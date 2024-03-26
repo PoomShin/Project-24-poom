@@ -1,10 +1,10 @@
 import { createPortal } from 'react-dom';
 import { useState } from 'react';
-import { useAddProfMutation } from '../../api/admin_api';
+import useAdminApi from '../../api/Admin_API';
 import AlertModal from '../../public/AlertModal';
 
 export default function AddProfModal({ branchTag, isVisible, onClose, refetchProfs }) {
-  const addProfMutation = useAddProfMutation();
+  const addProfMutation = useAdminApi().useAddProfMutation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',

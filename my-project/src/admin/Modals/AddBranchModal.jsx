@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useAddBranchMutation } from '../../api/admin_api';
+import useAdminApi from '../../api/Admin_API';
 import AlertModal from '../../public/AlertModal';
 
 export default function AddBranchModal({ isVisible, onClose, refetchBranches }) {
-  const addBranchMutation = useAddBranchMutation();
+  const addBranchMutation = useAdminApi().useAddBranchMutation();
   const [formData, setFormData] = useState({
     branch_name: '',
     branch_tag: '',

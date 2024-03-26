@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { useDeleteCourseMutation, useUpdateCourseMutation } from '../../api/admin_api';
+import useAdminApi from '../../api/Admin_API';
 import ConfirmationModal from '../../public/ConfirmationModal';
 import AlertModal from '../../public/AlertModal';
 
@@ -13,8 +13,8 @@ export default function CourseItems({ courses, onShowBranches, refetchCourses })
   const [courseToDelete, setCourseToDelete] = useState(null);
   const [message, setMessage] = useState('');
 
-  const deleteCourseMutation = useDeleteCourseMutation();
-  const updateCourseMutation = useUpdateCourseMutation();
+  const deleteCourseMutation = useAdminApi().useDeleteCourseMutation();
+  const updateCourseMutation = useAdminApi().useUpdateCourseMutation();
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);

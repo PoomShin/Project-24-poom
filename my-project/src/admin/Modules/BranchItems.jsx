@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useDelBranchMutation } from '../../api/admin_api';
+import useAdminApi from '../../api/Admin_API';
 import ConfirmationModal from '../../public/ConfirmationModal';
 import moreIcon from '../../assets/more.png';
 import removeIcon from '../../assets/remove.png';
 
 export default function BranchItems({ branches, onSelectBranch, refetchBranches }) {
-  const delBranchMutation = useDelBranchMutation();
+  const delBranchMutation = useAdminApi().useDelBranchMutation();
   const [selectedBranch, setSelectedBranch] = useState(null);
 
   const delBranch = async (branch) => {

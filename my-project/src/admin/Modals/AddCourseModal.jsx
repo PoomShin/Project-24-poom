@@ -8,7 +8,7 @@ import AddCourseSideBar from '../components/AddCourseSideBar';
 
 import transferIcon from '../../assets/transfer.png';
 import Manualimport from '../components/ManualImport';
-import { useImportCourseMutation } from '../../api/admin_api';
+import useAdminApi from '../../api/Admin_API';
 
 const currentYear = (new Date().getFullYear() + 543) % 100;
 
@@ -26,7 +26,7 @@ const generateOptions = () => {
 };
 
 export default function AddCourseModal({ courseTag, branchTag, isVisible, onClose }) {
-  const importCourseMutation = useImportCourseMutation();
+  const importCourseMutation = useAdminApi().useImportCourseMutation();
 
   const [selectedCurriculum, setSelectedCurriculum] = useState(currentYear);
   const [importedData, setImportedData] = useState([]);
