@@ -77,7 +77,6 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     );
     setImportedData(remainingData);
   };
-
   const handleTransfer = (rowData) => {
     setFilteredData((prevFilteredData) => [...prevFilteredData, rowData]);
 

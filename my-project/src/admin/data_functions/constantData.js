@@ -3,6 +3,7 @@ import { generateOptions } from "./generalFunctions";
 
 export const options = generateOptions();
 export const currentYear = (new Date().getFullYear() + 543) % 100;
+export const courseTypes = ['เฉพาะทั่วไป', 'เฉพาะเลือก', 'เฉพาะบังคับ', 'บริการ', 'อื่นๆ'];
 
 export const sidebarItems = [
     { key: 'Branch', label: 'Branch', icon: IconData['BranchIcon'] },

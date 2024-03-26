@@ -1,6 +1,6 @@
-import { useState } from "react";
-
-const courseTypes = ['เฉพาะทั่วไป', 'เฉพาะเลือก', 'เฉพาะบังคับ', 'บริการ', 'อื่นๆ'];
+import { useState } from 'react';
+import { courseTypes } from '../data_functions/constantData';
+import { initialRowState } from '../data_functions/initialData';
 
 const ManualTableImport = ({ yearOptions, rows, handleInputChange, handleDeleteRow, btnSubmit }) => (
   <form action='' className='relative'>
@@ -101,24 +101,29 @@ const ManualTableImport = ({ yearOptions, rows, handleInputChange, handleDeleteR
   </form>
 );
 
+const BtnAddDelete = ({ addRow }) => (
+  <div className='mt-5'>
+    <button className='bg-green-500 border border-solid border-black rounded-full px-3 py-1 hover:bg-green-200'
+      onClick={addRow}>
+      Add row
+    </button>
+  </div>
+);
+
+const BtnCloseMenu = ({ closeManual }) => (
+  <div className='mb-5'>
+    <button onClick={closeManual}>Back</button>
+  </div>
+);
+
 export default function Manualimport({ yearOptions, handleManualLoad }) {
-  const [rows, setRows] = useState([
-    {
-      courseCode: '',
-      curriculum: '',
-      thName: '',
-      engName: '',
-      credits: '',
-      courseType: '',
-    },
-  ]);
+  const [rows, setRows] = useState([initialRowState]);
 
   const handleInputChange = (index, key, value) => {
     const updatedRows = [...rows];
     updatedRows[index][key] = value;
     setRows(updatedRows);
   };
-
   const handleDeleteRow = (index) => {
     const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
@@ -144,12 +149,10 @@ export default function Manualimport({ yearOptions, handleManualLoad }) {
       alert('เพิ่มได้สูงสุด 5 วิชา/ครั้ง');
     }
   };
-
   const closeManual = () => {
     let menu = document.getElementById('manualImport');
     menu.classList.toggle('invisible');
   };
-
   const btnSubmit = (e) => {
     e.preventDefault();
 
@@ -204,20 +207,3 @@ export default function Manualimport({ yearOptions, handleManualLoad }) {
     </div>
   );
 }
-
-const BtnAddDelete = ({ addRow }) => (
-  <div className='mt-5'>
-    <button
-      className='bg-green-500 border border-solid border-black rounded-full px-3 py-1 hover:bg-green-200'
-      onClick={addRow}>
-      Add row
-    </button>
-  </div>
-);
-
-const BtnCloseMenu = ({ closeManual }) => (
-  <div className='mb-5'>
-    <button onClick={closeManual}>Back</button>
-  </div>
-);
-
