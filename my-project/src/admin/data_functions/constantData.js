@@ -6,7 +6,7 @@ export const sidebarItems = [
     { key: 'Logout', label: 'Log out', icon: IconData['LogoutIcon'] },
 ];
 
-export const contentIconMap = {
+export const tabbarIconMap = {
     'Branch': IconData['BranchIcon'],
     'Prof': IconData['ProfIcon'],
     'Curriculum': IconData['CurriculumIcon'],

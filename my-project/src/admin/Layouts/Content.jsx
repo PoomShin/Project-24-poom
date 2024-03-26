@@ -1,20 +1,15 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { useAdminContext } from '../../context/Admin-Context';
-//assets
-import { contentIconMap } from '../data_functions/constantData';
-//components
 import TabBar from '../components/TabBar';
 import BranchItems from '../Modules/BranchItems';
 import ProfItems from '../Modules/ProfItems';
 import CourseItems from '../Modules/CourseItems';
-//Modals
 import AddBranchModal from '../Modals/AddBranchModal';
 import AddProfModal from '../Modals/AddProfModal';
 import AddCourseModal from '../Modals/AddCourseModal';
 
 export default function Content({ currentPage, setCurrentPage, selectedBranchTag, setSelectedBranchTag }) {
     const { branches, profs, courses } = useAdminContext();
-    const icon = useMemo(() => contentIconMap[currentPage], [currentPage]);
 
     const [courseTag, setCourseTag] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +19,6 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
         setSelectedBranchTag(branchTag);
         setCourseTag(courseTag);
     }, [setCurrentPage, setSelectedBranchTag, setCourseTag]);
-
     const handleShowBranches = useCallback(() => {
         setCurrentPage(prevPage => prevPage === 'Curriculum' ? 'Course' : 'Branch');
         setSelectedBranchTag(null);
@@ -37,22 +31,18 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
     const modals = {
         Branch: { component: AddBranchModal, props: { isVisible: isModalOpen, onClose: toggleModal } },
         Prof: { component: AddProfModal, props: { branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal } },
-        Curriculum: { component: AddCourseModal, props: { courseTag: courseTag, branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal } }
+        Curriculum: { component: AddCourseModal, props: { courseTag, branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal } }
     };
+
     const ModalComponent = modals[currentPage];
 
     return (
         <div className='col-span-11 bg-gray-200'>
-            <TabBar icon={icon} currentPage={currentPage} toggleModal={toggleModal} />
+            <TabBar currentPage={currentPage} toggleModal={toggleModal} />
 
-            {(currentPage === 'Branch' || currentPage === 'Course') && branches && (
-                <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />)}
-            {currentPage === 'Prof' && profs && (
-                <ProfItems profs={profs} onShowBranches={handleShowBranches} />
-            )}
-            {currentPage === 'Curriculum' && courses && (
-                <CourseItems courses={courses} onShowBranches={handleShowBranches} />
-            )}
+            {(currentPage === 'Branch' || currentPage === 'Course') && branches && <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />}
+            {currentPage === 'Prof' && profs && <ProfItems profs={profs} onShowBranches={handleShowBranches} />}
+            {currentPage === 'Curriculum' && courses && <CourseItems courses={courses} onShowBranches={handleShowBranches} />}
 
             {ModalComponent && <ModalComponent.component {...ModalComponent.props} />}
         </div>
