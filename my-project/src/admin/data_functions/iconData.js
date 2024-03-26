@@ -6,6 +6,7 @@ import profIcon from '../../assets/user.png';
 import curriculumIcon from '../../assets/course.png';
 import courseIcon from '../../assets/course.png'
 import logoutIcon from '../../assets/logoutIcon.png'
+import transferIcon from '../../assets/transfer.png';
 
 export const IconData = {
     'KULogo': ku_logo,
@@ -16,4 +17,5 @@ export const IconData = {
     'CourseIcon': courseIcon,
     'CurriculumIcon': curriculumIcon,
     'LogoutIcon': logoutIcon,
+    'Transfer': transferIcon,
 }

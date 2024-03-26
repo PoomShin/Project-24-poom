@@ -9,21 +9,15 @@ export const useAdminContext = () => {
 
 export const AdminProvider = ({ children, selectedBranchTag }) => {
     const { getBranches, getCoursesByBranchTag, getProfsByBranchTag } = useAdminApi();
-    const { data: branches, error: branchError, refetch: refetchBranches } = getBranches();
-    const { data: profs, error: profsError, refetch: refetchProfs } = getProfsByBranchTag(selectedBranchTag);
-    const { data: courses, error: coursesError, refetch: refetchCourses } = getCoursesByBranchTag(selectedBranchTag);
+    const { data: branches } = getBranches();
+    const { data: profs } = getProfsByBranchTag(selectedBranchTag);
+    const { data: courses } = getCoursesByBranchTag(selectedBranchTag);
 
     const value = useMemo(() => ({
         branches,
-        branchError,
         profs,
-        profsError,
-        courses,
-        coursesError,
-        refetchBranches,
-        refetchProfs,
-        refetchCourses,
-    }), [branches, branchError, profs, profsError, courses, coursesError, refetchBranches, refetchProfs, refetchCourses]);
+        courses
+    }), [branches, profs, courses]);
 
     return (
         <AdminContext.Provider value={value}>

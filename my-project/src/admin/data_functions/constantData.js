@@ -1,4 +1,8 @@
 import { IconData } from "./iconData";
+import { generateOptions } from "./generalFunctions";
+
+export const options = generateOptions();
+export const currentYear = (new Date().getFullYear() + 543) % 100;
 
 export const sidebarItems = [
     { key: 'Branch', label: 'Branch', icon: IconData['BranchIcon'] },
