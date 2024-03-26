@@ -3,7 +3,7 @@ import { useState } from 'react';
 import useAdminApi from '../../api/Admin_API';
 import AlertModal from '../../public/AlertModal';
 
-export default function AddProfModal({ branchTag, isVisible, onClose, refetchProfs }) {
+export default function AddProfModal({ branchTag, isVisible, onClose }) {
   const addProfMutation = useAdminApi().useAddProfMutation();
   const [formData, setFormData] = useState({
     name: '',
@@ -18,7 +18,6 @@ export default function AddProfModal({ branchTag, isVisible, onClose, refetchPro
     e.preventDefault();
     try {
       const result = await addProfMutation.mutateAsync(formData);
-      refetchProfs();
       setAlertMessage(result.message);
       setIsAlert(true);
     } catch (error) {

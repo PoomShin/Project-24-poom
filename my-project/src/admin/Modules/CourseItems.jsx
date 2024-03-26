@@ -4,7 +4,7 @@ import useAdminApi from '../../api/Admin_API';
 import ConfirmationModal from '../../public/ConfirmationModal';
 import AlertModal from '../../public/AlertModal';
 
-export default function CourseItems({ courses, onShowBranches, refetchCourses }) {
+export default function CourseItems({ courses, onShowBranches }) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const [isAlertVisible, setIsAlertVisible] = useState(false);
@@ -80,7 +80,6 @@ export default function CourseItems({ courses, onShowBranches, refetchCourses })
     try {
       const result = await updateCourseMutation.mutateAsync(updatedCourseData);
       setMessage(result.message);
-      refetchCourses();
     } catch (error) {
       console.error("Error updating course:", error);
       setMessage(error.toString());

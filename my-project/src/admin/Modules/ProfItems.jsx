@@ -3,7 +3,7 @@ import useAdminApi from "../../api/Admin_API";
 import ConfirmationModal from "../../public/ConfirmationModal";
 import DataTable from "react-data-table-component";
 
-export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
+export default function ProfItems({ profs, onShowBranches }) {
   const [searchTerm, setSearchTerm] = useState("");
   //const [editToggle, setEditToggle] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
@@ -38,7 +38,6 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
   const confirmDelete = async () => {
     try {
       await deleteProfMutation.mutateAsync(deleteUserId);
-      refetchProfs();
       setDeleteUserId(null);
     } catch (error) {
       console.error(error);
@@ -61,7 +60,6 @@ export default function ProfItems({ profs, onShowBranches, refetchProfs }) {
         email,
         role: changeRoleValue,
       });
-      refetchProfs();
     } catch (error) {
       console.error(error);
       alert("An error occurred during update");

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import useAdminApi from '../../api/Admin_API';
 import AlertModal from '../../public/AlertModal';
 
-export default function AddBranchModal({ isVisible, onClose, refetchBranches }) {
+export default function AddBranchModal({ isVisible, onClose }) {
   const addBranchMutation = useAdminApi().useAddBranchMutation();
   const [formData, setFormData] = useState({
     branch_name: '',
@@ -23,7 +23,6 @@ export default function AddBranchModal({ isVisible, onClose, refetchBranches }) 
       const result = await addBranchMutation.mutateAsync(formData);
       setAlertMessage(result.message);
       setIsAlertOpen(true);
-      refetchBranches();
     } catch (error) {
       console.log(error.message)
       setAlertMessage(error.toString());
@@ -110,4 +109,3 @@ export default function AddBranchModal({ isVisible, onClose, refetchBranches }) 
     </>
   );
 }
-

@@ -13,7 +13,7 @@ import AddProfModal from '../Modals/AddProfModal';
 import AddCourseModal from '../Modals/AddCourseModal';
 
 export default function Content({ currentPage, setCurrentPage, selectedBranchTag, setSelectedBranchTag }) {
-    const { branches, refetchBranches, profs, refetchProfs, courses, refetchCourses } = useAdminContext();
+    const { branches, profs, courses } = useAdminContext();
     const icon = useMemo(() => contentIconMap[currentPage], [currentPage]);
 
     const [courseTag, setCourseTag] = useState(null);
@@ -35,8 +35,8 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
     }, []);
 
     const modals = {
-        Branch: { component: AddBranchModal, props: { isVisible: isModalOpen, onClose: toggleModal, refetchBranches: refetchBranches } },
-        Prof: { component: AddProfModal, props: { branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal, refetchProfs: refetchProfs } },
+        Branch: { component: AddBranchModal, props: { isVisible: isModalOpen, onClose: toggleModal } },
+        Prof: { component: AddProfModal, props: { branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal } },
         Curriculum: { component: AddCourseModal, props: { courseTag: courseTag, branchTag: selectedBranchTag, isVisible: isModalOpen, onClose: toggleModal } }
     };
     const ModalComponent = modals[currentPage];
@@ -46,12 +46,12 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
             <TabBar icon={icon} currentPage={currentPage} toggleModal={toggleModal} />
 
             {(currentPage === 'Branch' || currentPage === 'Course') && branches && (
-                <BranchItems branches={branches} onSelectBranch={handleSelectBranch} refetchBranches={refetchBranches} />)}
+                <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />)}
             {currentPage === 'Prof' && profs && (
-                <ProfItems profs={profs} onShowBranches={handleShowBranches} refetchProfs={refetchProfs} />
+                <ProfItems profs={profs} onShowBranches={handleShowBranches} />
             )}
             {currentPage === 'Curriculum' && courses && (
-                <CourseItems courses={courses} onShowBranches={handleShowBranches} refetchCourses={refetchCourses} />
+                <CourseItems courses={courses} onShowBranches={handleShowBranches} />
             )}
 
             {ModalComponent && <ModalComponent.component {...ModalComponent.props} />}

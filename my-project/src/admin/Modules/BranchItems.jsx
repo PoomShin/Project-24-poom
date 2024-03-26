@@ -4,7 +4,7 @@ import ConfirmationModal from '../../public/ConfirmationModal';
 import moreIcon from '../../assets/more.png';
 import removeIcon from '../../assets/remove.png';
 
-export default function BranchItems({ branches, onSelectBranch, refetchBranches }) {
+export default function BranchItems({ branches, onSelectBranch }) {
   const delBranchMutation = useAdminApi().useDelBranchMutation();
   const [selectedBranch, setSelectedBranch] = useState(null);
 
@@ -19,7 +19,6 @@ export default function BranchItems({ branches, onSelectBranch, refetchBranches 
     try {
       const result = await delBranchMutation.mutateAsync(branch_tag);
       alert(result.message);
-      refetchBranches();
     } catch (error) {
       console.log(error.message);
       alert(`Failed to delete ${branch_tag} ${branch_name}`);
