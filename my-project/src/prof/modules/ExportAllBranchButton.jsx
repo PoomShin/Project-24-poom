@@ -62,7 +62,6 @@ const generateExcel = (exportDataAllBranch) => {
 };
 
 export default function ExportAllBranchButton({ exportDataAllBranch }) {
-    console.log(exportDataAllBranch)
     const handleClick = async () => {
         try {
             const wbout = generateExcel(exportDataAllBranch);

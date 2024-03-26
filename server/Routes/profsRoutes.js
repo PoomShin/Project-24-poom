@@ -410,7 +410,8 @@ router.put('/updateGroup/:groupId', async (req, res) => {
                 day_of_week = $3,
                 start_time = $4,
                 end_time = $5,
-                lab_room = $6
+                lab_room = $6,
+                group_status = 'waiting'
             WHERE
                 id = $7
         `;
