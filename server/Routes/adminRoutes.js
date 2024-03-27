@@ -12,7 +12,7 @@ router.post('/addBranch', async (req, res) => {
 
         const result = await pool.query(
             'INSERT INTO branches (branch_name, branch_tag, course_tag) VALUES ($1, $2, $3) RETURNING *',
-            [branch_name, "T" + branch_tag, course_tag]
+            [branch_name, 'T' + branch_tag, course_tag]
         );
 
         const { rows: [newBranch] } = result;

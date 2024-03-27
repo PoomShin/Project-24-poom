@@ -6,3 +6,9 @@ export const initialRowState = {
     credits: '',
     courseType: '',
 };
+
+export const initialAddBranchFormState = {
+    branch_name: '',
+    branch_tag: '',
+    course_tag: '',
+}

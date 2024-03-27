@@ -1,27 +1,52 @@
 import { useState } from 'react';
+import { IconData } from '../data_functions/iconData';
 import useAdminApi from '../../api/Admin_API';
+import AlertModal from '../../public/AlertModal';
 import ConfirmationModal from '../../public/ConfirmationModal';
-import moreIcon from '../../assets/more.png';
-import removeIcon from '../../assets/remove.png';
+
+const BranchItem = ({ branch, onSelectBranch, onRemoveBranch }) => (
+  <div className='relative grid col-span-1 row-span-3 bg-slate-900/25 ml-4 hover:cursor-pointer'>
+    <p className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl font-sans'
+      onClick={() => onSelectBranch(branch.branch_tag, branch.course_tag)}
+    >
+      {branch.branch_tag}
+    </p>
+
+    <div className='justify-self-end self-end hover:bg-red-300'>
+      <img src={IconData['Remove']}
+        alt='removeIcon'
+        width='24px'
+        height='24px'
+        onClick={() => onRemoveBranch(branch)}
+      />
+    </div>
+
+    <div className='absolute bottom-[-30px] left-0 top-[105px] text-wrap'>
+      <p className='justify-self-start self-end inline-block pl-1'>{branch.course_tag}</p>
+      <p>{branch.branch_name}</p>
+    </div>
+  </div>
+);
 
 export default function BranchItems({ branches, onSelectBranch }) {
   const delBranchMutation = useAdminApi().useDelBranchMutation();
-  const [selectedBranch, setSelectedBranch] = useState(null);
 
-  const delBranch = async (branch) => {
-    setSelectedBranch(branch);
-  };
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const delBranch = async (branch) => setSelectedBranch(branch);
 
   const handleConfirmDelete = async () => {
     if (!selectedBranch) return;
 
     const { branch_tag, branch_name } = selectedBranch;
     try {
-      const result = await delBranchMutation.mutateAsync(branch_tag);
-      alert(result.message);
+      await delBranchMutation.mutateAsync(branch_tag);
     } catch (error) {
       console.log(error.message);
-      alert(`Failed to delete ${branch_tag} ${branch_name}`);
+      setIsAlertOpen(true);
+      setAlertMessage(`Failed to delete ${branch_tag} ${branch_name}`);
     } finally {
       setSelectedBranch(null);
     }
@@ -42,32 +67,7 @@ export default function BranchItems({ branches, onSelectBranch }) {
         onConfirm={handleConfirmDelete}
         onCancel={() => setSelectedBranch(null)}
       />
+      <AlertModal isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} message={alertMessage} />
     </div>
   );
 };
-
-const BranchItem = ({ branch, onSelectBranch, onRemoveBranch }) => (
-  <div className='relative grid col-span-1 row-span-3 bg-slate-900/25 ml-4 hover:cursor-pointer'>
-
-    <div onClick={() => onSelectBranch(branch.branch_tag, branch.course_tag)}>
-      <img className='absolute top-0 right-0 h-6 mr-2' src={moreIcon} alt='moreIcon' />
-      <p className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl font-sans'>{branch.branch_tag}</p>
-    </div>
-
-    <div className='justify-self-end self-end hover:bg-red-300'>
-      <img src={removeIcon}
-        alt='removeIcon'
-        width='24px'
-        height='24px'
-        onClick={() => onRemoveBranch(branch)}
-      />
-    </div>
-
-    <div className='absolute bottom-[-30px] left-0 top-[105px] text-wrap'>
-      <p className='justify-self-start self-end inline-block pl-1'>
-        {branch.course_tag}
-      </p>
-      <p>{branch.branch_name}</p>
-    </div>
-  </div>
-);
