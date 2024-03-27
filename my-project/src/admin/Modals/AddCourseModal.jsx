@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { options, currentYear } from '../data_functions/constantData';
 import { IconData } from '../data_functions/iconData';
-import Papa from 'papaparse'; // Library for parsing CSV files
+import { options, currentYear } from '../data_functions/constantData';
+import { handleCSVFileLoad } from '../data_functions/generalFunctions';
 import Table from '../components/Table';
 import TableRow from '../components/TableRow';
 import AddCourseSideBar from '../components/AddCourseSideBar';
@@ -37,22 +37,18 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     const file = event.target.files[0];
     const reader = new FileReader();
 
-    reader.onload = handleFileLoad;
+    reader.onload = () => {
+      if (file.type === 'text/csv') {
+        const loadedData = handleCSVFileLoad(reader.result, branchTag, courseTag, selectedCurriculum);
+        setImportedData(loadedData);
+      } else {
+        alert('Unsupported file type. Please select a CSV file.');
+      }
+    };
+
     reader.readAsText(file);
   };
-  const handleFileLoad = (e) => {
-    const text = e.target.result;
-    const result = Papa.parse(text, { header: true }); // Parsing CSV data with headers
 
-    const dataWithTags = result.data.map((item) => ({
-      ...item,
-      branch_tag: branchTag,
-      course_tag: courseTag,
-      curriculum: item.curriculum !== '' ? item.curriculum : selectedCurriculum,
-    }));
-
-    setImportedData(dataWithTags);
-  };
   const handleManualLoad = manual => {
     const dataWithTags = manual.map((item) => ({
       ...item,

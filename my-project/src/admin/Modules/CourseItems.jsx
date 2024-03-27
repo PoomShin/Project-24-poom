@@ -5,25 +5,24 @@ import ConfirmationModal from '../../public/ConfirmationModal';
 import AlertModal from '../../public/AlertModal';
 
 export default function CourseItems({ courses, onShowBranches }) {
+  const deleteCourseMutation = useAdminApi().useDeleteCourseMutation();
+  const updateCourseMutation = useAdminApi().useUpdateCourseMutation();
+
   const [searchTerm, setSearchTerm] = useState('');
 
+  const [message, setMessage] = useState('');
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
   const [courseToDelete, setCourseToDelete] = useState(null);
-  const [message, setMessage] = useState('');
 
-  const deleteCourseMutation = useAdminApi().useDeleteCourseMutation();
-  const updateCourseMutation = useAdminApi().useUpdateCourseMutation();
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
   const filteredData = courses.filter((courses) => courses.course_code.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  const handleSearch = (e) => setSearchTerm(e.target.value);
 
   const deleteCourse = (course) => {
     setCourseToDelete(course);
-    setMessage(`คุณต้องการลบ ${course.course_code} ${course.curriculum} ${course.th_name} ${course.eng_name} ${course.credit} ${course.course_type}?`);
+    setMessage(`คุณต้องการลบ ${course.course_code}-${course.curriculum} ${course.eng_name}?`);
     setIsConfirmationVisible(true);
   };
   const confirmDeleteCourse = async () => {
@@ -33,7 +32,8 @@ export default function CourseItems({ courses, onShowBranches }) {
         setCourseToDelete(null);
       } catch (error) {
         console.error("Error deleting course:", error);
-        alert(error);
+        setMessage('failed to delete courses')
+        setIsAlertVisible(true);
       }
     }
     setIsConfirmationVisible(false);
@@ -43,9 +43,7 @@ export default function CourseItems({ courses, onShowBranches }) {
     setIsConfirmationVisible(false);
   };
 
-  const edit_course = (id) => {
-    input_toggle(id);
-  };
+  const edit_course = (id) => input_toggle(id);
   const input_toggle = (id) => {
     let d = document;
     let code = d.getElementById(`course_code_${id}`);
@@ -64,8 +62,6 @@ export default function CourseItems({ courses, onShowBranches }) {
   };
   const submit_edit = async (id) => {
     input_toggle(id);
-    setMessage(`คุณต้องการอัพเดทรายวิชา id ${id}`);
-    setIsAlertVisible(true);
 
     let updatedCourseData = {
       id: id,
@@ -78,11 +74,12 @@ export default function CourseItems({ courses, onShowBranches }) {
     };
 
     try {
-      const result = await updateCourseMutation.mutateAsync(updatedCourseData);
-      setMessage(result.message);
+      await updateCourseMutation.mutateAsync(updatedCourseData);
     } catch (error) {
       console.error("Error updating course:", error);
-      setMessage(error.toString());
+      setMessage(error.response.data.error);
+      setIsAlertVisible(true);
+
     }
   };
 
