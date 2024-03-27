@@ -184,7 +184,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
         <TableImportButton handleImportDatabase={handleImportDatabase} />
       </div>
       {/* ----------Manualimport--------------- */}
-      <Manualimport yearOptions={options} handleManualLoad={handleManualLoad} />
+      <Manualimport yearOptions={options} handleManualLoad={handleManualLoad} courseTag={courseTag} />
     </div>, document.getElementById('root-modal'))
   );
 }

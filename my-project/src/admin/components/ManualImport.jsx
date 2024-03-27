@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { courseTypes } from '../data_functions/constantData';
+import { courseTypes, currentYear } from '../data_functions/constantData';
 import { initialRowState } from '../data_functions/initialData';
 
-const ManualTableImport = ({ yearOptions, rows, handleInputChange, handleDeleteRow, btnSubmit }) => (
-  <form action='' className='relative'>
-    <table
+const ManualTableImport = ({ yearOptions, rows, handleInputChange, handleDeleteRow, btnSubmit, courseTag }) => (
+  <form className='relative'>
+    <table className='w-full text-center border-2 border-solid border-black'
       id='tableID'
-      className='w-full text-center border-2 border-solid border-black'
     >
       <thead>
         <tr>
@@ -22,22 +21,20 @@ const ManualTableImport = ({ yearOptions, rows, handleInputChange, handleDeleteR
 
       <tbody>
         {rows.map((row, index) => (
-          <tr className='relative border border-solid border-black'
-            key={index}
-          >
+          <tr className='relative border border-solid border-black' key={index}>
             <td>
               <input className='courseCode border border-solid border-black'
                 required
                 type='text'
                 name={`courseCode_${index}`}
-                value={row.courseCode}
+                value={row.courseCode || courseTag}
                 onChange={e => handleInputChange(index, 'courseCode', e.target.value)}
               />
             </td>
             <td>
               <select className='curriculum border border-solid border-black'
                 name={`curriculum_${index}`}
-                value={row.curriculum}
+                value={row.curriculum || currentYear}
                 onChange={e => handleInputChange(index, 'curriculum', e.target.value)}>
                 {yearOptions}
               </select>
@@ -91,7 +88,7 @@ const ManualTableImport = ({ yearOptions, rows, handleInputChange, handleDeleteR
       </tbody>
     </table>
 
-    <button className='left-[90%] mt-5 bg-blue-500 border border-solid border-black rounded-full px-3 py-1 hover:bg-blue-400 absolute'
+    <button className='absolute left-[90%] bg-blue-500 border border-solid font-bold border-black rounded-full px-3 py-1 hover:bg-blue-400 mt-5'
       id='btnSubmit'
       type='submit'
       disabled={rows.length === 0}
@@ -102,7 +99,7 @@ const ManualTableImport = ({ yearOptions, rows, handleInputChange, handleDeleteR
 );
 
 const BtnAddDelete = ({ addRow }) => (
-  <div className='mt-5'>
+  <div className='mt-5 font-bold'>
     <button className='bg-green-500 border border-solid border-black rounded-full px-3 py-1 hover:bg-green-200'
       onClick={addRow}>
       Add row
@@ -116,7 +113,7 @@ const BtnCloseMenu = ({ closeManual }) => (
   </div>
 );
 
-export default function Manualimport({ yearOptions, handleManualLoad }) {
+export default function Manualimport({ yearOptions, handleManualLoad, courseTag }) {
   const [rows, setRows] = useState([initialRowState]);
 
   const handleInputChange = (index, key, value) => {
@@ -182,18 +179,16 @@ export default function Manualimport({ yearOptions, handleManualLoad }) {
       });
     });
 
-    if (courseData.length !== document.querySelectorAll('.courseCode').length) {
-      return;
-    }
-    console.log('Data to be saved:', courseData);
+    if (courseData.length !== document.querySelectorAll('.courseCode').length) return;
+    setRows([]);
     handleManualLoad(courseData);
   };
 
   return (
-    <div className='flex flex-col bg-black/50 top-0 left-0 absolute w-full min-h-dvh text-white justify-center items-center invisible'
+    <div className='flex flex-col bg-black/50 top-0 left-0 absolute w-full min-h-dvh justify-center items-center invisible'
       id='manualImport'
     >
-      <div className='relative p-5 bg-white/100 text-black w-2/3 overflow-auto'>
+      <div className='relative rounded-md bg-stone-200 text-black w-2/3 overflow-auto p-5'>
         <BtnCloseMenu closeManual={closeManual} />
         <ManualTableImport
           yearOptions={yearOptions}
@@ -201,6 +196,7 @@ export default function Manualimport({ yearOptions, handleManualLoad }) {
           handleInputChange={handleInputChange}
           handleDeleteRow={handleDeleteRow}
           btnSubmit={btnSubmit}
+          courseTag={courseTag}
         />
         <BtnAddDelete addRow={addRow} />
       </div>

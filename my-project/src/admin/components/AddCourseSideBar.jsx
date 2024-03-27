@@ -1,11 +1,9 @@
-export default function AddCourseSideBar({
-  options,
-  courseTag,
-  selectedCurriculum,
-  handleCurriculumChange,
-  handleImport,
-  onClose,
-}) {
+function closeManual() {
+  let memu = document.getElementById('manualImport');
+  memu.classList.toggle('invisible');
+}
+
+export default function AddCourseSideBar({ options, courseTag, selectedCurriculum, handleCurriculumChange, handleImport, onClose, }) {
   return (
     <div className='w-64 flex flex-col items-center rounded-lg bg-slate-200 p-4'>
       <h1 className='text-xl mb-4'>Add Course</h1>
@@ -50,9 +48,4 @@ export default function AddCourseSideBar({
       </button>
     </div>
   );
-}
-
-function closeManual() {
-  let memu = document.getElementById('manualImport');
-  memu.classList.toggle('invisible');
 }
