@@ -128,7 +128,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
   };
 
   return (isVisible && createPortal(
-    <div className='w-screen h-screen fixed flex bg-gray-800 bg-opacity-50 z-[10]'>
+    <div className='w-full h-full fixed flex bg-gray-800 bg-opacity-50 z-50'>
       <AddCourseSideBar
         options={options}
         courseTag={courseTag}

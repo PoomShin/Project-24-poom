@@ -1,6 +1,6 @@
 export default function Table(p) {
     return (
-        <div className={`h-64 flex flex-col overflow-y-auto text-left ${p.bg}`} >
+        <div className={`h-2/6 flex flex-col overflow-y-auto custom-scrollbar text-left ${p.bg}`} >
             <h1 className='text-center text-xl'>{p.text}</h1>
             <table className='first-letter:w-full table-auto'>
                 <thead>
