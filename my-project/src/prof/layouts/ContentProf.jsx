@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { getGroupsStatusByBranch, getExportDataByBranch, getExportDataAllBranch } from '../../api/Profs_API';
-import ExportByBranchButton from '../modules/ExportByBranchButton';
-import ExportAllBranchButton from '../modules/ExportAllBranchButton';
+import ExportByBranchButton from '../components/ExportByBranchButton';
+import ExportAllBranchButton from '../components/ExportAllBranchButton';
 import ContentProfHeader from './ContentProfHeader';
 import Scheduler from '../modules/Scheduler';
 import InsertCourseModal from '../modules/InsertCourseModal';
