@@ -35,29 +35,29 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
     const handleAdd = useCallback(async (e) => {
         e.preventDefault();
 
-        // if (formData.end_time <= formData.start_time) {
-        //     setAlertMessage('end_time more than start_time');
-        //     setIsInvalidTime(true);
-        //     return;
-        // }
-        // const isDuplicateGroup = mergedGroups.some(section =>
-        //     section.group_num === formData.group_num
-        // );
+        if (formData.end_time <= formData.start_time) {
+            setAlertMessage('end_time more than start_time');
+            setIsInvalidTime(true);
+            return;
+        }
+        const isDuplicateGroup = mergedGroups.some(section =>
+            section.group_num === formData.group_num
+        );
 
-        // const isDuplicateDayAndTime = mergedGroups.some(section =>
-        //     section.day_of_week === formData.day_of_week && (section.start_time === formData.start_time || section.end_time === formData.end_time)
-        // );
-        // const overlapWithYourself = checkOverlapWithYourself(groupsByBranch, formData);
+        const isDuplicateDayAndTime = mergedGroups.some(section =>
+            section.day_of_week === formData.day_of_week && (section.start_time === formData.start_time || section.end_time === formData.end_time)
+        );
+        const overlapWithYourself = checkOverlapWithYourself(groupsByBranch, formData);
 
-        // if (isDuplicateGroup) {
-        //     setAlertMessage(`${formData.group_num} is used for this course`);
-        //     setIsDuplicate(true);
-        //     return;
-        // } else if (isDuplicateDayAndTime || overlapWithYourself) {
-        //     setAlertMessage(`${formData.prof_name.join(', ')} already have a course at this time (${formData.day_of_week} ${formData.start_time}-${formData.end_time}).`);
-        //     setIsDuplicate(true);
-        //     return;
-        // }
+        if (isDuplicateGroup) {
+            setAlertMessage(`${formData.group_num} is used for this course`);
+            setIsDuplicate(true);
+            return;
+        } else if (isDuplicateDayAndTime || overlapWithYourself) {
+            setAlertMessage(`${formData.prof_name.join(', ')} already have a course at this time (${formData.day_of_week} ${formData.start_time}-${formData.end_time}).`);
+            setIsDuplicate(true);
+            return;
+        }
 
         onAddSection(formData);
         setFormData(prevData => ({
