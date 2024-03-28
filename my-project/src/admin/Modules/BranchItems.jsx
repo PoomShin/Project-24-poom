@@ -21,10 +21,8 @@ const BranchItem = ({ branch, onSelectBranch, onRemoveBranch }) => (
       />
     </div>
 
-    <div className='absolute bottom-[-30px] left-0 top-[105px] text-wrap'>
-      <p className='justify-self-start self-end inline-block pl-1'>{branch.course_tag}</p>
-      <p>{branch.branch_name}</p>
-    </div>
+    <p className='absolute bottom-[-30px] left-0 top-[105px] justify-self-start self-end inline-block pl-1'>{branch.course_tag}</p>
+    <p className='absolute bottom-[-30px] left-0 top-[125px] justify-self-start self-end truncate max-w-[150px]'>{branch.branch_name}</p>
   </div>
 );
 

@@ -59,7 +59,7 @@ export const SelectProf = ({ formData, setFormData, profsBranchTag }) => {
             <div className='overflow-x-auto flex items-center'>
                 {formData.prof_name.map((item, index) => (
                     <div key={index} className='relative mr-2'>
-                        {item && <p className='bg-white p-0'>{item}</p>}
+                        {item && <p className='bg-white text-ellipsis text-nowrap p-0'>{item}</p>}
                         {!item &&
                             <select
                                 value=''

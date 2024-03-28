@@ -2,7 +2,7 @@ const { router, pool } = require('./commonImport');
 
 router.get('/branches', async (req, res) => {
     try {
-        const branchRecords = await pool.query('SELECT * FROM branches');
+        const branchRecords = await pool.query('SELECT * FROM branches ORDER BY branch_tag');
         res.json(branchRecords.rows);
     } catch (error) {
         console.error('Error fetching branches:', error);

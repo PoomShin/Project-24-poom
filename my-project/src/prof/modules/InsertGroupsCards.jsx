@@ -41,7 +41,7 @@ export default function InsertGroupsCards({ creditHours, lectureGroups, labGroup
 const GroupItem = ({ group_num, quantity, unit, hours, day_of_week, start_time, end_time, prof_name, branch_year, isLab, lab_room, onDelete }) => {
     const renderSpans = (data) => {
         return data.map((item, index) => (
-            <span key={index} className='ml-1 mr-1 px-2 bg-gray-500'>{item}</span>
+            <span key={index} className='ml-1 mr-1 px-2 bg-gray-500 text-ellipsis text-nowrap' title={item}>{item}</span>
         ));
     };
 
@@ -61,7 +61,7 @@ const GroupItem = ({ group_num, quantity, unit, hours, day_of_week, start_time, 
             </div>
 
             <div className='flex flex-col self-center text-white mt-3'>
-                <div className='w-72 flex overflow-x-auto'>
+                <div className='w-72 flex overflow-x-auto py-2'>
                     <span className='ml-4 mr-1 px-2 bg-gray-800'>อาจารย์: </span>
                     {prof_name && renderSpans(prof_name)}
                 </div>

@@ -28,7 +28,7 @@ export default function AddProfModal({ branchTag, isVisible, onClose }) {
       setAlertMessage(error.response.data.error);
       setIsAlert(true);
     } finally {
-      onClose();
+      onCloseModal();
     }
   };
 

@@ -6,7 +6,7 @@ import { IconData } from '../data_functions/IconData';
 const HeaderSelect = ({ colStart, defaultSelect, options = [], value, handleChange }) => (
     <div className={`relative ${colStart} flex`}>
         <select
-            className='px-8 py-2 border rounded-sm font-semibold text-white bg-teal-800 hover:bg-teal-900 focus:outline-none focus:border-asparagus focus:ring focus:ring-asparagus/50'
+            className='px-2 py-2 border rounded-sm font-semibold text-white bg-teal-800 hover:bg-teal-900 focus:outline-none focus:border-asparagus focus:ring focus:ring-asparagus/50'
             value={value}
             onChange={e => handleChange(e.target.value)}
         >
@@ -50,7 +50,7 @@ export default function ContentProfHeader({ page, sharedState, onBranchChange, o
 
             {(page === 'Home' || page === 'Prof') && (
                 <MemoizedHeaderSelect
-                    colStart='col-start-5'
+                    colStart='col-start-4'
                     defaultSelect='select year'
                     options={yearOptions}
                     value={currentBranchYear}
@@ -59,7 +59,7 @@ export default function ContentProfHeader({ page, sharedState, onBranchChange, o
             )}
             {page === 'Prof' ? (
                 <MemoizedHeaderSelect
-                    colStart='col-start-7'
+                    colStart='col-start-6'
                     defaultSelect='select prof'
                     options={profsBranch.map(prof => ({ value: prof.name, label: prof.name, disabled: false }))}
                     value={currentProfName}
@@ -68,7 +68,7 @@ export default function ContentProfHeader({ page, sharedState, onBranchChange, o
             ) : (
                 page === 'Lab' && (
                     <MemoizedHeaderSelect
-                        colStart='col-start-5'
+                        colStart='col-start-4'
                         defaultSelect='select lab'
                         options={labRoomData.map(lab => ({ value: lab, label: lab, disabled: false }))}
                         value={currentLabRoom}
