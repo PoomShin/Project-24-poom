@@ -86,16 +86,22 @@ router.delete('/deleteProf/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
+        // Delete related groups first
+        await pool.query('DELETE FROM groups WHERE id IN (SELECT group_id FROM group_profs WHERE prof_id = $1)', [id]);
+
+        // Then, delete the professor
         const result = await pool.query('DELETE FROM profs WHERE id = $1 RETURNING *', [id]);
         const deletedProf = result.rows[0];
 
-        if (deletedProf) res.json({ message: 'Professor deleted successfully' });
-        else res.status(404).json({ error: 'Professor not found' });
-
+        if (deletedProf) {
+            res.json({ message: 'Professor and related groups deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Professor not found' });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+})
 router.post('/importCourse', async (req, res) => {
     const { data } = req.body;
     const duplicateCourses = [];
