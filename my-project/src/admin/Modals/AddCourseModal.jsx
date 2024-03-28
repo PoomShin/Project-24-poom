@@ -128,6 +128,12 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     );
   };
 
+  const onCloseModal = () => {
+    setImportedData([]);
+    setFilteredData([]);
+    onClose();
+  }
+
   return (isVisible && createPortal(
     <div className='w-full h-full fixed flex bg-gray-800 bg-opacity-50 z-50'>
       <AddCourseSideBar
@@ -136,7 +142,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
         selectedCurriculum={selectedCurriculum}
         handleCurriculumChange={handleCurriculumChange}
         handleImport={handleImport}
-        onClose={onClose}
+        onClose={onCloseModal}
       />
 
       <div className='w-full flex flex-col rounded-lg bg-slate-400'>
