@@ -110,6 +110,7 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
     setImportedData(updatedData);
   };
   const handleImportDatabase = () => {
+    if (filteredData.length === 0) return;
     importCourseMutation.mutate(
       filteredData,
       {

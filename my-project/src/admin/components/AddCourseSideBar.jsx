@@ -5,7 +5,7 @@ function closeManual() {
 
 export default function AddCourseSideBar({ options, courseTag, selectedCurriculum, handleCurriculumChange, handleImport, onClose, }) {
   return (
-    <div className='w-64 flex flex-col items-center rounded-lg bg-slate-200 p-4'>
+    <div className='w-64 flex flex-col items-center rounded-lg rounded-r-none bg-slate-200 p-4'>
       <h1 className='text-xl mb-4'>Add Course</h1>
 
       <div className='mb-4'>

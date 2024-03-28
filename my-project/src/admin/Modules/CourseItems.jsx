@@ -4,9 +4,10 @@ import useAdminApi from '../../api/Admin_API';
 import ConfirmationModal from '../../public/ConfirmationModal';
 import AlertModal from '../../public/AlertModal';
 
-export default function CourseItems({ courses, onShowBranches }) {
+export default function CourseItems({ branchTag, courses, onShowBranches }) {
   const deleteCourseMutation = useAdminApi().useDeleteCourseMutation();
   const updateCourseMutation = useAdminApi().useUpdateCourseMutation();
+  const deleteCoursesByBranchMutation = useAdminApi().useDeleteCoursesByBranchMutation();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -41,6 +42,16 @@ export default function CourseItems({ courses, onShowBranches }) {
   const cancelDeleteCourse = () => {
     setCourseToDelete(null);
     setIsConfirmationVisible(false);
+  };
+  const deleteAllCourses = async () => {
+    try {
+      await deleteCoursesByBranchMutation.mutateAsync(branchTag);
+      setMessage('All courses deleted successfully');
+    } catch (error) {
+      console.error('Error deleting all courses:', error);
+      setMessage(error.response.data.error);
+    }
+    setIsAlertVisible(true);
   };
 
   const edit_course = (id) => input_toggle(id);
@@ -268,6 +279,10 @@ export default function CourseItems({ courses, onShowBranches }) {
       <button className='col-span-8 rounded text-white font-bold bg-blue-500 hover:bg-blue-700 ms-10 mb-3 py-2 px-4'
         onClick={onShowBranches}>
         Return to Branch
+      </button>
+      <button className='col-span-8 rounded text-white font-bold bg-red-500 hover:bg-red-700 ms-10 mb-3 py-2 px-4'
+        onClick={deleteAllCourses}>
+        Delete all Course
       </button>
       <br />
       <input className='ms-10  mt-5 mb-4 px-2 py-1 rounded border'

@@ -5,12 +5,12 @@ export default function Table(p) {
             <table className='first-letter:w-full table-auto'>
                 <thead>
                     <tr className="bg-indigo-300">
-                        <th className="py-2 w-28">course code</th>
-                        <th className="py-2 w-10">curriculum</th>
-                        <th className="px-4 py-2">thname</th>
-                        <th className="px-4 py-2">engname</th>
-                        <th className="py-2 w-20">credits</th>
-                        <th className="py-2 w-28">course type</th>
+                        <th className="py-2 w-28">Course code</th>
+                        <th className="py-2 w-10">Curriculum</th>
+                        <th className="px-4 py-2">Thname</th>
+                        <th className="px-4 py-2">Engname</th>
+                        <th className="py-2 w-20">Credits</th>
+                        <th className="py-2 w-28">Course type</th>
                         <th className="py-2 w-16">Action</th>
                     </tr>
                 </thead>

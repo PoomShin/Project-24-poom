@@ -42,7 +42,7 @@ export default function Content({ currentPage, setCurrentPage, selectedBranchTag
 
             {(currentPage === 'Branch' || currentPage === 'Course') && branches && <BranchItems branches={branches} onSelectBranch={handleSelectBranch} />}
             {currentPage === 'Prof' && profs && <ProfItems profs={profs} onShowBranches={handleShowBranches} />}
-            {currentPage === 'Curriculum' && courses && <CourseItems courses={courses} onShowBranches={handleShowBranches} />}
+            {currentPage === 'Curriculum' && courses && <CourseItems branchTag={selectedBranchTag} courses={courses} onShowBranches={handleShowBranches} />}
 
             {ModalComponent && <ModalComponent.component {...ModalComponent.props} />}
         </div>

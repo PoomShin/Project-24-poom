@@ -122,6 +122,18 @@ const useAdminApi = () => {
             },
         });
     };
+    const useDeleteCoursesByBranchMutation = () => {
+        const deleteCoursesByBranchMutation = async (branch_tag) => {
+            const response = await axios.delete(`/admin/delCoursesByBranch/${branch_tag}`);
+            return response.data;
+        };
+
+        return useMutation(deleteCoursesByBranchMutation, {
+            onSuccess: () => {
+                queryClient.invalidateQueries('coursesData');
+            },
+        });
+    };
 
     return {
         getProfsByBranchTag,
@@ -134,7 +146,8 @@ const useAdminApi = () => {
         useDeleteProfMutation,
         useImportCourseMutation,
         useDeleteCourseMutation,
-        useUpdateCourseMutation
+        useUpdateCourseMutation,
+        useDeleteCoursesByBranchMutation
     };
 };
 

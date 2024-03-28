@@ -180,4 +180,24 @@ router.delete('/delCourse/:id', async (req, res) => {
     }
 });
 
+router.delete('/delCoursesByBranch/:branch_tag', async (req, res) => {
+    const { branch_tag } = req.params;
+
+    try {
+        // Execute the SQL query to delete all courses with the specific branch_tag
+        const result = await pool.query('DELETE FROM courses WHERE branch_tag = $1 RETURNING *', [branch_tag]);
+
+        // Check if any rows were affected
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'No courses found for the specified branch_tag' });
+        }
+
+        // Return success message
+        res.json({ message: 'Courses deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting courses:', error);
+        res.status(500).json({ error: 'Failed to delete courses. Please try again later.' });
+    }
+});
+
 module.exports = router;
