@@ -465,6 +465,7 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 c.combined_code_curriculum, 
                 c.eng_name, 
                 c.credit, 
+                g.group_num,
                 g.unit, 
                 g.hours, 
                 g.day_of_week, 
@@ -491,6 +492,7 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
                 c.combined_code_curriculum, 
                 c.eng_name, 
                 c.credit,
+                g.group_num,
                 g.unit, 
                 g.hours, 
                 g.day_of_week, 
@@ -515,6 +517,7 @@ router.get('/exportMyBranch/:branch', async (req, res) => {
         // Format the data
         const formattedData = Object.keys(courses).map(courseKey => {
             const courseGroups = courses[courseKey].map(group => ({
+                group_num: group.group_num,
                 unit: group.unit,
                 hours: group.hours,
                 day_of_week: group.day_of_week,
@@ -551,6 +554,7 @@ router.get('/exportAllBranch', async (req, res) => {
                 c.eng_name, 
                 c.credit, 
                 gy.owner_branch_tag, -- Use owner_branch_tag instead of branch_tag
+                g.group_num,
                 g.unit, 
                 g.hours, 
                 g.day_of_week, 
@@ -576,6 +580,7 @@ router.get('/exportAllBranch', async (req, res) => {
                 c.eng_name, 
                 c.credit,
                 gy.owner_branch_tag, -- Group by owner_branch_tag
+                g.group_num,
                 g.unit, 
                 g.hours, 
                 g.day_of_week, 
@@ -605,6 +610,7 @@ router.get('/exportAllBranch', async (req, res) => {
                 };
             }
             formattedData[branchTag][courseKey].groups.push({
+                group_num: row.group_num,
                 unit: row.unit,
                 hours: row.hours,
                 day_of_week: row.day_of_week,

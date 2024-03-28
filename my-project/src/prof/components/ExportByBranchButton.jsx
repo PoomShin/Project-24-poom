@@ -6,7 +6,7 @@ export default function ExportByBranchButton({ currentBranch, exportDataByBranch
         try {
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet([
-                ['รหัสวิชา', 'รหัสวิชา-พ.ศ.หลักสูตร', 'ชื่อวิชา', 'หน่วยกิต', 'หน่วย', 'จำนวน ชม.', 'วัน', 'เริ่ม', 'สิ้นสุด', 'ห้อง', 'สาขา', 'อาจารย์']
+                ['รหัสวิชา', 'รหัสวิชา-พ.ศ.หลักสูตร', 'ชื่อวิชา', 'หมู่', 'หน่วยกิต', 'หน่วย', 'จำนวน ชม.', 'วัน', 'เริ่ม', 'สิ้นสุด', 'ห้อง', 'สาขา', 'อาจารย์']
             ]);
 
             // Filter out only the groups that are in 'accept' status
@@ -28,8 +28,8 @@ export default function ExportByBranchButton({ currentBranch, exportDataByBranch
                     }
                 });
 
-                groups.forEach(({ unit, hours, day_of_week, start_time, end_time, lab_room, profs, branch_years }) => {
-                    const row = [course_code, combined_code_curriculum, eng_name, credit, unit, hours, day_of_week, start_time, end_time, lab_room, branch_years, profs];
+                groups.forEach(({ group_num, unit, hours, day_of_week, start_time, end_time, lab_room, profs, branch_years }) => {
+                    const row = [course_code, combined_code_curriculum, eng_name, group_num, credit, unit, hours, day_of_week, start_time, end_time, lab_room, branch_years, profs];
                     XLSX.utils.sheet_add_aoa(ws, [row], { origin: -1 });
                 });
             });
@@ -38,6 +38,7 @@ export default function ExportByBranchButton({ currentBranch, exportDataByBranch
                 { wch: 12 }, // Course Code
                 { wch: 22 }, // Combined Code Curriculum
                 { wch: 60 }, // Eng Name
+                { wch: 10 }, // Eng Name
                 { wch: 8 },  // Credit
                 { wch: 6 },  // Unit
                 { wch: 8 },  // Hours
