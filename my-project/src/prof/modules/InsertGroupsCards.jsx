@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import AddGroup from './AddGroup';
 
-export default function InsertGroupsCards({ creditHours, lectureGroups, labGroups, setLectureGroups, setLabGroups, setDisableSubmit }) {
+export default function InsertGroupsCards({ creditHours, lectureGroups, labGroups, setLectureGroups, setLabGroups, setDisableSubmit, mergedGroups }) {
     const handleAddGroup = (section, setter) => setter(prevSections => [...prevSections, section]);
 
     const handleDeleteGroup = (groupNum, isLab) => {
@@ -17,7 +17,7 @@ export default function InsertGroupsCards({ creditHours, lectureGroups, labGroup
                 {groups.map(group => (
                     <GroupItem key={group.group_num} {...group} isLab={isLab} onDelete={handleDeleteGroup} />
                 ))}
-                <AddGroup mergedGroups={isLab ? labGroups : lectureGroups}
+                <AddGroup mergedGroups={mergedGroups}
                     onAddSection={section => handleAddGroup(section, isLab ? setLabGroups : setLectureGroups)}
                     creditHours={creditHours} isLab={isLab}
                     setDisableSubmit={setDisableSubmit}

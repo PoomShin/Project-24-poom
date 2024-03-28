@@ -45,7 +45,9 @@ export default function AddGroup({ mergedGroups, onAddSection, creditHours, isLa
         );
 
         const isDuplicateDayAndTime = mergedGroups.some(section =>
-            section.day_of_week === formData.day_of_week && (section.start_time === formData.start_time || section.end_time === formData.end_time)
+            section.day_of_week === formData.day_of_week &&
+            ((section.start_time <= formData.start_time && formData.start_time < section.end_time) ||
+                (section.start_time < formData.end_time && formData.end_time <= section.end_time))
         );
         const overlapWithYourself = checkOverlapWithYourself(groupsByBranch, formData);
 

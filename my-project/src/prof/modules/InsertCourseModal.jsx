@@ -95,10 +95,10 @@ export default function InsertCourseModal({ ownerProfBranch, isVisible, onClose 
                         creditHours={creditHours}
                         lectureGroups={lectureGroups}
                         labGroups={labGroups}
-                        mergedGroups={mergedGroups}
                         setLectureGroups={setLectureGroups}
                         setLabGroups={setLabGroups}
                         setDisableSubmit={setDisableSubmit}
+                        mergedGroups={mergedGroups}
                     />
                 </div>
                 <div className='absolute bottom-0 right-0 flex mb-4 mr-8'>

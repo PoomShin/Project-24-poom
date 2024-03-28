@@ -64,6 +64,7 @@ export default function EditGroupForm({ closeEdit, isLab, handleUpdateGroup, gro
         const groupsToCheck = groupsByBranch.filter(group => group.group_id !== updatedGroupData.group_id);
 
         const overlapWithYourself = checkOverlapWithProf(groupsToCheck, updatedGroupData, profName);
+
         if (overlapWithYourself) {
             setAlertMessage(`${profName} already has a course at (${updatedGroupData.day_of_week} ${updatedGroupData.start_time}-${updatedGroupData.end_time}).`);
             setIsAlertOpen(true);

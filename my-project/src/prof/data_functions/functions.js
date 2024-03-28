@@ -114,8 +114,8 @@ export const checkOverlapWithProf = (groupsByBranch, formData, profName) => {
     return groupsByBranch.find(group =>
         group.prof_names.includes(profName) &&
         group.day_of_week === formData.day_of_week &&
-        ((simplifyTime(group.start_time) >= formData.start_time && simplifyTime(group.start_time) < formData.end_time) ||
-            (simplifyTime(group.end_time) > formData.start_time && simplifyTime(group.end_time) <= formData.end_time)
-        )
+        ((simplifyTime(group.start_time) <= formData.start_time && formData.start_time < simplifyTime(group.end_time)) ||
+            (simplifyTime(group.start_time) < formData.end_time && formData.end_time <= simplifyTime(group.end_time)) ||
+            (simplifyTime(group.start_time) >= formData.start_time && simplifyTime(group.end_time) <= formData.end_time))
     );
 };

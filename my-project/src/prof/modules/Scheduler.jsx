@@ -7,10 +7,10 @@ import ViewCourseButton from '../components/viewCourseButton';
 
 const GroupsStatusBar = ({ statusCounts, overlap }) => (
     <div className='pt-2 leading-none flex gap-2 items-center text-lg font-bold'>
-        <p className='text-yellow-900 underline decoration-yellow-600 rounded-sm'>Waiting: {statusCounts.waiting}</p>
+        <p className='text-gray-900 underline decoration-gray-700 rounded-sm'>Waiting: {statusCounts.waiting}</p>
         <p className='text-green-900 underline decoration-green-600 rounded-sm'>Accept: {statusCounts.accept}</p>
         <p className='text-red-900 underline decoration-red-600 rounded-sm'>Reject: {statusCounts.reject}</p>
-        <p className='text-neutral-900  underline decoration-neutral-600 rounded-sm'>Overlapping: {overlap}</p>
+        <p className='text-yellow-900  underline decoration-yellow-600 rounded-sm'>Overlapping: {overlap}</p>
     </div>
 )
 

@@ -54,7 +54,7 @@ export default function ProfItems({ profs, onShowBranches }) {
       });
     } catch (error) {
       console.error(error);
-      alert("An error occurred during update");
+      alert('duplicated name or email');
     }
   };
 
