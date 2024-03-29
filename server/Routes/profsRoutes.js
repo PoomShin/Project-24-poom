@@ -190,37 +190,38 @@ router.get('/groupsBY/:branchYear', async (req, res) => {
         const decodedBranchYear = decodeURIComponent(branchYear);
 
         const query = `
-            SELECT 
-                g.Id AS group_id, 
-                g.group_num, 
-                g.quantity, 
-                g.unit, 
-                g.hours, 
-                g.day_of_week, 
-                g.start_time, 
-                g.end_time, 
-                g.lab_room, 
-                g.group_status, 
-                c.eng_name,
-                c.combined_code_curriculum,
-                c.course_type,
-                gy.owner_branch_tag,
-                ARRAY_AGG(p.name) AS prof_names
-            FROM 
-                groups g
-            JOIN 
-                group_branch_year gy ON g.Id = gy.group_id
-            JOIN 
-                group_profs gp ON g.Id = gp.group_id
-            JOIN 
-                profs p ON gp.prof_id = p.id
-            JOIN 
-                courses c ON g.course_id = c.Id
-            WHERE 
-                gy.branch_year = $1
-            GROUP BY 
-                g.Id, c.eng_name, c.combined_code_curriculum, c.course_type, gy.owner_branch_tag;
-        `;
+        SELECT 
+            g.Id AS group_id, 
+            g.group_num, 
+            g.quantity, 
+            g.unit, 
+            g.hours, 
+            g.day_of_week, 
+            g.start_time, 
+            g.end_time, 
+            g.lab_room, 
+            g.group_status, 
+            c.eng_name,
+            c.combined_code_curriculum,
+            c.course_type,
+            c.credit, -- Include credit field
+            gy.owner_branch_tag,
+            ARRAY_AGG(p.name) AS prof_names
+        FROM 
+            groups g
+        JOIN 
+            group_branch_year gy ON g.Id = gy.group_id
+        JOIN 
+            group_profs gp ON g.Id = gp.group_id
+        JOIN 
+            profs p ON gp.prof_id = p.id
+        JOIN 
+            courses c ON g.course_id = c.Id
+        WHERE 
+            gy.branch_year = $1
+        GROUP BY 
+            g.Id, c.eng_name, c.combined_code_curriculum, c.course_type, c.credit, gy.owner_branch_tag; -- Include credit in GROUP BY
+    `;
 
         const { rows } = await pool.query(query, [decodedBranchYear]);
 

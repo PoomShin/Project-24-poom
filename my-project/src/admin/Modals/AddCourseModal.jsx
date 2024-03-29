@@ -123,6 +123,9 @@ export default function AddCourseModal({ courseTag, branchTag, isVisible, onClos
           const duplicates = error.response.data.duplicates.map((duplicate) => duplicate.combined_code_curriculum);
           const updatedFilteredData = filteredData.filter((item) => !duplicates.includes(`${item.course_code}-${item.curriculum}`));
           setFilteredData(updatedFilteredData);
+        },
+        onSettled: () => {
+          setFilteredData([]);
         }
       }
     );

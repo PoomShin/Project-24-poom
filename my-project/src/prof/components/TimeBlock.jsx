@@ -56,10 +56,15 @@ export default function TimeBlock({ bgStyle, group, branchYear, isSeeCourseName,
                 <div className={`flex justify-between underline ${(group.group_status === 'accept' || group.group_status === 'reject') ? 'text-gray-200' : 'text-gray-700'}`}>
                     {isSeeCourseName
                         ? <>
+                            <div>{displayNames}</div>
                             <div>{group.course_type}</div>
                             <div className='text-right'>{group.lab_room}</div>
                         </>
-                        : <div className='overflow-hidden whitespace-nowrap'>{group.eng_name}</div>
+                        :
+                        <>
+                            <div className='overflow-hidden text-balance'>{group.eng_name}</div>
+                            <div className='text-right text-ellipsis text-nowrap'>{group.credit}</div>
+                        </>
                     }
                 </div>
             </div>

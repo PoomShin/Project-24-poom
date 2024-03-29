@@ -10,7 +10,7 @@ export default function ViewCourseButton({ onClick, isSeeCourseName }) {
                 onClick={onClick}
             >
                 <img src={isSeeCourseName ? view : hide} alt='Course Image' className='mx-1 w-6 h-6' />
-                <span className="truncate">{isSeeCourseName ? 'view type' : 'view prof'}</span>
+                <span className="truncate">{isSeeCourseName ? 'see more' : 'see detail'}</span>
             </button>
         </div>
     );
